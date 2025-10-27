@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESPhome冷氣模組終極版使用說明</title>
+    <title>ESPhome冷氣模組終極版介紹與說明</title>
     <!-- 網站圖示 -->
     <link rel="icon" href="img/favicon.png" type="image/png">
     
@@ -29,10 +29,53 @@
         <!-- 主要標題 -->
         <header class="text-center my-8">
             <h1 class="text-3xl sm:text-4xl font-bold text-sky-700">ESPhome冷氣模組終極版</h1>
-            <h2 class="text-2xl text-slate-700 mt-2">使用說明</h2>
+            <h2 class="text-2xl text-slate-700 mt-2">產品介紹與使用說明</h2>
         </header>
 
         <main class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 space-y-8">
+
+            <!-- 產品介紹 -->
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b border-slate-200 pb-3">產品介紹</h2>
+                <div class="space-y-4 text-lg text-slate-700">
+                    <p class="text-slate-600">
+                        本模組的最大特色在於 <span class="font-semibold text-sky-600">極高的相容性與未來擴充性</span>。
+                        一次附贈多種主流冷氣廠牌的專用連接線，無須再為不同品牌尋找不同模組。
+                    </p>
+                    <p class="text-slate-600">
+                        更換冷氣品牌時，僅需更換對應的連接線，並透過<span class="font-semibold">簡易的網頁介面</span>，
+                        輕鬆點選幾下即可<span class="font-semibold">立即變更韌體</span>，模組便能完美支援新的冷氣。
+                    </p>
+
+                </div>
+            </div>
+
+            <!-- 接頭說明 -->
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b border-slate-200 pb-3">接頭說明</h2>
+                <div class="space-y-6 text-lg text-slate-700">
+                    <div class="text-red-600 font-bold text-base sm:text-lg p-4 bg-red-50 rounded-lg border border-red-200 text-center">
+                        <span class="text-2xl block">⚠️ 請注意 ⚠️</span>
+                        <span class="block mt-2">
+                            <span class="bg-red-100 text-red-700 px-2 py-1 rounded-md">三菱電機</span> 與 <span class="bg-red-100 text-red-700 px-2 py-1 rounded-md">大金S21 mini</span> 接頭相同，但<span class="underline decoration-2">順序不同</span>，請仔細看圖片! 避免接錯!
+                        </span>
+                    </div>
+                    
+                    <p class="text-slate-600">下方為各廠牌接頭示意圖。點擊圖片可放大檢視：</p>
+
+                    <!-- 圖片陳列廊 -->
+                    <div class="grid grid-cols-4 sm:grid-cols-7 gap-3 sm:gap-4">
+                        <!-- 7個圖片格子 (使用 placeholder) -->
+                        <img src="img/pa-cable.jpg" alt="國際" class="gallery-img rounded-lg aspect-square object-cover w-full h-full cursor-pointer hover:opacity-75 transition-opacity shadow-md" onclick="openModal(this.src, '國際')">
+                        <img src="img/ht-calbe.jpg" alt="日立" class="gallery-img rounded-lg aspect-square object-cover w-full h-full cursor-pointer hover:opacity-75 transition-opacity shadow-md" onclick="openModal(this.src, '日立')">
+                        <img src="img/mh-cable.jpg" alt="三菱電機" class="gallery-img rounded-lg aspect-square object-cover w-full h-full cursor-pointer hover:opacity-75 transition-opacity shadow-md" onclick="openModal(this.src, '三菱電機')">
+                        <img src="img/s403.jpg" alt="大金s403" class="gallery-img rounded-lg aspect-square object-cover w-full h-full cursor-pointer hover:opacity-75 transition-opacity shadow-md" onclick="openModal(this.src, '大金s403')">
+                        <img src="img/s403mini.jpg" alt="大金s403mini" class="gallery-img rounded-lg aspect-square object-cover w-full h-full cursor-pointer hover:opacity-75 transition-opacity shadow-md" onclick="openModal(this.src, '大金s403mini')">
+                        <img src="img/s21.jpg" alt="大金s21" class="gallery-img rounded-lg aspect-square object-cover w-full h-full cursor-pointer hover:opacity-75 transition-opacity shadow-md" onclick="openModal(this.src, '大金s21')">
+                        <img src="img/s21mini.jpg" alt="大金s21mini" class="gallery-img rounded-lg aspect-square object-cover w-full h-full cursor-pointer hover:opacity-75 transition-opacity shadow-md" onclick="openModal(this.src, '大金s21mini')">
+                    </div>
+                </div>
+            </div>
 
             <!-- 設定步驟 -->
             <div>
@@ -144,6 +187,40 @@
         </footer>
     </div>
 
+    <!-- Modal (燈箱) for Image Enlargement -->
+    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center p-4 z-50 hidden" onclick="closeModal()">
+        <div class="relative max-w-3xl max-h-full" onclick="event.stopPropagation()">
+            <img id="modalImage" src="" alt="放大的接頭圖片" class="max-w-full max-h-[90vh] rounded-lg shadow-lg object-contain">
+            <p id="modalCaption" class="text-white text-center text-lg mt-2"></p>
+        </div>
+        <button title="關閉 (Esc)" class="absolute top-4 right-6 text-white text-5xl font-light hover:text-slate-300 transition-colors" onclick="closeModal()">&times;</button>
+    </div>
+
+    <script>
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImage');
+        const modalCaption = document.getElementById('modalCaption');
+
+        function openModal(src, alt) {
+            // 請求 600x600 的放大圖 (您可以更改此尺寸)
+            modalImg.src = src.replace(/200x200/g, '800x800'); 
+            modalCaption.textContent = alt; // 設置圖片說明
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+        }
+
+        // 按下 Escape 鍵關閉 Modal
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+
 </body>
 </html>
+
 
