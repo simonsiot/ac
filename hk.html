@@ -48,16 +48,16 @@
                     <p class="text-slate-600">本模組除了可接 Home Assistant (HA) 外，還多了能直連 HomeKit 的功能。</p>
                     
                     <p class="mt-4 text-slate-600">在裝置的 IP 頁面能看到 HomeKit 配對碼以及重設配對的按鈕。</p>
-                    <img src="img/web.png" alt="裝置IP頁面顯示HomeKit配對碼" class="mt-2 rounded-lg shadow-md max-w-sm mx-auto w-full border border-slate-200" onerror="this.src='https://placehold.co/400x600/f1f5f9/64748b?text=web.png'">
+                    <img src="img/web_hkcode.png" alt="裝置IP頁面顯示HomeKit配對碼" class="mt-2 rounded-lg shadow-md max-w-sm mx-auto w-full border border-slate-200" >
 
                     <p class="mt-4 text-slate-600">加入 HomeKit 時，會顯示為一個橋接器 (Bridge)。</p>
-                    <img src="img/hub.png" alt="HomeKit 顯示為橋接器" class="mt-2 rounded-lg shadow-md max-w-sm mx-auto w-full border border-slate-200" onerror="this.src='https://placehold.co/400x600/f1f5f9/64748b?text=hub.PNG'">
+                    <img src="img/hub.png" alt="HomeKit 顯示為橋接器" class="mt-2 rounded-lg shadow-md max-w-sm mx-auto w-full border border-slate-200" >
 
                     <p class="mt-4 text-slate-600">橋接器的名稱及機型後面都會帶 MAC 末四碼，方便辨識。</p>
-                    <img src="img/hub_detail.png" alt="橋接器詳細資訊" class="mt-2 rounded-lg shadow-md max-w-sm mx-auto w-full border border-slate-200" onerror="this.src='https://placehold.co/400x600/f1f5f9/64748b?text=hub_detail.PNG'">
+                    <img src="img/hub_detail.png" alt="橋接器詳細資訊" class="mt-2 rounded-lg shadow-md max-w-sm mx-auto w-full border border-slate-200" >
 
                     <p class="mt-4 text-slate-600">然後再將空調加入，空調的名稱及機型後面也都會帶 MAC 末四碼，不容易搞混。</p>
-                    <img src="img/climte_detail.png" alt="空調裝置詳細資訊" class="mt-2 rounded-lg shadow-md max-w-sm mx-auto w-full border border-slate-200" onerror="this.src='https://placehold.co/400x600/f1f5f9/64748b?text=climte_detail.PNG'">
+                    <img src="img/climte_detail.png" alt="空調裝置詳細資訊" class="mt-2 rounded-lg shadow-md max-w-sm mx-auto w-full border border-slate-200" >
 
                     <p class="mt-4 text-slate-600">接入 HomeKit 後的功能為：<span class="font-semibold">關閉、冷氣、暖氣</span> 以及 <span class="font-semibold">調節溫度</span>。（注意：沒有風速調整功能）</p>
                     <img src="img/cliamte.png" alt="HomeKit 空調控制介面" class="mt-2 rounded-lg shadow-md max-w-sm mx-auto w-full border border-slate-200" onerror="this.src='https://placehold.co/400x600/f1f5f9/64748b?text=cliamte.PNG'">
@@ -67,7 +67,7 @@
             <!-- 設定步驟 -->
                 <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-r-lg" role="alert">
                     <p class="font-bold">請先透過 USB 測試連線！</p>
-                    <p>請先插上 USB 電源，確認模組可成功連上家中網路及 Home Assistant / HomeKit 後，再安裝到電器上。</p>
+                    <p>請先插上 USB 電源，確認模組可成功連上家中網路及 HA / HomeKit 後，再安裝到電器上。</p>
                 </div>            
             <div>
                 <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b border-slate-200 pb-3">設定步驟</h2>
@@ -117,10 +117,10 @@
                             <li>至路由器的管理頁面，找到裝置的 IP 位址。</li>
                             <li>
                                 在瀏覽器中開啟該 IP 位址 (例如 <code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">http://192.168.x.x</code>)，頁面上會顯示 HomeKit 配對碼。
-                                <img src="img/web.png" alt="裝置IP頁面顯示HomeKit配對碼" class="mt-2 rounded-lg shadow-md max-w-sm mx-auto w-full border border-slate-200" onerror="this.src='https://placehold.co/400x600/f1f5f9/64748b?text=web.png'">
+                                <img src="img/web_hkcode.png" alt="裝置IP頁面顯示HomeKit配對碼" class="mt-2 rounded-lg shadow-md max-w-sm mx-auto w-full border border-slate-200">
                             </li>
                             <li>打開 Apple「家庭 (Home)」App，點擊右上角「+」，選擇「加入配件」。</li>
-                            <li>點擊「更多選項...」，應會自動搜尋到名稱結W帶有 4位MAC 碼的「橋接器」。</li>
+                            <li>點擊「更多選項...」，應會自動搜尋到名稱結尾帶有 4位MAC 碼的「橋接器」。</li>
                             <li>點選該橋接器，並輸入您在 IP 頁面上看到的配對碼。</li>
                             <li>成功加入橋接器後，再依照提示將「空調」配件加入，即完成設定。</li>
                         </ol>
@@ -147,8 +147,8 @@
 
         <!-- 頁腳回首頁按鈕 -->
         <div class="text-center mt-8">
-            <a href="https://siot.cc" class="inline-block bg-sky-600 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-sky-700 transition-colors">
-                &larr; 回首頁
+            <a href="https://siot.cc/ac/" class="inline-block bg-sky-600 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-sky-700 transition-colors">
+                &larr; 回前頁
             </a>
         </div>
 
