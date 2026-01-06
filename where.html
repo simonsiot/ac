@@ -17,9 +17,29 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap"
         rel="stylesheet">
     <style>
-        /* 使用 Noto Sans TC 作為主要字體，Inter 作為備用 */
         body {
             font-family: 'Noto Sans TC', 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            background-image:
+                radial-gradient(at 0% 0%, hsla(210, 100%, 96%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(210, 100%, 94%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(210, 100%, 96%, 1) 0, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(210, 100%, 94%, 1) 0, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(13, 79, 141, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(13, 79, 141, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: -1;
         }
 
         /* 增加 modal 的過渡效果 */
@@ -29,7 +49,7 @@
     </style>
 </head>
 
-<body class="bg-sky-50 text-slate-800 antialiased">
+<body class="text-slate-800 antialiased">
 
     <!-- 主容器 -->
     <div class="container mx-auto px-4 py-8 md:py-12">
@@ -43,7 +63,7 @@
         <!-- 警語區塊 -->
         <div class="mb-8 p-4 bg-red-100 border-l-4 border-red-500 text-red-800 rounded-lg shadow-md">
             <p class="font-bold">重要提醒：</p>
-            <p>如找不到插座請務必先加line詢問！切勿亂插以免模組或電器損壞！</p>
+            <p>插頭都有防呆設計，不要硬插，如找不到插座請務必先加line詢問！切勿亂插以免模組或電器損壞！</p>
         </div>
         <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-lg shadow-md" role="alert">
             <p class="font-bold">點擊圖片可放大</p>
@@ -58,10 +78,13 @@
                 <div class="p-6">
                     <h2 class="text-2xl font-bold mb-3 text-slate-900">三菱電機</h2>
                     <p class="text-slate-700 text-lg">
-                        找到並連接至主機板上<span
-                            class="font-semibold text-red-700 bg-red-100 px-2 py-1 rounded-md mx-1">CN105</span>的紅色5-pin插座。
+                        拆開外殼，面對主機在右下方可找到寫著<span
+                            class="font-semibold text-red-700 bg-red-100 px-2 py-1 rounded-md mx-1">CN105</span>的紅色或白色外觀的5-pin插座。
                     </p>
                 </div>
+                <img src="img/CN105.jpg" alt="三菱電機插座位置"
+                    class="w-full h-56 object-cover cursor-pointer enlargeable-image"
+                    onerror="this.onerror=null;this.src='https://placehold.co/600x400/E5E7EB/4B5563?text=三菱電機圖片'">
             </div>
 
             <!-- 卡片 2: 三菱重工 -->
@@ -70,7 +93,7 @@
                 <div class="p-6">
                     <h2 class="text-2xl font-bold mb-3 text-slate-900">三菱重工</h2>
                     <p class="text-slate-700 text-lg">
-                        找到並連接至主機板上標明<span
+                        拆開外殼，找到並連接至主機板上標明<span
                             class="font-semibold text-yellow-800 bg-yellow-100 px-2 py-1 rounded-md mx-1">CNS</span>的5-pin插座。
                     </p>
                 </div>
