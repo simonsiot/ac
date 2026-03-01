@@ -109,12 +109,31 @@
                         <img src="img/climte_detail.png" alt="空調裝置詳細資訊"
                             class="mt-2 rounded-lg shadow-md max-w-sm mx-auto w-full border border-slate-200">
 
-                        <p class="mt-4 text-slate-600">接入 HomeKit 後的功能為：<span class="font-semibold">關閉、冷氣、暖氣</span> 以及
-                            <span class="font-semibold">調節溫度</span>。（注意：沒有風速調整功能）
+                        <p class="mt-4 text-slate-600">接入 HomeKit 後的功能為：<span
+                                class="font-semibold">關閉、冷氣、暖氣、調節溫度</span>以及
+                            <span class="font-semibold">風速調整</span>。
                         </p>
                         <img src="img/cliamte.png" alt="HomeKit 空調控制介面"
                             class="mt-2 rounded-lg shadow-md max-w-sm mx-auto w-full border border-slate-200"
                             onerror="this.src='https://placehold.co/400x600/f1f5f9/64748b?text=cliamte.PNG'">
+
+                        <p class="mt-6 text-slate-600">關於 <span class="font-semibold">風速調整</span>，HomeKit 以 0%～100%
+                            的滑桿呈現。設定為 <span class="font-semibold">0%
+                                時即為自動風速（Auto）</span>，由空調本身依室溫自動決定風速；其餘數值則對應由弱至強的各段風速。<br>
+                            由於各品牌支援的風速段數不同，滑桿並非每 1%
+                            都有實際效果，而是會依廠牌對應至各自支援的風速檔位，說明如下：</p>
+                        <ul class="mt-3 ml-4 space-y-1 text-slate-600 list-disc list-inside">
+                            <li><span class="font-semibold">國際 (Panasonic)</span>：靜音、弱、中、強，共 4 段</li>
+                            <li><span class="font-semibold">日立 (Hitachi)</span>：靜音、弱、中、強，共 4 段</li>
+                            <li><span class="font-semibold">大金 (Daikin)</span>：靜音、1、2、3、4、5，共 6 段</li>
+                            <li><span class="font-semibold">三菱電機 (Mitsubishi Electric)</span>：靜音、1、2、3、4，共 5 段</li>
+                            <!-- [待驗證] 三菱重工
+                            <li><span class="font-semibold">三菱重工 (Mitsubishi Heavy Industries)</span>：超低、弱、中、強，共 4 段
+                            </li>
+                            -->
+                        </ul>
+                        <img src="img/hk_fan.png" alt="HomeKit 風速調整介面"
+                            class="mt-4 rounded-lg shadow-md max-w-sm mx-auto w-full border border-slate-200">
                     </div>
                 </div>
             </details>
@@ -161,6 +180,14 @@
                                 <li>三菱電機: <code
                                         class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">hk-ac-mt</code>
                                 </li>
+                                <!-- [待驗證] 三菱重工
+                                <li>三菱重工(壁掛): <code
+                                        class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">hk-ac-mhi</code>
+                                </li>
+                                <li>三菱重工(吊隱): <code
+                                        class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">hk-ac-mhi-c</code>
+                                </li>
+                                -->
                             </ul>
                         </li>
 
@@ -204,7 +231,11 @@
                                 <li>打開 Apple「家庭 (Home)」App，點擊右上角「+」，選擇「加入配件」。</li>
                                 <li>點擊「更多選項...」，應會自動搜尋到名稱結尾帶有 4位MAC 碼的「橋接器」。</li>
                                 <li>點選該橋接器，並輸入您在 IP 頁面上看到的配對碼。</li>
-                                <li>成功加入橋接器後，再依照提示將「空調」配件加入，即完成設定。</li>
+                                <li>成功加入橋接器後，再依照提示將「<span class="font-semibold">自動調溫器（空調）</span>」及「<span
+                                        class="font-semibold">風扇（風速）</span>」配件加入，即完成設定。
+                                    <img src="img/hk_add.png" alt="HomeKit 加入配件示意圖"
+                                        class="mt-2 rounded-lg shadow-md max-w-sm mx-auto w-full border border-slate-200">
+                                </li>
                             </ol>
                         </li>
 
@@ -241,6 +272,86 @@
                             <span class="font-semibold">恢復出廠設定 (Factory Reset)：</span>
                             <p class="ml-6 mt-1 text-slate-600">在裝置 IP 頁面下方找到「Factory Reset 恢復出廠」，按下右方的 <span
                                     class="font-bold">PRESS</span> 按鈕，將會清除包含 Wi-Fi 在內的所有設定，需重新進行連線設定。</p>
+                        </li>
+                    </ol>
+                </div>
+            </details>
+
+            <!-- OTA 更新步驟 (Collapsible) -->
+            <details
+                class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                <summary
+                    class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
+                    <h2 class="text-2xl font-bold text-slate-900">OTA 韌體更新</h2>
+                    <span class="text-slate-500 group-open:rotate-180 transition-transform duration-300">
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </span>
+                </summary>
+
+                <div class="p-6 border-t border-slate-200 bg-white">
+                    <!-- 警語 -->
+                    <div class="bg-orange-100 border-l-4 border-orange-500 text-orange-800 p-4 rounded-r-lg mb-6"
+                        role="alert">
+                        <p class="font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> OTA 更新前請注意！</p>
+                        <p class="mt-1">更新韌體後，Wi-Fi 設定有可能被清除，需重新設定連線。請務必依照步驟順序操作，避免裝置進入異常狀態。</p>
+                    </div>
+
+                    <ol class="list-decimal list-inside space-y-6 text-lg text-slate-700">
+                        <!-- 步驟 a -->
+                        <li>
+                            <span class="font-semibold text-red-600">先從「家庭」App 刪除橋接器！（重要）</span>
+                            <p class="ml-6 mt-1 text-slate-600">更新前，<span class="font-bold underline">務必</span>先打開
+                                Apple「家庭 (Home)」App，將現有的橋接器移除，否則更新後可能無法正常重新配對。</p>
+                        </li>
+
+                        <!-- 步驟 b -->
+                        <li>
+                            <span class="font-semibold">下載 OTA 韌體檔案：</span>
+                            <p class="ml-6 mt-1 text-slate-600">至官方提供的下載連結，下載檔名結尾為 <code
+                                    class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">ota.bin</code>
+                                的韌體檔案，並儲存至電腦。</p>
+                        </li>
+
+                        <!-- 步驟 c -->
+                        <li>
+                            <span class="font-semibold">開啟裝置設定頁面：</span>
+                            <p class="ml-6 mt-1 text-slate-600">在瀏覽器網址列輸入裝置的 IP 位址（例如 <code
+                                    class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">http://192.168.x.x</code>），進入裝置設定頁面。
+                            </p>
+                        </li>
+
+                        <!-- 步驟 d -->
+                        <li>
+                            <span class="font-semibold">上傳韌體並等待更新完成：</span>
+                            <p class="ml-6 mt-1 text-slate-600">捲動至頁面最下方，找到 <span class="font-bold">OTA Update</span>
+                                區塊，點擊「選擇檔案」並選取剛才下載的 <code
+                                    class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">ota.bin</code>，再按下
+                                <span class="font-bold">Update</span>。上傳完成後頁面會自動跳轉並顯示 <span
+                                    class="font-bold text-green-700">done</span>，代表韌體更新成功。
+                            </p>
+                        </li>
+
+                        <!-- 步驟 e -->
+                        <li>
+                            <span class="font-semibold">重新設定 Wi-Fi（若有需要）：</span>
+                            <p class="ml-6 mt-1 text-slate-600">若更新後裝置 Wi-Fi 設定被清除，模組將重新建立熱點。請依照上方「設定步驟」中的 Wi-Fi
+                                連線說明，重新完成網路設定。</p>
+                        </li>
+
+                        <!-- 步驟 f -->
+                        <li>
+                            <span class="font-semibold">重設 HomeKit 配對：</span>
+                            <p class="ml-6 mt-1 text-slate-600">在裝置 IP 頁面，找到「<span class="font-bold">Reset
+                                    HK</span>」並按下右方的 <span class="font-bold">PRESS</span> 按鈕，清除舊的配對資料。稍待片刻後，再至頁面下方找到
+                                <span class="font-bold">Restart</span> 並按下，讓模組重新開機。
+                            </p>
+                        </li>
+
+                        <!-- 步驟 g -->
+                        <li>
+                            <span class="font-semibold">重新加入 HomeKit：</span>
+                            <p class="ml-6 mt-1 text-slate-600">模組重啟後，依照上方「設定步驟」第 6 項的 HomeKit
+                                配對流程，重新將橋接器及空調配件加入「家庭」App，即完成整個更新程序。</p>
                         </li>
                     </ol>
                 </div>
