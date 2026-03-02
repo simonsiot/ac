@@ -78,11 +78,16 @@
             </div>
 
             <!-- 產品說明 (Collapsible) -->
-            <details
+            <details id="pd"
                 class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
                 <summary
                     class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
-                    <h2 class="text-2xl font-bold text-slate-900">產品介紹</h2>
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-2xl font-bold text-slate-900">產品介紹</h2>
+                        <a href="#pd" class="text-slate-400 hover:text-sky-600 transition-colors" onclick="event.stopPropagation();">
+                            <i class="fa-solid fa-link text-lg"></i>
+                        </a>
+                    </div>
                     <span class="text-slate-500 group-open:rotate-180 transition-transform duration-300">
                         <i class="fa-solid fa-chevron-down"></i>
                     </span>
@@ -117,11 +122,12 @@
                             class="mt-2 rounded-lg shadow-md max-w-sm mx-auto w-full border border-slate-200"
                             onerror="this.src='https://placehold.co/400x600/f1f5f9/64748b?text=cliamte.PNG'">
 
-                        <p class="mt-6 text-slate-600">在 Apple「家庭」App 的總覽畫面中，空調溫度會根據您選擇的運作模式自動變換色彩。啟動「<span class="font-semibold text-sky-600">冷氣模式</span>」時，數值會呈現藍色；若切換至「<span class="font-semibold text-orange-500">暖氣模式</span>」，則會轉換為橘色。直覺化的視覺設計，讓您一眼就能掌握當前的空調狀態。</p>
+                        <!-- 新增的顏色變化說明與附圖 -->
+                        <p class="mt-6 text-slate-600">在 Apple「家庭」App 的總覽畫面中，裝置圖示會根據您選擇的運作模式自動變換色彩。例如啟動「<span class="font-semibold text-sky-600">冷氣模式</span>」時，數值會顯示藍色；若切換至「<span class="font-semibold text-orange-500">暖氣模式</span>」，則會轉為橘色。讓您一眼就能掌握當前的空調狀態。</p>
                         <img src="img/hk_mode_color.jpg" alt="HomeKit 冷暖氣模式顏色變化"
                             class="mt-4 rounded-lg shadow-md max-w-md mx-auto w-full border border-slate-200">
 
-                        <p class="mt-6 text-slate-600">關於 <span class="font-semibold">風速調整</span>，HomeKit 以 0%～100%
+                        <p class="mt-6 text-slate-600">關於 <span class="font-semibold">風速調整</span>，HomeKit以 0%～100%
                             的滑桿呈現。設定為 <span class="font-semibold">0%
                                 時即為自動風速（Auto）</span>，由空調本身依室溫自動決定風速；其餘數值則對應由弱至強的各段風速。<br>
                             由於各品牌支援的風速段數不同，滑桿並非每 1%
@@ -143,11 +149,16 @@
             </details>
 
             <!-- 設定步驟 (Collapsible) -->
-            <details
+            <details id="set"
                 class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
                 <summary
                     class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
-                    <h2 class="text-2xl font-bold text-slate-900">設定步驟</h2>
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-2xl font-bold text-slate-900">設定步驟</h2>
+                        <a href="#set" class="text-slate-400 hover:text-sky-600 transition-colors" onclick="event.stopPropagation();">
+                            <i class="fa-solid fa-link text-lg"></i>
+                        </a>
+                    </div>
                     <span class="text-slate-500 group-open:rotate-180 transition-transform duration-300">
                         <i class="fa-solid fa-chevron-down"></i>
                     </span>
@@ -255,11 +266,16 @@
             </details>
 
             <!-- 重設步驟 (Collapsible) -->
-            <details
+            <details id="reset"
                 class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
                 <summary
                     class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
-                    <h2 class="text-2xl font-bold text-slate-900">重設步驟</h2>
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-2xl font-bold text-slate-900">重設步驟</h2>
+                        <a href="#reset" class="text-slate-400 hover:text-sky-600 transition-colors" onclick="event.stopPropagation();">
+                            <i class="fa-solid fa-link text-lg"></i>
+                        </a>
+                    </div>
                     <span class="text-slate-500 group-open:rotate-180 transition-transform duration-300">
                         <i class="fa-solid fa-chevron-down"></i>
                     </span>
@@ -282,11 +298,16 @@
             </details>
 
             <!-- OTA 更新步驟 (Collapsible) -->
-            <details
+            <details id="ota"
                 class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
                 <summary
                     class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
-                    <h2 class="text-2xl font-bold text-slate-900">OTA 韌體更新</h2>
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-2xl font-bold text-slate-900">韌體更新</h2>
+                        <a href="#ota" class="text-slate-400 hover:text-sky-600 transition-colors" onclick="event.stopPropagation();">
+                            <i class="fa-solid fa-link text-lg"></i>
+                        </a>
+                    </div>
                     <span class="text-slate-500 group-open:rotate-180 transition-transform duration-300">
                         <i class="fa-solid fa-chevron-down"></i>
                     </span>
@@ -311,7 +332,7 @@
                         <!-- 步驟 b -->
                         <li>
                             <span class="font-semibold">下載 OTA 韌體檔案：</span>
-                            <p class="ml-6 mt-1 text-slate-600">至官方提供的下載連結，下載檔名結尾為 <code
+                            <p class="ml-6 mt-1 text-slate-600">至下載連結，下載檔名結尾為 <code
                                     class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">ota.bin</code>
                                 的韌體檔案，並儲存至電腦。</p>
                         </li>
@@ -412,6 +433,28 @@
         </footer>
     </div>
 
+    <script>
+        // 處理網址錨點，自動展開對應的 details 區塊並滾動至該處
+        function handleHashTarget() {
+            const hash = window.location.hash;
+            if (hash) {
+                const target = document.querySelector(hash);
+                // 檢查目標是否存在且為 details 元素
+                if (target && target.tagName === 'DETAILS') {
+                    target.open = true; // 展開區塊
+                    // 稍微延遲以確保瀏覽器正確捲動至展開後的位置
+                    setTimeout(() => {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                }
+            }
+        }
+
+        // 頁面載入完成時執行
+        document.addEventListener('DOMContentLoaded', handleHashTarget);
+        // 網址 Hash 改變時執行（例如點擊了標題旁的連結圖示）
+        window.addEventListener('hashchange', handleHashTarget);
+    </script>
 </body>
 
 </html>
