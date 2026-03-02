@@ -314,71 +314,126 @@
                 </summary>
 
                 <div class="p-6 border-t border-slate-200 bg-white">
-                    <!-- 警語 -->
-                    <div class="bg-orange-100 border-l-4 border-orange-500 text-orange-800 p-4 rounded-r-lg mb-6"
-                        role="alert">
-                        <p class="font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> OTA 更新前請注意！</p>
-                        <p class="mt-1">更新韌體後，Wi-Fi 設定有可能被清除，需重新設定連線。請務必依照步驟順序操作，避免裝置進入異常狀態。</p>
+
+                    <!-- 下載連結提示區塊 -->
+                    <div class="mb-6 bg-sky-50 p-4 rounded-lg border border-sky-100 flex items-start">
+                        <i class="fa-solid fa-download text-sky-600 mt-1 mr-3 text-lg"></i>
+                        <div>
+                            <p class="text-slate-800 font-bold mb-1">韌體下載位址：</p>
+                            <a href="https://github.com/xangin/FW/" target="_blank" class="text-sky-600 hover:text-sky-800 hover:underline transition-colors font-semibold">點擊前往下載頁面</a>
+                        </div>
                     </div>
 
-                    <ol class="list-decimal list-inside space-y-6 text-lg text-slate-700">
-                        <!-- 步驟 a -->
-                        <li>
-                            <span class="font-semibold text-red-600">先從「家庭」App 刪除橋接器！（重要）</span>
-                            <p class="ml-6 mt-1 text-slate-600">更新前，<span class="font-bold underline">務必</span>先打開
-                                Apple「家庭 (Home)」App，將現有的橋接器移除，否則更新後可能無法正常重新配對。</p>
-                        </li>
+                    <!-- 警語 -->
+                    <div class="bg-orange-100 border-l-4 border-orange-500 text-orange-800 p-4 rounded-r-lg mb-8"
+                        role="alert">
+                        <p class="font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> 韌體更新前請注意！</p>
+                        <p class="mt-1">更新韌體後，Wi-Fi 設定有可能被清除，需重新設定連線。請務必依照步驟順序操作，避免裝置進入異常狀態。</p>
+                        <p class="mt-2 font-semibold text-red-600">※ 若 OTA 更新失敗或出現異常，將需要把模組拆下，並透過 USB 接上電腦重新燒錄韌體喔！</p>
+                    </div>
 
-                        <!-- 步驟 b -->
-                        <li>
-                            <span class="font-semibold">下載 OTA 韌體檔案：</span>
-                            <p class="ml-6 mt-1 text-slate-600">至下載連結，下載檔名結尾為 <code
-                                    class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">ota.bin</code>
-                                的韌體檔案，並儲存至電腦。</p>
-                        </li>
+                    <!-- 方式一：OTA 無線更新 -->
+                    <div class="mb-10">
+                        <h3 class="text-xl font-bold text-sky-700 mb-4 border-b border-sky-200 pb-2"><i class="fa-solid fa-wifi mr-2"></i>方式一：OTA 無線更新 (建議)</h3>
+                        <ol class="list-decimal list-inside space-y-6 text-lg text-slate-700">
+                            <!-- 步驟 a -->
+                            <li>
+                                <span class="font-semibold text-red-600">先從「家庭」App 刪除橋接器！（重要）</span>
+                                <p class="ml-6 mt-1 text-slate-600">更新前，<span class="font-bold underline">務必</span>先打開
+                                    Apple「家庭 (Home)」App，將現有的橋接器移除，否則更新後可能無法正常重新配對。</p>
+                            </li>
 
-                        <!-- 步驟 c -->
-                        <li>
-                            <span class="font-semibold">開啟裝置設定頁面：</span>
-                            <p class="ml-6 mt-1 text-slate-600">在瀏覽器網址列輸入裝置的 IP 位址（例如 <code
-                                    class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">http://192.168.x.x</code>），進入裝置設定頁面。
-                            </p>
-                        </li>
+                            <!-- 步驟 b -->
+                            <li>
+                                <span class="font-semibold">下載 OTA 韌體檔案：</span>
+                                <p class="ml-6 mt-1 text-slate-600">請前往上方提供的韌體下載連結，下載檔名結尾為 <code
+                                        class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">ota.bin</code>
+                                    的檔案，並儲存至電腦。</p>
+                            </li>
 
-                        <!-- 步驟 d -->
-                        <li>
-                            <span class="font-semibold">上傳韌體並等待更新完成：</span>
-                            <p class="ml-6 mt-1 text-slate-600">捲動至頁面最下方，找到 <span class="font-bold">OTA Update</span>
-                                區塊，點擊「選擇檔案」並選取剛才下載的 <code
-                                    class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">ota.bin</code>，再按下
-                                <span class="font-bold">Update</span>。上傳完成後頁面會自動跳轉並顯示 <span
-                                    class="font-bold text-green-700">done</span>，代表韌體更新成功。
-                            </p>
-                        </li>
+                            <!-- 步驟 c -->
+                            <li>
+                                <span class="font-semibold">開啟裝置設定頁面：</span>
+                                <p class="ml-6 mt-1 text-slate-600">在瀏覽器網址列輸入裝置的 IP 位址（例如 <code
+                                        class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">http://192.168.x.x</code>），進入裝置設定頁面。
+                                </p>
+                            </li>
 
-                        <!-- 步驟 e -->
-                        <li>
-                            <span class="font-semibold">重新設定 Wi-Fi（若有需要）：</span>
-                            <p class="ml-6 mt-1 text-slate-600">若更新後裝置 Wi-Fi 設定被清除，模組將重新建立熱點。請依照上方「設定步驟」中的 Wi-Fi
-                                連線說明，重新完成網路設定。</p>
-                        </li>
+                            <!-- 步驟 d -->
+                            <li>
+                                <span class="font-semibold">上傳韌體並等待更新完成：</span>
+                                <p class="ml-6 mt-1 text-slate-600">捲動至頁面最下方，找到 <span class="font-bold">OTA Update</span>
+                                    區塊，點擊「選擇檔案」並選取剛才下載的 <code
+                                        class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">ota.bin</code>，再按下
+                                    <span class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">Update</span>。上傳完成後頁面會自動跳轉並顯示 <span
+                                        class="font-bold text-green-700">done</span>，代表韌體更新成功。
+                                </p>
+                            </li>
 
-                        <!-- 步驟 f -->
-                        <li>
-                            <span class="font-semibold">重設 HomeKit 配對：</span>
-                            <p class="ml-6 mt-1 text-slate-600">在裝置 IP 頁面，找到「<span class="font-bold">Reset
-                                    HK</span>」並按下右方的 <span class="font-bold">PRESS</span> 按鈕，清除舊的配對資料。稍待片刻後，再至頁面下方找到
-                                <span class="font-bold">Restart</span> 並按下，讓模組重新開機。
-                            </p>
-                        </li>
+                            <!-- 步驟 e -->
+                            <li>
+                                <span class="font-semibold">重新設定 Wi-Fi（若有需要）：</span>
+                                <p class="ml-6 mt-1 text-slate-600">若更新後裝置 Wi-Fi 設定被清除，模組將重新建立熱點。請依照上方「設定步驟」中的 Wi-Fi
+                                    連線說明，重新完成網路設定。</p>
+                            </li>
 
-                        <!-- 步驟 g -->
-                        <li>
-                            <span class="font-semibold">重新加入 HomeKit：</span>
-                            <p class="ml-6 mt-1 text-slate-600">模組重啟後，依照上方「設定步驟」第 6 項的 HomeKit
-                                配對流程，重新將橋接器及空調配件加入「家庭」App，即完成整個更新程序。</p>
-                        </li>
-                    </ol>
+                            <!-- 步驟 f -->
+                            <li>
+                                <span class="font-semibold">重設 HomeKit 配對：</span>
+                                <p class="ml-6 mt-1 text-slate-600">在裝置 IP 頁面，找到「<span class="font-bold">Reset
+                                        HK</span>」並按下右方的 <span class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">PRESS</span> 按鈕，清除舊的配對資料。稍待片刻後，再至頁面下方找到「
+                                    <span class="font-bold">Restart</span> 」並按下右方的 <span class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">PRESS</span> 按鈕，讓模組重新開機。
+                                </p>
+                            </li>
+
+                            <!-- 步驟 g -->
+                            <li>
+                                <span class="font-semibold">重新加入 HomeKit：</span>
+                                <p class="ml-6 mt-1 text-slate-600">模組重啟後，依照上方「設定步驟」第 6 項的 HomeKit
+                                    配對流程，重新將橋接器及空調配件加入「家庭」App，即完成整個更新程序。</p>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- 方式二：USB 有線更新 -->
+                    <div>
+                        <h3 class="text-xl font-bold text-sky-700 mb-4 border-b border-sky-200 pb-2"><i class="fa-brands fa-usb mr-2"></i>方式二：USB 有線更新</h3>
+                        <ol class="list-decimal list-inside space-y-6 text-lg text-slate-700">
+                            <!-- 步驟 1 -->
+                            <li>
+                                <span class="font-semibold text-red-600">先從「家庭」App 刪除橋接器！（重要）</span>
+                                <p class="ml-6 mt-1 text-slate-600">更新前，<span class="font-bold underline">務必</span>先打開 Apple「家庭 (Home)」App，將現有的橋接器移除。</p>
+                            </li>
+                            <!-- 步驟 2 -->
+                            <li>
+                                <span class="font-semibold">下載 USB 韌體檔案：</span>
+                                <p class="ml-6 mt-1 text-slate-600">請前往上方提供的韌體下載連結，下載檔名結尾為 <code
+                                        class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">factory.bin</code> 的檔案，並儲存至電腦。</p>
+                            </li>
+                            <!-- 步驟 3 -->
+                            <li>
+                                <span class="font-semibold">連接電腦：</span>
+                                <p class="ml-6 mt-1 text-slate-600">將模組拆下，並使用一條支援資料傳輸的 USB 線將其連接至電腦（ Windows 或 Mac 皆可）。</p>
+                            </li>
+                            <!-- 步驟 4 -->
+                            <li>
+                                <span class="font-semibold">透過網頁進行燒錄：</span>
+                                <p class="ml-6 mt-1 text-slate-600">建議使用 Chrome 或 Edge 瀏覽器，前往 <a href="https://web.esphome.io" target="_blank" class="text-sky-600 hover:text-sky-800 hover:underline transition-colors">https://web.esphome.io</a>：</p>
+                                <ul class="list-disc list-inside ml-10 mt-2 space-y-2 text-slate-600">
+                                    <li>點擊頁面上的 <span class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">CONNECT</span> 按鈕。</li>
+                                    <li>在彈出的視窗中，選擇帶有「<span class="font-semibold">USB JTAG</span>」字樣的連接埠選項。</li>
+                                    <li>連線成功後，點擊 <span class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">INSTALL</span>。</li>
+                                    <li>選擇剛剛下載的 <code class="bg-slate-200 text-slate-800 px-1 rounded-md font-mono">factory.bin</code> 檔案，並等待進度條跑完即完成燒錄。</li>
+                                </ul>
+                            </li>
+                            <!-- 步驟 5 -->
+                            <li>
+                                <span class="font-semibold">重新設定設備：</span>
+                                <p class="ml-6 mt-1 text-slate-600">燒錄完成後請先拔除 USB 線，再重新插回電源。最後，請依照上方的「<a href="#set" class="text-sky-600 hover:text-sky-800 hover:underline transition-colors font-semibold">設定步驟</a>」重新將模組連上網路並加入HomeKit，最後再插回空調上。</p>
+                            </li>
+                        </ol>
+                    </div>
+
                 </div>
             </details>
 
