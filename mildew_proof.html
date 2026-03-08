@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>關機防霉功能說明 - Simon IoT</title>
+    <link rel="icon" href="img/favicon.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #f0f4f8;
+            background-image:
+                radial-gradient(at 0% 0%, hsla(210, 100%, 96%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(210, 100%, 94%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(210, 100%, 96%, 1) 0, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(210, 100%, 94%, 1) 0, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(13, 79, 141, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(13, 79, 141, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: -1;
+        }
+    </style>
+</head>
+
+<body class="text-slate-800">
+
+    <div class="container mx-auto max-w-3xl p-4 sm:p-6 md:p-8">
+
+        <!-- 主要標題 -->
+        <header class="text-center my-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-sky-700">關機防霉功能</h1>
+            <h2 class="text-2xl text-slate-700 mt-2">模式說明</h2>
+        </header>
+
+        <main class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 space-y-8">
+
+            <!-- 功能說明 -->
+            <div class="space-y-4">
+                <h3 class="text-xl font-bold text-slate-800 border-b border-slate-200 pb-2">
+                    <i class="fa-solid fa-circle-info text-sky-600 mr-2"></i>什麼是關機防霉？
+                </h3>
+                <div class="bg-slate-50 p-4 rounded-lg">
+                    <p class="text-lg text-slate-700 leading-relaxed">
+                        「關機防霉」功能會在冷氣關機後，自動將冷氣轉為送風模式（Fan Only），將蒸發器上的水分徹底吹乾，防止異味和黴菌的產生。
+                    </p>
+                    <p class="text-lg text-slate-700 leading-relaxed mt-4">
+                        此功能可讓您的冷氣避免下次開機時產生討厭的異味。
+                    </p>
+                </div>
+            </div>
+
+            <!-- 功能特色 -->
+            <div class="space-y-4">
+                <h3 class="text-xl font-bold text-slate-800 border-b border-slate-200 pb-2">
+                    <i class="fa-solid fa-star text-amber-500 mr-2"></i>功能特色
+                </h3>
+                <ul class="space-y-3 text-lg text-slate-700">
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-check text-green-500 mt-1 mr-3"></i>
+                        <span>關機後自動啟動乾燥運轉，防止蒸發器積水</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-check text-green-500 mt-1 mr-3"></i>
+                        <span>有效抑制細菌、黴菌滋生，減少異味產生</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-check text-green-500 mt-1 mr-3"></i>
+                        <span>保持室內機內部乾燥，延長冷氣使用壽命</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa-solid fa-check text-green-500 mt-1 mr-3"></i>
+                        <span>每次關機後自動執行，無需手動設定</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 功能截圖展示 -->
+            <div class="space-y-4">
+                <h3 class="text-xl font-bold text-slate-800 border-b border-slate-200 pb-2">
+                    <i class="fa-solid fa-image text-sky-600 mr-2"></i>功能畫面
+                </h3>
+                <div class="bg-slate-50 p-4 rounded-lg">
+                    <img src="img/mildew_proof.png" alt="關機防霉功能畫面"
+                        class="rounded-lg shadow-md max-w-md mx-auto w-full border border-slate-200">
+                    <p class="text-center text-sm text-slate-500 mt-3">
+                        如上圖所示，在控制面板中可看到「關機防霉」選項
+                    </p>
+                </div>
+            </div>
+
+            <!-- 實體功能說明 -->
+            <div class="space-y-4">
+                <h3 class="text-xl font-bold text-slate-800 border-b border-slate-200 pb-2">
+                    <i class="fa-solid fa-microchip text-sky-600 mr-2"></i>實體功能說明
+                </h3>
+
+                <!-- Switch 開關 -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <div class="bg-sky-50 p-4 border-b border-slate-200 flex items-center">
+                        <i class="fa-solid fa-toggle-on text-sky-600 text-xl mr-3"></i>
+                        <div>
+                            <h4 class="font-bold text-slate-800">自動防霉開關</h4>
+                            <p class="text-sm text-slate-500">名稱：Mildew Proof Auto</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-white">
+                        <p class="text-slate-700"><span class="font-semibold">功能：</span>這是整個防霉功能的總開關。</p>
+                        <ul class="mt-2 list-disc list-inside space-y-1 text-slate-600">
+                            <li>開啟後：當冷氣關機時，系統會自動偵測並啟動防霉程序</li>
+                            <li>關閉後：即使冷氣關機，也不會觸發防霉功能</li>
+                            <li>預設狀態：開啟（RESTORE_DEFAULT_ON）</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Button 按鈕 -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <div class="bg-sky-50 p-4 border-b border-slate-200 flex items-center">
+                        <i class="fa-solid fa-stop text-red-500 text-xl mr-3"></i>
+                        <div>
+                            <h4 class="font-bold text-slate-800">強制停止防霉按鈕</h4>
+                            <p class="text-sm text-slate-500">名稱：Stop Mildew Proof</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-white">
+                        <p class="text-slate-700"><span class="font-semibold">功能：</span>手動強制停止正在運行的防霉程序。</p>
+                        <ul class="mt-2 list-disc list-inside space-y-1 text-slate-600">
+                            <li>當防霉功能正在送風乾燥時，按下此按鈕可立即停止</li>
+                            <li>如果在延遲等待期間按下，則會取消延遲啟動</li>
+                            <li>使用情境：臨時需要立刻關閉冷氣時使用</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Number 數值 -->
+                <div class="space-y-3">
+                    <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <div class="bg-sky-50 p-4 border-b border-slate-200 flex items-center">
+                            <i class="fa-solid fa-fan text-sky-600 text-xl mr-3"></i>
+                            <div>
+                                <h4 class="font-bold text-slate-800">防霉送風時間</h4>
+                                <p class="text-sm text-slate-500">名稱：Duration</p>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-white">
+                            <p class="text-slate-700"><span class="font-semibold">功能：</span>設定防霉送風運轉的持續時間。</p>
+                            <ul class="mt-2 list-disc list-inside space-y-1 text-slate-600">
+                                <li>可設定範圍：1 ~ 180 分鐘</li>
+                                <li>預設值：60 分鐘</li>
+                                <li>數值會被儲存，重啟後會恢復設定值</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <div class="bg-sky-50 p-4 border-b border-slate-200 flex items-center">
+                            <i class="fa-solid fa-clock text-sky-600 text-xl mr-3"></i>
+                            <div>
+                                <h4 class="font-bold text-slate-800">自動防霉延遲</h4>
+                                <p class="text-sm text-slate-500">名稱：Auto Delay</p>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-white">
+                            <p class="text-slate-700"><span class="font-semibold">功能：</span>設定冷氣關機後，等待多久才啟動防霉送風。</p>
+                            <ul class="mt-2 list-disc list-inside space-y-1 text-slate-600">
+                                <li>可設定範圍：1 ~ 60 秒</li>
+                                <li>預設值：20 秒</li>
+                                <li>用途：避免關機後立即啟動送風造成困擾</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <div class="bg-sky-50 p-4 border-b border-slate-200 flex items-center">
+                            <i class="fa-solid fa-hourglass-half text-sky-600 text-xl mr-3"></i>
+                            <div>
+                                <h4 class="font-bold text-slate-800">防霉啟動門檻</h4>
+                                <p class="text-sm text-slate-500">名稱：Min Run Duration</p>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-white">
+                            <p class="text-slate-700"><span class="font-semibold">功能：</span>冷氣需運行超過此時間，關機後才會觸發防霉。</p>
+                            <ul class="mt-2 list-disc list-inside space-y-1 text-slate-600">
+                                <li>可設定範圍：0 ~ 120 分鐘</li>
+                                <li>預設值：10 分鐘</li>
+                                <li>設為 0：關機後立即觸發，不檢查運行時間</li>
+                                <li>用途：避免短暫開機關機也觸發防霉，浪費電力</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Binary Sensor -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <div class="bg-sky-50 p-4 border-b border-slate-200 flex items-center">
+                        <i class="fa-solid fa-eye text-green-600 text-xl mr-3"></i>
+                        <div>
+                            <h4 class="font-bold text-slate-800">防霉運行狀態</h4>
+                            <p class="text-sm text-slate-500">名稱：Mildew Proof Status</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-white">
+                        <p class="text-slate-700"><span class="font-semibold">功能：</span>顯示防霉功能是否正在運行。</p>
+                        <ul class="mt-2 list-disc list-inside space-y-1 text-slate-600">
+                            <li>顯示「ON」：防霉送風正在運轉中</li>
+                            <li>顯示「OFF」：防霉功能目前未啟動</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Text Sensor -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <div class="bg-sky-50 p-4 border-b border-slate-200 flex items-center">
+                        <i class="fa-solid fa-hourglass text-orange-500 text-xl mr-3"></i>
+                        <div>
+                            <h4 class="font-bold text-slate-800">防霉剩餘時間</h4>
+                            <p class="text-sm text-slate-500">名稱：Countdown</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-white">
+                        <p class="text-slate-700"><span class="font-semibold">功能：</span>顯示防霉運轉的剩餘時間倒數。</p>
+                        <ul class="mt-2 list-disc list-inside space-y-1 text-slate-600">
+                            <li>格式：MM:SS（分:秒）</li>
+                            <li>防霉結束時顯示：00:00</li>
+                            <li>防霉未啟動時顯示：空白</li>
+                            <li>更新頻率：每秒更新</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 運作邏輯說明 -->
+            <div class="space-y-4">
+                <h3 class="text-xl font-bold text-slate-800 border-b border-slate-200 pb-2">
+                    <i class="fa-solid fa-diagram-project text-sky-600 mr-2"></i>運作邏輯
+                </h3>
+
+                <div class="bg-slate-50 p-4 rounded-lg space-y-3">
+                    <p class="text-slate-700 font-semibold">自動防霉觸發流程：</p>
+                    <ol class="list-decimal list-inside space-y-2 text-slate-600 ml-2">
+                        <li>確認「自動防霉開關」為開啟狀態</li>
+                        <li>偵測到冷氣從運轉狀態變為關機（OFF）</li>
+                        <li>檢查冷氣關機前的模式是否在「防霉保護清單」中</li>
+                        <li>檢查冷氣運行時間是否超過「防霉啟動門檻」設定</li>
+                        <li>等待「自動防霉延遲」設定的秒數</li>
+                        <li>冷氣自動切換為送風模式（Fan Only）</li>
+                        <li>持續送風「防霉送風時間」設定的分鐘數</li>
+                        <li>送風結束後自動關機</li>
+                    </ol>
+                </div>
+
+                <!-- 保護機制 -->
+                <div class="bg-amber-50 p-4 rounded-lg border border-amber-200">
+                    <h4 class="font-bold text-amber-800 mb-3">
+                        <i class="fa-solid fa-shield-halved mr-2"></i>保護機制
+                    </h4>
+                    <ul class="space-y-2 text-slate-700">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span><span class="font-semibold">使用者中斷：</span>防霉運行中若使用者手動切換模式（非送風），防霉會立即停止</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span><span class="font-semibold">延遲中開機：</span>若在延遲期間使用者重新開啟冷氣，會取消防霉程序</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span><span class="font-semibold">異常偵測：</span>若短時間內狀態變更過於頻繁（可能是設備異常），會暫停防霉功能並進入冷卻期</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-check-circle text-green-500 mt-1 mr-2"></i>
+                            <span><span class="font-semibold">冷卻期：</span>異常觸發後需等待 5 分鐘才能重新啟用防霉功能</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 模式對應 -->
+                <div class="bg-slate-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-slate-800 mb-2">預設保護模式</h4>
+                    <p class="text-slate-600 mb-2">預設情況下，以下模式關機後會觸發防霉：</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-sky-100 text-sky-700 px-3 py-1 rounded-full text-sm font-semibold">冷氣 (Cool)</span>
+                        <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-semibold">冷暖 (Heat Cool)</span>
+                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold">除濕 (Dry)</span>
+                    </div>
+                    <p class="text-slate-500 text-sm mt-2">送風模式 (Fan Only) 和關機 (Off) 狀態下不會觸發防霉。</p>
+                </div>
+            </div>
+
+            <!-- 使用說明 -->
+            <div class="space-y-4">
+                <h3 class="text-xl font-bold text-slate-800 border-b border-slate-200 pb-2">
+                    <i class="fa-solid fa-book text-sky-600 mr-2"></i>如何使用
+                </h3>
+                
+                <div class="bg-slate-50 p-4 rounded-lg">
+                    <p class="text-slate-700 mb-3">
+                        本功能所產生的所有實體，都可以在 Home Assistant 的以下位置找到：
+                    </p>
+                    <ol class="list-decimal list-inside space-y-2 text-slate-600 ml-2">
+                        <li>進入 Home Assistant</li>
+                        <li>點擊左側選單的「<span class="font-semibold">設定</span>」</li>
+                        <li>選擇「<span class="font-semibold">裝置與服務</span>」</li>
+                        <li>切換到「<span class="font-semibold">ESPhome</span>」標籤</li>
+                        <li>找到您的冷氣模組並點擊進入</li>
+                        <li>即可看到所有防霉相關的實體</li>
+                    </ol>
+                </div>
+
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <p class="text-blue-800">
+                        <i class="fa-solid fa-wifi mr-2"></i>
+                        <span class="font-semibold">HK 版專用：</span>
+                        除了 Home Assistant 外，您也可以直接透過瀏覽器輸入模組 IP 位址（如 <code class="bg-slate-200 px-1 rounded">http://192.168.1.x</code>），捲動至頁面下方找到「<span class="font-semibold">Mildew Proof 防霉設定</span>」區塊進行設定。
+                    </p>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- 頁腳回首頁按鈕 -->
+        <div class="text-center mt-8">
+            <a href="index.html"
+                class="inline-block bg-sky-600 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-sky-700 transition-colors">
+                &larr; 回說明書目錄
+            </a>
+        </div>
+
+        <!-- 頁腳 -->
+        <footer class="text-center mt-6 text-slate-500 text-sm">
+            <p>&copy; 2025 Simon IoT. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+</body>
+
+</html>
