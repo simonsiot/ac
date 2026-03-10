@@ -13,7 +13,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap"
         rel="stylesheet">
-    <style> 
+    <style>
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
             background-color: #f0f4f8;
@@ -84,7 +84,8 @@
                     class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
                     <div class="flex items-center gap-2">
                         <h2 class="text-2xl font-bold text-slate-900">產品介紹</h2>
-                        <a href="#pd" class="text-slate-400 hover:text-sky-600 transition-colors" onclick="event.stopPropagation();">
+                        <a href="#pd" class="text-slate-400 hover:text-sky-600 transition-colors"
+                            onclick="event.stopPropagation();">
                             <i class="fa-solid fa-link text-lg"></i>
                         </a>
                     </div>
@@ -96,7 +97,7 @@
                 <div class="p-6 border-t border-slate-200 bg-white">
                     <div class="space-y-6 text-lg text-slate-700">
                         <p class="text-slate-600">本模組除了可透過ESPhome接入 Home Assistant (HA) 外，還多了能直連 HomeKit
-                            的功能，目前支援國際、日立、大金及三菱電機空調。</p>
+                            的功能，目前支援國際、日立、大金、三菱<b>電機</b>及三菱<b>重工</b>空調。</p>
 
                         <p class="mt-4 text-slate-600">在裝置的 IP 頁面能看到 HomeKit 配對碼以及重設配對的按鈕。</p>
                         <img src="img/web_hkcode.png" alt="裝置IP頁面顯示HomeKit配對碼"
@@ -123,7 +124,9 @@
                             onerror="this.src='https://placehold.co/400x600/f1f5f9/64748b?text=cliamte.PNG'">
 
                         <!-- 新增的顏色變化說明與附圖 -->
-                        <p class="mt-6 text-slate-600">在 Apple「家庭」App 的總覽畫面中，裝置圖示會根據您選擇的運作模式自動變換色彩。例如啟動「<span class="font-semibold text-sky-600">冷氣模式</span>」時，數值會顯示藍色；若切換至「<span class="font-semibold text-orange-500">暖氣模式</span>」，則會轉為橘色。讓您一眼就能掌握當前的空調狀態。</p>
+                        <p class="mt-6 text-slate-600">在 Apple「家庭」App 的總覽畫面中，裝置圖示會根據您選擇的運作模式自動變換色彩。例如啟動「<span
+                                class="font-semibold text-sky-600">冷氣模式</span>」時，數值會顯示藍色；若切換至「<span
+                                class="font-semibold text-orange-500">暖氣模式</span>」，則會轉為橘色。讓您一眼就能掌握當前的空調狀態。</p>
                         <img src="img/hk_mode_color.jpg" alt="HomeKit 冷暖氣模式顏色變化"
                             class="mt-4 rounded-lg shadow-md max-w-md mx-auto w-full border border-slate-200">
 
@@ -137,10 +140,9 @@
                             <li><span class="font-semibold">日立 (Hitachi)</span>：靜音、弱、中、強，共 4 段</li>
                             <li><span class="font-semibold">大金 (Daikin)</span>：靜音、1、2、3、4、5，共 6 段</li>
                             <li><span class="font-semibold">三菱電機 (Mitsubishi Electric)</span>：靜音、1、2、3、4，共 5 段</li>
-                            <!-- [待驗證] 三菱重工
                             <li><span class="font-semibold">三菱重工 (Mitsubishi Heavy Industries)</span>：超低、弱、中、強，共 4 段
                             </li>
-                            -->
+
                         </ul>
                         <img src="img/hk_fan.png" alt="HomeKit 風速調整介面"
                             class="mt-4 rounded-lg shadow-md max-w-sm mx-auto w-full border border-slate-200">
@@ -155,7 +157,8 @@
                     class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
                     <div class="flex items-center gap-2">
                         <h2 class="text-2xl font-bold text-slate-900">設定步驟</h2>
-                        <a href="#set" class="text-slate-400 hover:text-sky-600 transition-colors" onclick="event.stopPropagation();">
+                        <a href="#set" class="text-slate-400 hover:text-sky-600 transition-colors"
+                            onclick="event.stopPropagation();">
                             <i class="fa-solid fa-link text-lg"></i>
                         </a>
                     </div>
@@ -195,14 +198,14 @@
                                 <li>三菱電機: <code
                                         class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">hk-ac-mt</code>
                                 </li>
-                                <!-- [待驗證] 三菱重工
+
                                 <li>三菱重工(壁掛): <code
-                                        class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">hk-ac-mhi</code>
+                                        class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">hk-ac-mhi-w</code>
                                 </li>
                                 <li>三菱重工(吊隱): <code
                                         class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">hk-ac-mhi-c</code>
                                 </li>
-                                -->
+
                             </ul>
                         </li>
 
@@ -272,7 +275,8 @@
                     class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
                     <div class="flex items-center gap-2">
                         <h2 class="text-2xl font-bold text-slate-900">重設步驟</h2>
-                        <a href="#reset" class="text-slate-400 hover:text-sky-600 transition-colors" onclick="event.stopPropagation();">
+                        <a href="#reset" class="text-slate-400 hover:text-sky-600 transition-colors"
+                            onclick="event.stopPropagation();">
                             <i class="fa-solid fa-link text-lg"></i>
                         </a>
                     </div>
@@ -304,7 +308,8 @@
                     class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
                     <div class="flex items-center gap-2">
                         <h2 class="text-2xl font-bold text-slate-900">韌體更新</h2>
-                        <a href="#ota" class="text-slate-400 hover:text-sky-600 transition-colors" onclick="event.stopPropagation();">
+                        <a href="#ota" class="text-slate-400 hover:text-sky-600 transition-colors"
+                            onclick="event.stopPropagation();">
                             <i class="fa-solid fa-link text-lg"></i>
                         </a>
                     </div>
@@ -320,7 +325,8 @@
                         <i class="fa-solid fa-download text-sky-600 mt-1 mr-3 text-lg"></i>
                         <div>
                             <p class="text-slate-800 font-bold mb-1">韌體下載位址：</p>
-                            <a href="https://github.com/xangin/FW/" target="_blank" class="text-sky-600 hover:text-sky-800 hover:underline transition-colors font-semibold">點擊前往下載頁面</a>
+                            <a href="https://github.com/xangin/FW/" target="_blank"
+                                class="text-sky-600 hover:text-sky-800 hover:underline transition-colors font-semibold">點擊前往下載頁面</a>
                         </div>
                     </div>
 
@@ -334,7 +340,8 @@
 
                     <!-- 方式一：OTA 無線更新 -->
                     <div class="mb-10">
-                        <h3 class="text-xl font-bold text-sky-700 mb-4 border-b border-sky-200 pb-2"><i class="fa-solid fa-wifi mr-2"></i>方式一：OTA 無線更新 (建議)</h3>
+                        <h3 class="text-xl font-bold text-sky-700 mb-4 border-b border-sky-200 pb-2"><i
+                                class="fa-solid fa-wifi mr-2"></i>方式一：OTA 無線更新 (建議)</h3>
                         <ol class="list-decimal list-inside space-y-6 text-lg text-slate-700">
                             <!-- 步驟 a -->
                             <li>
@@ -362,11 +369,13 @@
                             <!-- 步驟 d -->
                             <li>
                                 <span class="font-semibold">上傳韌體並等待更新完成：</span>
-                                <p class="ml-6 mt-1 text-slate-600">捲動至頁面最下方，找到 <span class="font-bold">OTA Update</span>
+                                <p class="ml-6 mt-1 text-slate-600">捲動至頁面最下方，找到 <span class="font-bold">OTA
+                                        Update</span>
                                     區塊，點擊「選擇檔案」並選取剛才下載的 <code
                                         class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">ota.bin</code>，再按下
-                                    <span class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">Update</span>。上傳完成後頁面會自動跳轉並顯示 <span
-                                        class="font-bold text-green-700">done</span>，代表韌體更新成功。
+                                    <span
+                                        class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">Update</span>。上傳完成後頁面會自動跳轉並顯示
+                                    <span class="font-bold text-green-700">done</span>，代表韌體更新成功。
                                 </p>
                             </li>
 
@@ -381,8 +390,12 @@
                             <li>
                                 <span class="font-semibold">重設 HomeKit 配對：</span>
                                 <p class="ml-6 mt-1 text-slate-600">在裝置 IP 頁面，找到「<span class="font-bold">Reset
-                                        HK</span>」並按下右方的 <span class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">PRESS</span> 按鈕，清除舊的配對資料。稍待片刻後，再至頁面下方找到「
-                                    <span class="font-bold">Restart</span> 」並按下右方的 <span class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">PRESS</span> 按鈕，讓模組重新開機。
+                                        HK</span>」並按下右方的 <span
+                                        class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">PRESS</span>
+                                    按鈕，清除舊的配對資料。稍待片刻後，再至頁面下方找到「
+                                    <span class="font-bold">Restart</span> 」並按下右方的 <span
+                                        class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">PRESS</span>
+                                    按鈕，讓模組重新開機。
                                 </p>
                             </li>
 
@@ -397,39 +410,54 @@
 
                     <!-- 方式二：USB 有線更新 -->
                     <div>
-                        <h3 class="text-xl font-bold text-sky-700 mb-4 border-b border-sky-200 pb-2"><i class="fa-brands fa-usb mr-2"></i>方式二：USB 有線更新</h3>
+                        <h3 class="text-xl font-bold text-sky-700 mb-4 border-b border-sky-200 pb-2"><i
+                                class="fa-brands fa-usb mr-2"></i>方式二：USB 有線更新</h3>
                         <ol class="list-decimal list-inside space-y-6 text-lg text-slate-700">
                             <!-- 步驟 1 -->
                             <li>
                                 <span class="font-semibold text-red-600">先從「家庭」App 刪除橋接器！（重要）</span>
-                                <p class="ml-6 mt-1 text-slate-600">更新前，<span class="font-bold underline">務必</span>先打開 Apple「家庭 (Home)」App，將現有的橋接器移除。</p>
+                                <p class="ml-6 mt-1 text-slate-600">更新前，<span class="font-bold underline">務必</span>先打開
+                                    Apple「家庭 (Home)」App，將現有的橋接器移除。</p>
                             </li>
                             <!-- 步驟 2 -->
                             <li>
                                 <span class="font-semibold">下載 USB 韌體檔案：</span>
                                 <p class="ml-6 mt-1 text-slate-600">請前往上方提供的韌體下載連結，下載檔名結尾為 <code
-                                        class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">factory.bin</code> 的檔案，並儲存至電腦。</p>
+                                        class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">factory.bin</code>
+                                    的檔案，並儲存至電腦。</p>
                             </li>
                             <!-- 步驟 3 -->
                             <li>
                                 <span class="font-semibold">連接電腦：</span>
-                                <p class="ml-6 mt-1 text-slate-600">將模組拆下，並使用一條支援資料傳輸的 USB 線將其連接至電腦（ Windows 或 Mac 皆可）。</p>
+                                <p class="ml-6 mt-1 text-slate-600">將模組拆下，並使用一條支援資料傳輸的 USB 線將其連接至電腦（ Windows 或 Mac 皆可）。
+                                </p>
                             </li>
                             <!-- 步驟 4 -->
                             <li>
                                 <span class="font-semibold">透過網頁進行燒錄：</span>
-                                <p class="ml-6 mt-1 text-slate-600">建議使用 Chrome 或 Edge 瀏覽器，前往 <a href="https://web.esphome.io" target="_blank" class="text-sky-600 hover:text-sky-800 hover:underline transition-colors">https://web.esphome.io</a>：</p>
+                                <p class="ml-6 mt-1 text-slate-600">建議使用 Chrome 或 Edge 瀏覽器，前往 <a
+                                        href="https://web.esphome.io" target="_blank"
+                                        class="text-sky-600 hover:text-sky-800 hover:underline transition-colors">https://web.esphome.io</a>：
+                                </p>
                                 <ul class="list-disc list-inside ml-10 mt-2 space-y-2 text-slate-600">
-                                    <li>點擊頁面上的 <span class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">CONNECT</span> 按鈕。</li>
+                                    <li>點擊頁面上的 <span
+                                            class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">CONNECT</span>
+                                        按鈕。</li>
                                     <li>在彈出的視窗中，選擇帶有「<span class="font-semibold">USB JTAG</span>」字樣的連接埠選項。</li>
-                                    <li>連線成功後，點擊 <span class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">INSTALL</span>。</li>
-                                    <li>選擇剛剛下載的 <code class="bg-slate-200 text-slate-800 px-1 rounded-md font-mono">factory.bin</code> 檔案，並等待進度條跑完即完成燒錄。</li>
+                                    <li>連線成功後，點擊 <span
+                                            class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">INSTALL</span>。
+                                    </li>
+                                    <li>選擇剛剛下載的 <code
+                                            class="bg-slate-200 text-slate-800 px-1 rounded-md font-mono">factory.bin</code>
+                                        檔案，並等待進度條跑完即完成燒錄。</li>
                                 </ul>
                             </li>
                             <!-- 步驟 5 -->
                             <li>
                                 <span class="font-semibold">重新設定設備：</span>
-                                <p class="ml-6 mt-1 text-slate-600">燒錄完成後請先拔除 USB 線，再重新插回電源。最後，請依照上方的「<a href="#set" class="text-sky-600 hover:text-sky-800 hover:underline transition-colors font-semibold">設定步驟</a>」重新將模組連上網路並加入HomeKit，最後再插回空調上。</p>
+                                <p class="ml-6 mt-1 text-slate-600">燒錄完成後請先拔除 USB 線，再重新插回電源。最後，請依照上方的「<a href="#set"
+                                        class="text-sky-600 hover:text-sky-800 hover:underline transition-colors font-semibold">設定步驟</a>」重新將模組連上網路並加入HomeKit，最後再插回空調上。
+                                </p>
                             </li>
                         </ol>
                     </div>
