@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常見問題 Q&A - Simon IoT</title>
+    <link rel="icon" href="img/favicon.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #f0f4f8;
+            background-image:
+                radial-gradient(at 0% 0%, hsla(210, 100%, 96%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(210, 100%, 94%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(210, 100%, 96%, 1) 0, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(210, 100%, 94%, 1) 0, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(13, 79, 141, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(13, 79, 141, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* sticky 章節導覽，scroll 時自動黏在頂端 */
+        .chapter-nav {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background-color: rgba(255, 255, 255, 0.85);
+            border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+        }
+
+        /* chip 的橫向捲動陰影提示（小螢幕用） */
+        .chip-scroll {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .chip-scroll::-webkit-scrollbar { display: none; }
+
+        /* 章節標題的色條 */
+        .section-bar {
+            width: 6px;
+            border-radius: 9999px;
+            align-self: stretch;
+        }
+
+        /* scroll-margin 給 sticky nav 預留高度，避免錨點跳過去被遮住 */
+        section[id], details[id] { scroll-margin-top: 80px; }
+    </style>
+</head>
+
+<body class="text-slate-800">
+
+    <!-- Sticky 章節導覽 -->
+    <nav class="chapter-nav">
+        <div class="container mx-auto max-w-3xl px-3 py-2">
+            <div class="flex items-center gap-2 overflow-x-auto chip-scroll">
+                <a href="#top"
+                    class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-100 transition-colors">
+                    <i class="fa-solid fa-house"></i>頂端
+                </a>
+                <span class="text-slate-300">|</span>
+                <a href="#ch1"
+                    class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 transition-colors">
+                    <i class="fa-solid fa-circle-question"></i>購買前
+                </a>
+                <a href="#ch2"
+                    class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors">
+                    <i class="fa-solid fa-screwdriver-wrench"></i>安裝
+                </a>
+                <a href="#ch3"
+                    class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-violet-700 bg-violet-50 hover:bg-violet-100 transition-colors">
+                    <i class="fa-solid fa-house-signal"></i>HA整合
+                </a>
+                <a href="#ch4"
+                    class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors">
+                    <i class="fa-solid fa-wifi"></i>連線
+                </a>
+                <a href="#ch5"
+                    class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 transition-colors">
+                    <i class="fa-solid fa-truck-fast"></i>售後
+                </a>
+                <a href="#advanced"
+                    class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors">
+                    <i class="fa-solid fa-code"></i>進階
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div id="top" class="container mx-auto max-w-3xl p-4 sm:p-6 md:p-8">
+
+        <!-- Hero 標題區 -->
+        <header class="text-center my-8">
+            <div class="inline-block p-4 rounded-full bg-white shadow-sm mb-4">
+                <i class="fa-solid fa-circle-question text-sky-600 text-4xl"></i>
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-bold text-sky-700">常見問題 Q&amp;A</h1>
+            <p class="text-slate-600 mt-3 text-lg">整理自 LINE 客服最常被問的 14 題<br>看完八成的問題都能自己解決</p>
+        </header>
+
+        <main class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 space-y-10">
+
+            <!-- 🔴 頁首三大警示 -->
+            <section aria-label="重要警示">
+                <h2 class="text-lg font-bold text-red-700 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i>三件事最常出包，先看這裡
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
+                        <p class="font-bold text-red-800 mb-1">1. 先 USB 測試</p>
+                        <p class="text-sm text-red-700 leading-relaxed">收到後務必<b>先用 Type-C 線測試連網</b>，確認模組沒問題後，再裝上冷氣。</p>
+                    </div>
+                    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
+                        <p class="font-bold text-red-800 mb-1">2. 不要插錯腳座</p>
+                        <p class="text-sm text-red-700 leading-relaxed">接頭只防「反插」不防「插錯位置」，<b>插錯會直接燒模組，不保固</b>。</p>
+                    </div>
+                    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
+                        <p class="font-bold text-red-800 mb-1">3. 確認版本買對</p>
+                        <p class="text-sm text-red-700 leading-relaxed">標準版需 HA、HK 版功能少、終極版可切換廠牌，<a href="#q1-2"
+                                class="underline font-semibold">先看 Q1.2 對照表</a>。</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =========================================================== -->
+            <!-- 章節 1：買之前先確認 (sky) -->
+            <!-- =========================================================== -->
+            <section id="ch1" class="pt-2">
+                <div class="flex items-center gap-3 mb-5">
+                    <span class="section-bar bg-sky-500"></span>
+                    <div>
+                        <div class="text-sm font-semibold text-sky-600">章節 1</div>
+                        <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-question text-sky-600"></i>購買前先確認
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <!-- Q1.1 -->
+                    <details id="q1-1"
+                        class="group border border-sky-100 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                        <summary
+                            class="flex items-center justify-between p-4 cursor-pointer bg-sky-50/60 hover:bg-sky-50 transition-colors list-none select-none">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sky-600 font-mono font-bold text-sm">Q1.1</span>
+                                <h3 class="text-lg font-semibold text-slate-900">我家是 OO 牌冷氣，可以用嗎？</h3>
+                            </div>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform duration-300 shrink-0 ml-2">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="p-5 border-t border-sky-100 bg-white text-slate-700 leading-relaxed space-y-3">
+                            <p>看的是冷氣有沒有「<b>可外接 Wi-Fi 模組</b>」這項規格，<b>不是看年份</b>。各品牌對應的接頭如下：</p>
+                            <ul class="space-y-1.5 ml-1">
+                                <li>📌 <b>日立壁掛 / 吊隱</b>：<code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN10</code>（部分新機型 CN30）</li>
+                                <li>📌 <b>大金</b>：<code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN-SAA</code></li>
+                                <li>📌 <b>國際 Panasonic</b>：<code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN-CNT</code></li>
+                                <li>📌 <b>三菱電機</b>：<code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN105</code></li>
+                                <li>📌 <b>三菱重工</b>：<code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CNS</code></li>
+                            </ul>
+                            <div class="bg-red-50 border-l-4 border-red-400 p-3 rounded-r-md">
+                                <p class="text-red-800"><b>目前不支援</b>：格力、禾聯、美的 (Media)、Panasonic 除濕機。</p>
+                            </div>
+                            <p>超過 10 年的舊機型多半沒有對應接頭。不確定的話，<b>拆機殼拍接頭照片用 LINE 傳給我看</b>，幫您確認再下單。</p>
+                        </div>
+                    </details>
+
+                    <!-- Q1.2 -->
+                    <details id="q1-2"
+                        class="group border border-sky-100 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                        <summary
+                            class="flex items-center justify-between p-4 cursor-pointer bg-sky-50/60 hover:bg-sky-50 transition-colors list-none select-none">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sky-600 font-mono font-bold text-sm">Q1.2</span>
+                                <h3 class="text-lg font-semibold text-slate-900">標準版 / HK 版 / 終極版，我該選哪個？</h3>
+                            </div>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform duration-300 shrink-0 ml-2">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="p-5 border-t border-sky-100 bg-white text-slate-700 leading-relaxed space-y-4">
+                            <div class="bg-sky-50 border border-sky-200 rounded-lg p-4">
+                                <p class="font-bold text-sky-800 mb-2">📌 30 秒快速選擇</p>
+                                <ul class="space-y-1.5 text-slate-700">
+                                    <li>只想用 <b>Siri / Apple 家庭</b> 開關冷氣 → <b class="text-indigo-700">HK 版</b></li>
+                                    <li>想做自動化、看耗電量、整合其他家電 → <b class="text-sky-700">標準版</b>（需要 HA）</li>
+                                    <li>多個品牌或想常換 → <b class="text-amber-700">終極版</b>（一機四廠牌切換）</li>
+                                </ul>
+                            </div>
+
+                            <div class="overflow-x-auto -mx-1">
+                                <table class="w-full text-sm border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-100">
+                                            <th class="border border-slate-200 p-2 text-left">比較項目</th>
+                                            <th class="border border-slate-200 p-2 text-center">HK 版</th>
+                                            <th class="border border-slate-200 p-2 text-center">標準版</th>
+                                            <th class="border border-slate-200 p-2 text-center">終極版</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white">
+                                        <tr>
+                                            <td class="border border-slate-200 p-2 font-semibold">需要 HA Server</td>
+                                            <td class="border border-slate-200 p-2 text-center text-green-600">❌ 不用</td>
+                                            <td class="border border-slate-200 p-2 text-center text-rose-600">✅ 要</td>
+                                            <td class="border border-slate-200 p-2 text-center text-rose-600">✅ 要</td>
+                                        </tr>
+                                        <tr class="bg-slate-50">
+                                            <td class="border border-slate-200 p-2 font-semibold">完整功能（風速 / 送風 / 除濕 / 自動）</td>
+                                            <td class="border border-slate-200 p-2 text-center text-rose-600">❌ 沒有</td>
+                                            <td class="border border-slate-200 p-2 text-center text-green-600">✅</td>
+                                            <td class="border border-slate-200 p-2 text-center text-green-600">✅</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border border-slate-200 p-2 font-semibold">支援三菱重工</td>
+                                            <td class="border border-slate-200 p-2 text-center text-rose-600">❌</td>
+                                            <td class="border border-slate-200 p-2 text-center text-green-600">✅</td>
+                                            <td class="border border-slate-200 p-2 text-center text-rose-600">❌</td>
+                                        </tr>
+                                        <tr class="bg-slate-50">
+                                            <td class="border border-slate-200 p-2 font-semibold">多品牌切換</td>
+                                            <td class="border border-slate-200 p-2 text-center text-rose-600">❌</td>
+                                            <td class="border border-slate-200 p-2 text-center text-rose-600">❌</td>
+                                            <td class="border border-slate-200 p-2 text-center text-green-600">✅ 4 牌</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border border-slate-200 p-2 font-semibold">價格</td>
+                                            <td class="border border-slate-200 p-2 text-center">+150 元</td>
+                                            <td class="border border-slate-200 p-2 text-center">基本款</td>
+                                            <td class="border border-slate-200 p-2 text-center">最高</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded-r-md space-y-2">
+                                <p class="font-bold text-yellow-800">⚠️ 三大常見誤解</p>
+                                <ul class="text-yellow-800 text-sm space-y-1">
+                                    <li>• <b>Apple TV ≠ HA Server</b>。Apple TV 只是 HomeKit Hub，沒辦法跑 HA。</li>
+                                    <li>• <b>「HomeKit 直連」≠「全功能」</b>。HK 版受 Apple 協議限制，沒有風速、送風、除濕、自動模式。</li>
+                                    <li>• <b>三菱重工用戶請直接買標準版</b>，HK 版完全不支援重工。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- Q1.3 -->
+                    <details id="q1-3"
+                        class="group border border-sky-100 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                        <summary
+                            class="flex items-center justify-between p-4 cursor-pointer bg-sky-50/60 hover:bg-sky-50 transition-colors list-none select-none">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sky-600 font-mono font-bold text-sm">Q1.3</span>
+                                <h3 class="text-lg font-semibold text-slate-900">不支援的品牌（格力 / 美的 / 禾聯）怎麼辦？</h3>
+                            </div>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform duration-300 shrink-0 ml-2">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="p-5 border-t border-sky-100 bg-white text-slate-700 leading-relaxed space-y-3">
+                            <p>目前確認 <b>不支援</b>：<br>
+                                格力、禾聯、美的 (Media)。</p>
+                            <p>沒有詳細研究這幾種品牌，所以不支援。</p>
+                            <p class="font-semibold text-slate-800">替代方案 — 改用紅外線控制：</p>
+                            <ul class="ml-1 space-y-1">
+                                <li>• <b>Aqara 空調伴侶</b>（紅外線發射 + 溫濕度回報）</li>
+                                <li>• <b>SwitchBot 萬能遙控</b></li>
+                            </ul>
+                            <p class="text-sm text-slate-500">⚠️ 紅外線方案無法精準回報冷氣狀態（例如「現在實際在運轉的模式」），但基本開關、溫度、模式切換都做得到。</p>
+                        </div>
+                    </details>
+
+                    <!-- Q1.4 -->
+                    <details id="q1-4"
+                        class="group border border-sky-100 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                        <summary
+                            class="flex items-center justify-between p-4 cursor-pointer bg-sky-50/60 hover:bg-sky-50 transition-colors list-none select-none">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sky-600 font-mono font-bold text-sm">Q1.4</span>
+                                <h3 class="text-lg font-semibold text-slate-900">跟原廠 / Aqara 比有什麼不同？</h3>
+                            </div>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform duration-300 shrink-0 ml-2">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="p-5 border-t border-sky-100 bg-white text-slate-700 leading-relaxed space-y-3">
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-100">
+                                            <th class="border border-slate-200 p-2 text-left">比較</th>
+                                            <th class="border border-slate-200 p-2 text-center">我的模組</th>
+                                            <th class="border border-slate-200 p-2 text-center">原廠 HK</th>
+                                            <th class="border border-slate-200 p-2 text-center">Aqara 紅外線</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white">
+                                        <tr>
+                                            <td class="border border-slate-200 p-2 font-semibold">控制方式</td>
+                                            <td class="border border-slate-200 p-2 text-center">直連主板</td>
+                                            <td class="border border-slate-200 p-2 text-center">直連主板</td>
+                                            <td class="border border-slate-200 p-2 text-center">紅外線</td>
+                                        </tr>
+                                        <tr class="bg-slate-50">
+                                            <td class="border border-slate-200 p-2 font-semibold">狀態回報</td>
+                                            <td class="border border-slate-200 p-2 text-center text-green-600">精準</td>
+                                            <td class="border border-slate-200 p-2 text-center text-green-600">精準</td>
+                                            <td class="border border-slate-200 p-2 text-center text-rose-600">不精準</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border border-slate-200 p-2 font-semibold">價格</td>
+                                            <td class="border border-slate-200 p-2 text-center">中</td>
+                                            <td class="border border-slate-200 p-2 text-center">高</td>
+                                            <td class="border border-slate-200 p-2 text-center">低</td>
+                                        </tr>
+                                        <tr class="bg-slate-50">
+                                            <td class="border border-slate-200 p-2 font-semibold">自動化能力</td>
+                                            <td class="border border-slate-200 p-2 text-center">強（HA）</td>
+                                            <td class="border border-slate-200 p-2 text-center">受限</td>
+                                            <td class="border border-slate-200 p-2 text-center">看搭配</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border border-slate-200 p-2 font-semibold">售後</td>
+                                            <td class="border border-slate-200 p-2 text-center">LINE 直接找我</td>
+                                            <td class="border border-slate-200 p-2 text-center">原廠保固</td>
+                                            <td class="border border-slate-200 p-2 text-center">原廠保固</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p class="text-slate-600">簡單一句話：<b>花錢省時間</b> 就買原廠 HK；<b>省錢花時間</b> 就選我的搭 HA 或 HK。</p>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <!-- =========================================================== -->
+            <!-- 章節 2：安裝步驟 (emerald) -->
+            <!-- =========================================================== -->
+            <section id="ch2" class="pt-2">
+                <div class="flex items-center gap-3 mb-5">
+                    <span class="section-bar bg-emerald-500"></span>
+                    <div>
+                        <div class="text-sm font-semibold text-emerald-600">章節 2</div>
+                        <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-screwdriver-wrench text-emerald-600"></i>安裝步驟
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <!-- Q2.1 -->
+                    <details id="q2-1"
+                        class="group border border-emerald-100 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                        <summary
+                            class="flex items-center justify-between p-4 cursor-pointer bg-emerald-50/60 hover:bg-emerald-50 transition-colors list-none select-none">
+                            <div class="flex items-center gap-2">
+                                <span class="text-emerald-600 font-mono font-bold text-sm">Q2.1</span>
+                                <h3 class="text-lg font-semibold text-slate-900">模組剛收到，第一步該做什麼？</h3>
+                            </div>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform duration-300 shrink-0 ml-2">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="p-5 border-t border-emerald-100 bg-white text-slate-700 leading-relaxed space-y-3">
+                            <p><b>不用先燒韌體</b>，出貨前我已經燒好了。請務必照順序：</p>
+                            <ol class="space-y-3 ml-1">
+                                <li><b>1. ⚡ 先用 Type-C 接電腦 / 充電器供電</b><br>
+                                    <span class="text-sm text-slate-600 ml-5">模組約 30 秒後會自動建立 Wi-Fi 熱點</span>
+                                </li>
+                                <li><b>2. 📱 連上模組的熱點</b><br>
+                                    <span class="text-sm text-slate-600 ml-5">密碼固定：<code class="bg-slate-100 px-2 py-0.5 rounded text-sm">12345678</code></span>
+                                </li>
+                                <li><b>3. 🌐 設定 Wi-Fi</b><br>
+                                    <span class="text-sm text-slate-600 ml-5">瀏覽器開 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">192.168.4.1/wifi</code>，選您家 2.4GHz Wi-Fi、輸入密碼、按 SAVE</span>
+                                </li>
+                                <li><b>4. ✅ 確認加入 HA / HomeKit 並能正常控制</b><br>
+                                    <span class="text-sm text-slate-600 ml-5">至少先確認「看得到裝置 + 開關有反應」</span>
+                                </li>
+                                <li><b>5. 🔌 都正常後，才把模組接到冷氣</b></li>
+                            </ol>
+                            <div class="bg-red-50 border-l-4 border-red-500 p-3 rounded-r-md">
+                                <p class="text-red-800"><b>千萬不要省略前 4 步直接插冷氣！</b>萬一冷氣腳座有問題或接錯位置，會直接燒掉模組，事後無法挽回。</p>
+                            </div>
+                            <div class="bg-sky-50 border-l-4 border-sky-400 p-3 rounded-r-md">
+                                <p class="text-sky-800 text-sm">💡 Type-C 只是「設定 / 燒錄用」，裝上冷氣後就不需要 Type-C 了，模組會由冷氣主板供電。</p>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- Q2.2 -->
+                    <details id="q2-2"
+                        class="group border border-emerald-100 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                        <summary
+                            class="flex items-center justify-between p-4 cursor-pointer bg-emerald-50/60 hover:bg-emerald-50 transition-colors list-none select-none">
+                            <div class="flex items-center gap-2">
+                                <span class="text-emerald-600 font-mono font-bold text-sm">Q2.2</span>
+                                <h3 class="text-lg font-semibold text-slate-900">該插冷氣的哪個接頭？</h3>
+                            </div>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform duration-300 shrink-0 ml-2">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="p-5 border-t border-emerald-100 bg-white text-slate-700 leading-relaxed space-y-3">
+                            <div class="bg-red-100 border-l-4 border-red-600 p-4 rounded-r-md">
+                                <p class="font-bold text-red-800 mb-1">🔴 重要警示</p>
+                                <p class="text-red-800">接頭有防呆，<b>只防「反插」，不防「插到錯的位置」</b>！冷氣板上會有很多 4-pin / 5-pin 接頭，<b>插錯會直接燒毀模組，不在保固範圍</b>。</p>
+                            </div>
+                            <p>各品牌應該找的接頭：</p>
+                            <ul class="space-y-1.5 ml-1">
+                                <li>🔌 <b>三菱電機</b>：紅色 / 白色 5-pin，標示 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN105</code>（面對主機右下角）</li>
+                                <li>🔌 <b>三菱重工</b>：5-pin，標示 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CNS</code></li>
+                                <li>🔌 <b>日立壁掛</b>：黑色 4-pin <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN10</code>（部分新機 CN30）</li>
+                                <li>🔌 <b>日立吊隱</b>：同 CN10 系列，位置不同（拆殼找「黑色那一顆」）</li>
+                                <li>🔌 <b>大金</b>：標示 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN-SAA</code></li>
+                                <li>🔌 <b>國際 Panasonic</b>：標示 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN-CNT</code></li>
+                            </ul>
+                            <p class="text-slate-700"><b>不確定時的標準動作</b>：拆殼後拍主機板照片 → LINE 傳給我 → 我幫您圈出正確接頭再裝。<b>花 5 分鐘確認，勝過燒一個模組</b>。</p>
+                            <div class="text-center mt-4">
+                                <a href="where.html"
+                                    class="inline-flex items-center gap-2 bg-emerald-600 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow hover:bg-emerald-700 transition-colors">
+                                    <i class="fa-solid fa-image"></i>查看詳細接頭定位圖解
+                                </a>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- Q2.3 -->
+                    <details id="q2-3"
+                        class="group border border-emerald-100 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                        <summary
+                            class="flex items-center justify-between p-4 cursor-pointer bg-emerald-50/60 hover:bg-emerald-50 transition-colors list-none select-none">
+                            <div class="flex items-center gap-2">
+                                <span class="text-emerald-600 font-mono font-bold text-sm">Q2.3</span>
+                                <h3 class="text-lg font-semibold text-slate-900">吊隱式冷氣怎麼裝？為什麼比較難？</h3>
+                            </div>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform duration-300 shrink-0 ml-2">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="p-5 border-t border-emerald-100 bg-white text-slate-700 leading-relaxed space-y-3">
+                            <p>吊隱式可以裝，但比壁掛麻煩很多，<b>三件事務必先考慮</b>：</p>
+                            <div class="space-y-3">
+                                <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                                    <p class="font-bold text-slate-800">🔧 1. 拆殼</p>
+                                    <p class="text-sm text-slate-600 mt-1">吊隱式在天花板裡，裝潢封板後很難拆。<b>強烈建議找冷氣師傅一起</b>。最理想是<b>裝潢前就先裝</b>。</p>
+                                </div>
+                                <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                                    <p class="font-bold text-slate-800">📶 2. Wi-Fi 訊號</p>
+                                    <p class="text-sm text-slate-600 mt-1">吊隱式被金屬殼和天花板包住，訊號常常很差。<b>請先用 USB 供電放在預定位置 24 小時測試</b>，確認不會掉線再上機。</p>
+                                </div>
+                                <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                                    <p class="font-bold text-slate-800">📏 3. 線材長度</p>
+                                    <p class="text-sm text-slate-600 mt-1">建議請水電預留 <b>1.5m 以上長線</b>，把模組拉到檢修口外面。未來壞了 / 要重設 Wi-Fi 都不用再拆天花板。</p>
+                                </div>
+                            </div>
+                            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded-r-md">
+                                <p class="text-yellow-800 text-sm">⚠️ 真實案例：曾有顧客一次裝 4 組吊隱式，全部插錯腳座 → 4 個模組全部燒毀。<b>多組安裝請先成功裝完 1 組</b>，再裝其餘的。</p>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <!-- =========================================================== -->
+            <!-- 章節 3：HA / HomeKit 整合 (violet) -->
+            <!-- =========================================================== -->
+            <section id="ch3" class="pt-2">
+                <div class="flex items-center gap-3 mb-5">
+                    <span class="section-bar bg-violet-500"></span>
+                    <div>
+                        <div class="text-sm font-semibold text-violet-600">章節 3</div>
+                        <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-house-signal text-violet-600"></i>HA 整合
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <!-- Q3.1 -->
+                    <details id="q3-1"
+                        class="group border border-violet-100 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                        <summary
+                            class="flex items-center justify-between p-4 cursor-pointer bg-violet-50/60 hover:bg-violet-50 transition-colors list-none select-none">
+                            <div class="flex items-center gap-2">
+                                <span class="text-violet-600 font-mono font-bold text-sm">Q3.1</span>
+                                <h3 class="text-lg font-semibold text-slate-900">加進 HA 後看不到資訊 / 按了沒反應？</h3>
+                            </div>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform duration-300 shrink-0 ml-2">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="p-5 border-t border-violet-100 bg-white text-slate-700 leading-relaxed space-y-3">
+                            <p>請依序排查：</p>
+                            <ol class="space-y-2 ml-1">
+                                <li><b>1.</b> 到 HA 整合頁面，按 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">get info</code> 按鈕，看會不會讀到冷氣型號 / 資訊</li>
+                                <li><b>2.</b> 沒讀到 → 按 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">restart</code> 重啟模組</li>
+                                <li><b>3.</b> 還是沒有 → 拔下來檢查 <b>有沒有插到正確接頭</b>（很可能是位置插錯）</li>
+                                <li><b>4.</b> 接頭也對 → 可能是冷氣型號太新或太舊，<b>拍冷氣型號貼紙</b>給我，必要時寄回換新</li>
+                            </ol>
+                            <div class="bg-sky-50 border-l-4 border-sky-400 p-3 rounded-r-md">
+                                <p class="text-sky-800 text-sm">💡 日立、國際的<b>舊款</b>可能只支援開關 + 溫度，沒有風速 / 風向是正常的，不是壞掉。</p>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- Q3.2 -->
+                    <details id="q3-2"
+                        class="group border border-violet-100 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                        <summary
+                            class="flex items-center justify-between p-4 cursor-pointer bg-violet-50/60 hover:bg-violet-50 transition-colors list-none select-none">
+                            <div class="flex items-center gap-2">
+                                <span class="text-violet-600 font-mono font-bold text-sm">Q3.2</span>
+                                <h3 class="text-lg font-semibold text-slate-900">怎麼從 HA 接到 HomeKit / Siri？</h3>
+                            </div>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform duration-300 shrink-0 ml-2">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="p-5 border-t border-violet-100 bg-white text-slate-700 leading-relaxed space-y-3">
+                            <p><b>標準做法（3 步驟）</b>：</p>
+                            <ol class="space-y-2 ml-1">
+                                <li><b>1.</b> HA → <b>設定 → 裝置與服務 → 新增整合</b>，搜尋 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">HomeKit Bridge</code> 並安裝</li>
+                                <li><b>2.</b> 設定時會出現實體勾選清單 — <b>只勾 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">climate.冷氣名稱</code></b> 這一個</li>
+                                <li><b>3.</b> 其他溫度 / 濕度 / 耗電量 sensor → <b>不要勾</b>，留在 HA 用就好</li>
+                            </ol>
+                            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded-r-md">
+                                <p class="font-bold text-yellow-800 mb-1">❓ 為什麼 HomeKit 出現一堆怪選項？</p>
+                                <p class="text-yellow-800 text-sm">就是因為剛剛勾太多了！模組會丟出很多 sensor，全部勾起來 Apple 家庭就會塞滿奇怪的開關。<b>只留 <code class="bg-yellow-100 px-1 rounded text-xs">climate.xxx</code></b> 就乾淨了。</p>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <!-- =========================================================== -->
+            <!-- 章節 4：連線 / 使用狀況 (amber) -->
+            <!-- =========================================================== -->
+            <section id="ch4" class="pt-2">
+                <div class="flex items-center gap-3 mb-5">
+                    <span class="section-bar bg-amber-500"></span>
+                    <div>
+                        <div class="text-sm font-semibold text-amber-600">章節 4</div>
+                        <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-wifi text-amber-600"></i>連線 / 使用狀況
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <!-- Q4.1 -->
+                    <details id="q4-1"
+                        class="group border border-amber-100 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                        <summary
+                            class="flex items-center justify-between p-4 cursor-pointer bg-amber-50/60 hover:bg-amber-50 transition-colors list-none select-none">
+                            <div class="flex items-center gap-2">
+                                <span class="text-amber-600 font-mono font-bold text-sm">Q4.1</span>
+                                <h3 class="text-lg font-semibold text-slate-900">模組常常斷線 / 變 unavailable，怎麼辦？</h3>
+                            </div>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform duration-300 shrink-0 ml-2">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="p-5 border-t border-amber-100 bg-white text-slate-700 leading-relaxed space-y-3">
+                            <p><b>最快的判斷方式：USB 單獨測試 24 小時</b></p>
+                            <ol class="space-y-2 ml-1">
+                                <li><b>1.</b> 拔下模組，<b>單獨用 USB 供電</b>放著（不要插冷氣）</li>
+                                <li><b>2.</b> 觀察 24 小時，看會不會斷</li>
+                                <li><b>3.</b> 看結果：</li>
+                            </ol>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                                <div class="bg-rose-50 border-l-4 border-rose-500 p-3 rounded-r-md">
+                                    <p class="font-bold text-rose-800 mb-1">❌ USB 供電也斷</p>
+                                    <p class="text-sm text-rose-700">模組瑕疵或您所在地 Wi-Fi 訊號太弱 → <b>寄回換新</b>（見 Q5.2）。</p>
+                                </div>
+                                <div class="bg-emerald-50 border-l-4 border-emerald-500 p-3 rounded-r-md">
+                                    <p class="font-bold text-emerald-800 mb-1">✅ USB 很穩定</p>
+                                    <p class="text-sm text-emerald-700">代表是<b>冷氣裡訊號太差</b> → 請水電拉長線把模組拉出機殼。</p>
+                                </div>
+                            </div>
+                            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded-r-md mt-3">
+                                <p class="font-bold text-yellow-800 mb-1">💊 自己做過 OTA 後變不穩？</p>
+                                <ul class="text-sm text-yellow-800 space-y-1">
+                                    <li>• 一般情況「<b>能用就不要動</b>」，OTA 不需要主動做</li>
+                                    <li>• 已經做了變不穩 → 把錯誤訊息丟 AI 問，或<b>重燒回我提供的 bin</b></li>
+                                    <li>• 自己改 YAML 改壞了 → 把自己加的部分刪掉</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- Q4.2 -->
+                    <details id="q4-2"
+                        class="group border border-amber-100 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                        <summary
+                            class="flex items-center justify-between p-4 cursor-pointer bg-amber-50/60 hover:bg-amber-50 transition-colors list-none select-none">
+                            <div class="flex items-center gap-2">
+                                <span class="text-amber-600 font-mono font-bold text-sm">Q4.2</span>
+                                <h3 class="text-lg font-semibold text-slate-900">模組上的藍燈是什麼意思？</h3>
+                            </div>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform duration-300 shrink-0 ml-2">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="p-5 border-t border-amber-100 bg-white text-slate-700 leading-relaxed space-y-3">
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-100">
+                                            <th class="border border-slate-200 p-2 text-left">LED燈狀態</th>
+                                            <th class="border border-slate-200 p-2 text-left">意義</th>
+                                            <th class="border border-slate-200 p-2 text-left">該擔心嗎？</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white">
+                                        <tr>
+                                            <td class="border border-slate-200 p-2"><span class="text-blue-500">●</span> 慢閃（USB 測試時）</td>
+                                            <td class="border border-slate-200 p-2">正在找 Wi-Fi</td>
+                                            <td class="border border-slate-200 p-2 text-green-600">✅ 正常，等它連上</td>
+                                        </tr>
+                                        <tr class="bg-slate-50">
+                                            <td class="border border-slate-200 p-2"><span class="text-blue-500">●</span> 先慢閃後不亮</td>
+                                            <td class="border border-slate-200 p-2">已連上 Wi-Fi</td>
+                                            <td class="border border-slate-200 p-2 text-green-600">✅ 正常</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border border-slate-200 p-2"><span class="text-slate-400">○</span> 完全不亮（插冷氣後）</td>
+                                            <td class="border border-slate-200 p-2">沒有供電</td>
+                                            <td class="border border-slate-200 p-2 text-rose-600"><b>❌ 不正常</b><br>檢查腳座是否插錯</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <!-- =========================================================== -->
+            <!-- 章節 5：出貨 / 售後 (rose) -->
+            <!-- =========================================================== -->
+            <section id="ch5" class="pt-2">
+                <div class="flex items-center gap-3 mb-5">
+                    <span class="section-bar bg-rose-500"></span>
+                    <div>
+                        <div class="text-sm font-semibold text-rose-600">章節 5</div>
+                        <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-truck-fast text-rose-600"></i>出貨 / 售後
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <!-- Q5.1 -->
+                    <details id="q5-1"
+                        class="group border border-rose-100 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                        <summary
+                            class="flex items-center justify-between p-4 cursor-pointer bg-rose-50/60 hover:bg-rose-50 transition-colors list-none select-none">
+                            <div class="flex items-center gap-2">
+                                <span class="text-rose-600 font-mono font-bold text-sm">Q5.1</span>
+                                <h3 class="text-lg font-semibold text-slate-900">多久會出貨？怎麼追蹤？</h3>
+                            </div>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform duration-300 shrink-0 ml-2">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="p-5 border-t border-rose-100 bg-white text-slate-700 leading-relaxed space-y-2">
+                            <ul class="space-y-2 ml-1">
+                                <li>📦 <b>通常下單後幾天內</b>出貨。缺料時我會主動 LINE 通知您。</li>
+                                <li>📬 出貨後約三天，到貨後全家會發訊息通知您取貨。</li>
+                                <li>💬 寄出後可在好賣家查詢目前進度。</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <!-- Q5.2 -->
+                    <details id="q5-2"
+                        class="group border border-rose-100 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                        <summary
+                            class="flex items-center justify-between p-4 cursor-pointer bg-rose-50/60 hover:bg-rose-50 transition-colors list-none select-none">
+                            <div class="flex items-center gap-2">
+                                <span class="text-rose-600 font-mono font-bold text-sm">Q5.2</span>
+                                <h3 class="text-lg font-semibold text-slate-900">收到後不能用 / 想退換貨，怎麼處理？</h3>
+                            </div>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform duration-300 shrink-0 ml-2">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="p-5 border-t border-rose-100 bg-white text-slate-700 leading-relaxed space-y-3">
+                            <p>標準流程（<b>不用付任何運費</b>）：</p>
+                            <ol class="space-y-3 ml-1">
+                                <li><b>1. 💬 先 LINE 告知狀況</b><br>
+                                    <span class="text-sm text-slate-600 ml-5">型號不支援 / 模組壞掉 / 想換版本，任一狀況都先講</span>
+                                </li>
+                                <li><b>2. 📦 包好寄到任一全家</b><br>
+                                    <span class="text-sm text-slate-600 ml-5">請在機器上憑「寄件編號＋末三碼」列印單據貼在外包裝，<b>運費我這邊付</b></span>
+                                </li>
+                                <li><b>3. 🔍 我收到後測試</b><br>
+                                    <ul class="text-sm text-slate-600 ml-5 mt-1 space-y-1">
+                                        <li>• 模組瑕疵 → <b>換新</b>給您，取貨付 100 元，<b>我會把 100 元放在包裹內</b>（等於免費）</li>
+                                        <li>• 型號不支援 → <b>全額退款</b></li>
+                                        <li>• 買錯版本 → 補差 / 退差換新版本</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                            <div class="bg-red-50 border-l-4 border-red-500 p-3 rounded-r-md">
+                                <p class="text-red-800 text-sm">⚠️ <b>例外</b>：因「插錯接頭」造成的燒毀<b>不在保固範圍</b>。這就是為什麼章節 2 一直強調要先 USB 測試 + 拍照確認接頭。</p>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <!-- =========================================================== -->
+            <!-- 進階折疊區 (slate) -->
+            <!-- =========================================================== -->
+            <section id="advanced" class="pt-2">
+                <div class="flex items-center gap-3 mb-5">
+                    <span class="section-bar bg-slate-500"></span>
+                    <div>
+                        <div class="text-sm font-semibold text-slate-600">進階</div>
+                        <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-code text-slate-600"></i>給想研究的人
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-3">
+                    <p class="text-slate-600 text-sm">ℹ️ 一般買家完全不需要看這區。出貨已預燒完成，照前面 5 章操作就能用。以下適合想自己客製化、改 YAML、升級韌體的進階使用者。</p>
+                </div>
+
+                <div class="space-y-3">
+                    <!-- A.1 -->
+                    <details id="adv-1"
+                        class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                        <summary
+                            class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
+                            <div class="flex items-center gap-2">
+                                <span class="text-slate-600 font-mono font-bold text-sm">A.1</span>
+                                <h3 class="text-base font-semibold text-slate-800">怎麼自己重燒韌體？</h3>
+                            </div>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform duration-300 shrink-0 ml-2">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 bg-white text-slate-700 leading-relaxed space-y-3">
+                            <p>一般用不到。<b>只有要更新到新版功能 / 修 bug 時才需要重燒</b>。</p>
+
+                            <div>
+                                <p class="font-semibold text-slate-800 mb-2">方式 1：USB 線燒（最穩）</p>
+                                <ol class="space-y-1 ml-1 text-sm">
+                                    <li>1. 到 GitHub 下載 bin 檔：<a href="https://github.com/xangin/TaiSEIA_ESPhome_samples" target="_blank"
+                                            class="text-sky-600 hover:underline">TaiSEIA_ESPhome_samples</a></li>
+                                    <li>2. 模組接電腦 Type-C</li>
+                                    <li>3. 開 ESPhome 線上燒錄頁面 → <b>Connect</b> → 選 <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">USB Single Serial</code> → <b>INSTALL</b> → 選 bin</li>
+                                    <li>4. 燒完要 <b>重新設定 Wi-Fi</b>（連模組熱點 → 輸入家中 Wi-Fi）</li>
+                                </ol>
+                            </div>
+
+                            <div>
+                                <p class="font-semibold text-slate-800 mb-2">方式 2：OTA 線上燒（不用拆）</p>
+                                <ol class="space-y-1 ml-1 text-sm">
+                                    <li>1. 到 HA 找出模組的 IP 位址</li>
+                                    <li>2. 瀏覽器連上該 IP，捲到最下方「OTA update」</li>
+                                    <li>3. 上傳 <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">ota.bin</code> → 等顯示「OTA 完成」即可</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- A.2 -->
+                    <details id="adv-2"
+                        class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                        <summary
+                            class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
+                            <div class="flex items-center gap-2">
+                                <span class="text-slate-600 font-mono font-bold text-sm">A.2</span>
+                                <h3 class="text-base font-semibold text-slate-800">怎麼自己改 YAML？</h3>
+                            </div>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform duration-300 shrink-0 ml-2">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 bg-white text-slate-700 leading-relaxed space-y-3">
+                            <ol class="space-y-1.5 ml-1 text-sm">
+                                <li>1. <b>先確認模組可正常控制冷氣</b>再開始改</li>
+                                <li>2. 參考範例：<a href="https://github.com/xangin/TaiSEIA_ESPhome_samples/blob/main/Hitachi/Climate-ESP32C3.yaml" target="_blank"
+                                        class="text-sky-600 hover:underline">Climate-ESP32C3.yaml</a></li>
+                                <li>3. 常見可改項目：<code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">devicename</code>、<code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">upper_devicename</code>、移除不要的 sensor</li>
+                                <li>4. 改完用 OTA 上傳新韌體</li>
+                                <li>5. 萬一改壞 → 把自己加的刪掉，或重燒原始 bin</li>
+                            </ol>
+                            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded-r-md">
+                                <p class="text-yellow-800 text-sm">⚠️ <b>重要聲明</b>：自行修改 YAML <b>不在售後支援範圍</b>。改完不穩、無法控制需自己排查（可丟 ChatGPT 或社群問）。<b>重燒回原廠 bin 永遠是有效的還原方式</b>。</p>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- A.3 -->
+                    <details id="adv-3"
+                        class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                        <summary
+                            class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
+                            <div class="flex items-center gap-2">
+                                <span class="text-slate-600 font-mono font-bold text-sm">A.3</span>
+                                <h3 class="text-base font-semibold text-slate-800">怎麼把耗電量加到 HA 能源頁？</h3>
+                            </div>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform duration-300 shrink-0 ml-2">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 bg-white text-slate-700 leading-relaxed space-y-2">
+                            <p>HA → <b>設定 → 儀表板 → 能源 → 個別裝置 → 新增裝置</b>，選擇冷氣的「耗電量」sensor 即可。</p>
+                            <div class="bg-sky-50 border-l-4 border-sky-400 p-3 rounded-r-md">
+                                <p class="text-sky-800 text-sm">💡 加進去後<b>才開始累積資料</b>，加之前的舊資料不會回填。</p>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <!-- 找不到答案？聯絡 LINE@ -->
+            <div class="text-center border-t border-slate-200 pt-6">
+                <h3 class="text-xl font-semibold text-slate-800">看完還是找不到答案？</h3>
+                <p class="text-slate-600 mt-2">這頁整理了 80% 最常被問的，剩下的請點下方加 LINE@ 直接問我。</p>
+                <a href="https://line.me/R/ti/p/@066hhxou" target="_blank"
+                    class="mt-4 text-2xl font-bold text-green-600 bg-green-50 hover:bg-green-100 transition-colors py-2 px-4 rounded-lg inline-block">@066hhxou</a>
+            </div>
+
+        </main>
+
+        <!-- 頁腳回首頁按鈕 -->
+        <div class="text-center mt-8">
+            <a href="index.html"
+                class="inline-block bg-sky-600 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-sky-700 transition-colors">
+                &larr; 回說明書目錄
+            </a>
+        </div>
+
+        <!-- 頁腳 -->
+        <footer class="text-center mt-6 text-slate-500 text-sm">
+            <p>&copy; 2025 Simon IoT. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // 處理網址錨點，自動展開對應的 details 區塊並滾動至該處
+        function handleHashTarget() {
+            const hash = window.location.hash;
+            if (hash) {
+                const target = document.querySelector(hash);
+                if (target && target.tagName === 'DETAILS') {
+                    target.open = true;
+                    setTimeout(() => {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                }
+            }
+        }
+        document.addEventListener('DOMContentLoaded', handleHashTarget);
+        window.addEventListener('hashchange', handleHashTarget);
+    </script>
+</body>
+
+</html>
