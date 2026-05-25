@@ -260,6 +260,20 @@
 
                         <!-- 步驟 7 -->
                         <li>
+                            <span class="font-semibold text-red-600">遷移房間注意事項（重要！）：</span>
+                            <p class="ml-6 mt-1 text-slate-600">由於 HomeKit 原生並不支援風速控制，模組會將<span
+                                    class="font-semibold">冷氣與風扇合併為一組配件</span>呈現。成功加入「家庭」App 後，如需將此配件遷移到其他房間，請<span
+                                    class="font-bold underline text-red-600">務必將「冷氣」與「風扇」一起遷移</span>，否則會造成風速調整功能消失。</p>
+                            <div class="ml-6 mt-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-3 rounded-r-lg">
+                                <p><span class="font-bold"><i class="fa-solid fa-screwdriver-wrench mr-1"></i>補救方式：</span>若風速功能已消失或配件遍尋不著，請至模組的 IP 頁面按下「<span
+                                        class="font-bold">Reset HK</span>」右方的 <span
+                                        class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">PRESS</span>
+                                    按鈕重設 HomeKit 配對，再依照<span class="font-semibold">步驟 6</span> 重新加入即可。</p>
+                            </div>
+                        </li>
+
+                        <!-- 步驟 8 -->
+                        <li>
                             <span class="font-semibold">整合至 Home Assistant：</span>
                             <p class="ml-6 mt-1 text-slate-600">Home Assistant (HA) 通常會自動提示發現新設備，點擊加入即可。若無自動提示，請至 HA
                                 的「設定」>「裝置與服務」>「新增整合」，搜尋並選擇 <span class="font-bold">ESPhome</span>，然後輸入模組的 IP 位址手動加入。</p>
