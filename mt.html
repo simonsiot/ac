@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>冷氣模組MT版介紹與說明 - Simon IoT</title>
+    <link rel="icon" href="img/favicon.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #f0f4f8;
+            background-image:
+                radial-gradient(at 0% 0%, hsla(210, 100%, 96%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(210, 100%, 94%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(210, 100%, 96%, 1) 0, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(210, 100%, 94%, 1) 0, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(13, 79, 141, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(13, 79, 141, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* 手機介面截圖（直式）統一外觀 */
+        .shot {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+
+<body class="text-slate-800">
+
+    <div class="container mx-auto max-w-3xl p-4 sm:p-6 md:p-8">
+
+        <!-- 主要標題 -->
+        <header class="text-center my-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-sky-700">冷氣模組MT版</h1>
+            <h2 class="text-2xl text-slate-700 mt-2">產品介紹與使用說明</h2>
+        </header>
+
+        <main class="bg-white rounded-2xl shadow-lg p-6 sm:p-8 space-y-8">
+
+            <!-- 重要警告訊息 -->
+            <div class="space-y-4">
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-800 p-4 rounded-r-lg" role="alert">
+                    <p class="font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>上機前務必確認插對地方！</p>
+                    <p>如因插錯腳座造成模組或電器損壞恕不負責。建議先用 USB 上電測試，確認可連網與配對後，再安裝到電器上。</p>
+                </div>
+                <!-- 特色提示 -->
+                <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-lg">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <i class="fa-solid fa-qrcode text-emerald-600 mt-1"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-emerald-800 font-bold">掃 QR code 就能配對</h3>
+                            <p class="text-emerald-700 mt-1"><b>不需雲端、不需額外橋接器</b>，用 Google Home／Apple
+                                家庭／Home Assistant 掃描裝置上的 QR code 即可加入控制。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 產品介紹 ========== -->
+            <details id="pd" open
+                class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                <summary
+                    class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-2xl font-bold text-slate-900">產品介紹</h2>
+                        <a href="#pd" class="text-slate-400 hover:text-sky-600 transition-colors"
+                            onclick="event.stopPropagation();"><i class="fa-solid fa-link text-lg"></i></a>
+                    </div>
+                    <span class="text-slate-500 group-open:rotate-180 transition-transform duration-300"><i
+                            class="fa-solid fa-chevron-down"></i></span>
+                </summary>
+
+                <div class="p-6 border-t border-slate-200 bg-white">
+                    <div class="space-y-5 text-lg text-slate-700">
+                        <p class="text-slate-600">本模組純跑 WiFi，無需雲端、無需橋接器，可直接被
+                            <span class="font-semibold text-sky-700">Google Home</span>、<span
+                                class="font-semibold text-sky-700">Apple 家庭</span>、<span
+                                class="font-semibold text-sky-700">Home Assistant</span> 掃 QR code 加入控制。</p>
+
+                        <p class="text-slate-600">若想在 <span class="font-semibold text-sky-700">Home Assistant</span>
+                            取得更完整的狀態資訊與更多可控項目，也可改用 <b>MQTT</b> 方式接入；不過受限於模組記憶體，<b>QR code 配對</b> 與 <b>MQTT</b> 兩種方式<b>只能擇一使用</b>。</p>
+
+                        <p class="text-slate-600">目前支援以下廠牌空調：</p>
+                        <ul class="ml-4 space-y-1 text-slate-600 list-disc list-inside">
+                            <li><span class="font-semibold">國際 (Panasonic)</span></li>
+                            <li><span class="font-semibold">日立 (Hitachi)</span></li>
+                            <li><span class="font-semibold">大金 (Daikin)</span></li>
+                            <li><span class="font-semibold">三菱重工 (Mitsubishi Heavy Industries)</span></li>
+                        </ul>
+
+                        <p class="text-slate-600">除了平台配對外，模組本身內建一個<span class="font-semibold">網頁控制台</span>，連上家中 Wi-Fi
+                            後，直接在瀏覽器開啟裝置 IP 即可<b>不經雲端、區網直接控制</b>，並查看冷氣即時狀態。</p>
+                        <img src="img/mt_state.png" alt="網頁控制台 - 狀態頁"
+                            class="shot mt-2 max-w-[18rem] mx-auto w-full">
+
+                        <div class="bg-sky-50 p-4 rounded-lg border border-sky-100">
+                            <p class="text-slate-700 font-bold mb-2"><i class="fa-solid fa-sliders text-sky-600 mr-1"></i>可控制的功能</p>
+                            <ul class="ml-1 space-y-1 text-slate-600 text-base list-disc list-inside">
+                                <li>電源開關</li>
+                                <li>模式：冷氣／暖氣／除濕／送風／自動</li>
+                                <li>設定溫度</li>
+                                <li>風速：Auto 自動 + 各廠牌支援的數段（靜音／弱／中／強…）</li>
+                                <li>各廠牌專屬功能（依機型而異）：上下／左右葉片擺動位置、動向感應，以及如國際的 econavi、nanoeX、蜂鳴器等</li>
+                            </ul>
+                        </div>
+
+                        <p class="text-slate-600 mt-2"><i class="fa-solid fa-circle-info text-sky-600 mr-1"></i>
+                            從 Google Home／Apple 家庭調整溫度、模式等，網頁控制台也會即時同步顯示；反之亦然。</p>
+                    </div>
+                </div>
+            </details>
+
+            <!-- ========== 設定步驟 ========== -->
+            <details id="set"
+                class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                <summary
+                    class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-2xl font-bold text-slate-900">設定步驟</h2>
+                        <a href="#set" class="text-slate-400 hover:text-sky-600 transition-colors"
+                            onclick="event.stopPropagation();"><i class="fa-solid fa-link text-lg"></i></a>
+                    </div>
+                    <span class="text-slate-500 group-open:rotate-180 transition-transform duration-300"><i
+                            class="fa-solid fa-chevron-down"></i></span>
+                </summary>
+
+                <div class="p-6 border-t border-slate-200 bg-white">
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-r-lg mb-6"
+                        role="alert">
+                        <p class="font-bold">請先透過 USB 測試連線！</p>
+                        <p>先插上 USB 電源，確認模組可成功連上家中網路並完成配對後，再安裝到電器上。</p>
+                    </div>
+
+                    <ol class="list-decimal list-inside space-y-6 text-lg text-slate-700">
+                        <li>
+                            <span class="font-semibold">開啟 Wi-Fi 熱點：</span>
+                            <p class="ml-6 mt-1 text-slate-600">從模組的 USB-C 孔上電，若約 <b>60 秒</b>內沒有連上已設定的 Wi-Fi，模組會自動建立一個 Wi-Fi
+                                熱點（全新或清除設定後也會直接進入此模式）。</p>
+                        </li>
+
+                        <li>
+                            <span class="font-semibold">辨識並連上熱點：</span>
+                            <p class="ml-6 mt-1 text-slate-600">熱點名稱為 <code
+                                    class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-&lt;廠牌&gt;-XXXXXX</code>（XXXXXX
+                                為 MAC 末六碼），<b>開放無密碼</b>，依廠牌：</p>
+                            <ul class="list-disc list-inside ml-10 mt-2 space-y-1 text-slate-600">
+                                <li>國際：<code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-pa</code></li>
+                                <li>日立：<code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-ht</code></li>
+                                <li>大金：<code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-dk</code></li>
+                                <li>三菱重工：<code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-mhi</code></li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <span class="font-semibold">進入設定頁：</span>
+                            <p class="ml-6 mt-1 text-slate-600">手機連上熱點後通常會<b>自動跳出</b>設定頁；若沒有，請開瀏覽器輸入
+                                <a href="http://192.168.4.1" target="_blank"
+                                    class="text-sky-600 hover:underline">192.168.4.1</a>。</p>
+                            <img src="img/mt_captive_portal.png" alt="AP 配對模式設定頁"
+                                class="shot mt-3 max-w-[18rem] mx-auto w-full">
+                        </li>
+
+                        <li>
+                            <span class="font-semibold">設定家中 Wi-Fi：</span>
+                            <p class="ml-6 mt-1 text-slate-600">在「附近網路」點選您家中的 <b>2.4GHz</b> Wi-Fi（或手動輸入名稱），輸入密碼後按下 <span
+                                    class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">連線</span>。</p>
+                        </li>
+
+                        <li>
+                            <span class="font-semibold text-emerald-700">直接看到裝置 IP（免去路由器查找）：</span>
+                            <p class="ml-6 mt-1 text-slate-600">連上成功後，頁面會<b>直接顯示模組取得的內網 IP 位址</b>。把手機切回家中 Wi-Fi，再於瀏覽器開啟該
+                                IP，即可進入控制台。</p>
+                            <img src="img/mt_connect.png" alt="連上家中 WiFi 後顯示裝置 IP"
+                                class="shot mt-3 max-w-[18rem] mx-auto w-full">
+                        </li>
+
+                        <li>
+                            <span class="font-semibold">加入智慧家庭平台（掃 QR code）：</span>
+                            <p class="ml-6 mt-1 text-slate-600">在控制台切換到「<b>配對</b>」分頁，會看到 QR code 與 11 碼配對碼。打開 <span
+                                    class="font-semibold">Google Home</span>／<span class="font-semibold">Apple
+                                    家庭</span>／<span class="font-semibold">Home Assistant</span>，新增裝置並掃描此 QR
+                                code（或手動輸入配對碼）即可完成。</p>
+                            <img src="img/mt_pairing.png" alt="配對分頁 QR code 與配對碼"
+                                class="shot mt-3 max-w-[18rem] mx-auto w-full">
+                            <div class="ml-6 mt-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-3 rounded-r-lg">
+                                <p><span class="font-bold"><i class="fa-solid fa-lightbulb mr-1"></i>小提醒：</span>若配對遲遲無法成功，請將模組重新上電，再回配對分頁確認配對碼後重試。</p>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+            </details>
+
+            <!-- ========== 介面說明 ========== -->
+            <details id="ui"
+                class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                <summary
+                    class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-2xl font-bold text-slate-900">介面說明</h2>
+                        <a href="#ui" class="text-slate-400 hover:text-sky-600 transition-colors"
+                            onclick="event.stopPropagation();"><i class="fa-solid fa-link text-lg"></i></a>
+                    </div>
+                    <span class="text-slate-500 group-open:rotate-180 transition-transform duration-300"><i
+                            class="fa-solid fa-chevron-down"></i></span>
+                </summary>
+
+                <div class="p-6 border-t border-slate-200 bg-white">
+                    <p class="text-slate-600 mb-6">在瀏覽器開啟裝置 IP 後，控制台分為 <b>狀態</b>、<b>控制</b>、<b>配對</b>、<b>Log</b>、<b>系統</b> 五個分頁。</p>
+
+                    <div class="space-y-8">
+                        <!-- 狀態 -->
+                        <div class="grid sm:grid-cols-2 gap-4 items-start">
+                            <img src="img/mt_state.png" alt="狀態分頁" class="shot max-w-[16rem] mx-auto w-full">
+                            <div>
+                                <h3 class="text-xl font-bold text-sky-700"><i class="fa-solid fa-gauge-high mr-2"></i>狀態</h3>
+                                <p class="text-slate-600 mt-2 text-base">顯示冷氣即時狀態：運轉模式、設定／室內／室外溫度、風速、即時與累計耗電量、清潔濾網提示。下方「裝置資訊」可看到
+                                    Hostname、Wi-Fi 模式、IP、MAC、<b>韌體版本</b>、運行時間與可用記憶體。</p>
+                            </div>
+                        </div>
+
+                        <!-- 控制 -->
+                        <div class="grid sm:grid-cols-2 gap-4 items-start">
+                            <img src="img/mt_control.png" alt="控制分頁" class="shot max-w-[16rem] mx-auto w-full sm:order-2">
+                            <div class="sm:order-1">
+                                <h3 class="text-xl font-bold text-sky-700"><i class="fa-solid fa-sliders mr-2"></i>控制</h3>
+                                <p class="text-slate-600 mt-2 text-base">完整操控：模式（關機／冷氣／暖氣／除濕／送風／自動）、風速、溫度、上下／左右葉片擺動位置與動向感應，以及各廠牌專屬的功能切換（如蜂鳴器、econavi、nanoeX）與動作按鈕（清除濾網通知、重設耗電量）。操作為即時反饋，與
+                                    App 端雙向同步。</p>
+                            </div>
+                        </div>
+
+                        <!-- 配對 -->
+                        <div class="grid sm:grid-cols-2 gap-4 items-start">
+                            <img src="img/mt_pairing.png" alt="配對分頁" class="shot max-w-[16rem] mx-auto w-full">
+                            <div>
+                                <h3 class="text-xl font-bold text-sky-700"><i class="fa-solid fa-qrcode mr-2"></i>配對</h3>
+                                <p class="text-slate-600 mt-2 text-base">顯示 QR code 與 11 碼配對碼，供 Google Home／Apple
+                                    家庭／Home Assistant 加入。也可看到目前已配對的 controller 數量。<br>
+                                    <span class="text-sm text-slate-500">※ 受限於模組記憶體，QR code 配對與 MQTT 兩種模式只能擇一使用。</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Log -->
+                        <div class="grid sm:grid-cols-2 gap-4 items-start">
+                            <img src="img/mt_log.png" alt="Log 分頁" class="shot max-w-[16rem] mx-auto w-full sm:order-2">
+                            <div class="sm:order-1">
+                                <h3 class="text-xl font-bold text-sky-700"><i class="fa-solid fa-clipboard-list mr-2"></i>Log</h3>
+                                <p class="text-slate-600 mt-2 text-base">記錄系統的<b>警告／錯誤</b>訊息，方便在沒有接電腦的情況下排查冷氣通訊問題。為節省配對期間的記憶體，需<b>配對完成後</b>才能啟用。</p>
+                            </div>
+                        </div>
+
+                        <!-- 系統 -->
+                        <div class="grid sm:grid-cols-2 gap-4 items-start">
+                            <img src="img/mt_system.png" alt="系統分頁" class="shot max-w-[16rem] mx-auto w-full">
+                            <div>
+                                <h3 class="text-xl font-bold text-sky-700"><i class="fa-solid fa-gear mr-2"></i>系統</h3>
+                                <p class="text-slate-600 mt-2 text-base">提供管理功能：<b>WiFi 設定</b>（變更／清除）、<b>韌體更新（OTA）</b>（線上檢查更新或手動上傳）、<b>配對重置</b>、<b>恢復出廠設定</b>，以及<b>重新開機</b>。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- ========== 韌體更新 ========== -->
+            <details id="ota"
+                class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                <summary
+                    class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-2xl font-bold text-slate-900">韌體更新</h2>
+                        <a href="#ota" class="text-slate-400 hover:text-sky-600 transition-colors"
+                            onclick="event.stopPropagation();"><i class="fa-solid fa-link text-lg"></i></a>
+                    </div>
+                    <span class="text-slate-500 group-open:rotate-180 transition-transform duration-300"><i
+                            class="fa-solid fa-chevron-down"></i></span>
+                </summary>
+
+                <div class="p-6 border-t border-slate-200 bg-white">
+                    <div class="bg-sky-50 border-l-4 border-sky-400 text-sky-800 p-4 rounded-r-lg mb-8" role="alert">
+                        <p class="font-bold"><i class="fa-solid fa-circle-check mr-1"></i>好消息：OTA 會保留設定</p>
+                        <p class="mt-1">透過網頁 OTA 更新時，<b>Wi-Fi 與配對資料都會保留</b>，更新完自動重開即可繼續使用，不需重設。（僅
+                            USB 全燒 <code class="bg-white/70 px-1 rounded font-mono">factory.bin</code> 才會清除設定。）</p>
+                    </div>
+
+                    <!-- 方式一：線上檢查更新 -->
+                    <div class="mb-10">
+                        <h3 class="text-xl font-bold text-sky-700 mb-4 border-b border-sky-200 pb-2"><i
+                                class="fa-solid fa-cloud-arrow-down mr-2"></i>方式一：線上檢查更新（建議）</h3>
+                        <ol class="list-decimal list-inside space-y-4 text-lg text-slate-700">
+                            <li>在控制台開啟「<span class="font-semibold">系統</span>」分頁，找到「韌體更新 (OTA)」。</li>
+                            <li>按下 <span class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">檢查更新</span>，模組會自動向線上比對是否有新版本。</li>
+                            <li>若有新版，畫面會顯示新版本號與更新說明，按下「<span class="font-bold">立即更新</span>」，模組會自動下載並更新，完成後自動重開。</li>
+                        </ol>
+                        <img src="img/mt_system.png" alt="系統分頁的檢查更新"
+                            class="shot mt-4 max-w-[18rem] mx-auto w-full">
+                    </div>
+
+                    <!-- 方式二：手動上傳 -->
+                    <div class="mb-10">
+                        <h3 class="text-xl font-bold text-sky-700 mb-4 border-b border-sky-200 pb-2"><i
+                                class="fa-solid fa-upload mr-2"></i>方式二：手動上傳 .bin</h3>
+                        <ol class="list-decimal list-inside space-y-4 text-lg text-slate-700">
+                            <li>取得對應廠牌、結尾為 <code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">ota.bin</code> 的韌體檔。</li>
+                            <li>在「系統」分頁的「韌體更新 (OTA)」展開「<span class="font-semibold">手動上傳 .bin</span>」，選擇該檔並上傳。</li>
+                            <li>上傳完成後模組會自動重開，即完成更新。</li>
+                        </ol>
+                    </div>
+
+                    <!-- 方式三：USB 燒錄 -->
+                    <div>
+                        <h3 class="text-xl font-bold text-sky-700 mb-4 border-b border-sky-200 pb-2"><i
+                                class="fa-brands fa-usb mr-2"></i>方式三：USB 燒錄（救機用）</h3>
+                        <div class="bg-orange-100 border-l-4 border-orange-500 text-orange-800 p-3 rounded-r-lg mb-4">
+                            <p>USB 全燒會使用 <code class="bg-white/70 px-1 rounded font-mono">factory.bin</code>，<b>會清除包含 Wi-Fi
+                                    與配對在內的所有設定</b>，需重新設定。一般情況請優先使用方式一或二。</p>
+                        </div>
+                        <ol class="list-decimal list-inside space-y-4 text-lg text-slate-700">
+                            <li>取得對應廠牌、結尾為 <code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">factory.bin</code> 的韌體檔。</li>
+                            <li>用支援資料傳輸的 USB 線將模組接上電腦。</li>
+                            <li>用 Chrome／Edge 前往 <a href="https://web.esphome.io" target="_blank"
+                                    class="text-sky-600 hover:text-sky-800 hover:underline">https://web.esphome.io</a>，點
+                                <span class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">CONNECT</span>，選擇帶「USB
+                                JTAG」字樣的連接埠。</li>
+                            <li>點 <span class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">INSTALL</span>，選擇
+                                <code class="bg-slate-200 text-slate-800 px-1 rounded-md font-mono">factory.bin</code>，等進度條跑完即完成，再依「設定步驟」重新設定。</li>
+                        </ol>
+                    </div>
+                </div>
+            </details>
+
+            <!-- ========== 重設步驟 ========== -->
+            <details id="reset"
+                class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                <summary
+                    class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-2xl font-bold text-slate-900">重設步驟</h2>
+                        <a href="#reset" class="text-slate-400 hover:text-sky-600 transition-colors"
+                            onclick="event.stopPropagation();"><i class="fa-solid fa-link text-lg"></i></a>
+                    </div>
+                    <span class="text-slate-500 group-open:rotate-180 transition-transform duration-300"><i
+                            class="fa-solid fa-chevron-down"></i></span>
+                </summary>
+
+                <div class="p-6 border-t border-slate-200 bg-white">
+                    <ol class="list-decimal list-inside space-y-6 text-lg text-slate-700">
+                        <li>
+                            <span class="font-semibold">清除配對（重新配對）：</span>
+                            <p class="ml-6 mt-1 text-slate-600">若從 Google Home／Apple Home 移除裝置後配對碼失效、無法重新加入，請至「系統」分頁的「配對重置」按下「<span
+                                    class="font-bold">清除配對</span>」，模組重開後會重新進入配對狀態。</p>
+                        </li>
+                        <li>
+                            <span class="font-semibold">清除 Wi-Fi（換網路）：</span>
+                            <p class="ml-6 mt-1 text-slate-600">在「系統」分頁按「<span class="font-bold">清除 WiFi 設定</span>」，模組會重開並回到
+                                AP 配對模式，可重新設定要連線的 Wi-Fi。</p>
+                        </li>
+                        <li>
+                            <span class="font-semibold text-red-600">恢復出廠設定：</span>
+                            <p class="ml-6 mt-1 text-slate-600">在「系統」分頁按「<span class="font-bold">恢復出廠設定</span>」，會清除 Wi-Fi、MQTT
+                                與配對等<b>全部資料</b>，回到初始狀態，需重新設定 Wi-Fi 並重新配對。</p>
+                        </li>
+                    </ol>
+                </div>
+            </details>
+
+            <!-- 聯絡方式 -->
+            <div class="text-center border-t border-slate-200 pt-6">
+                <h3 class="text-xl font-semibold text-slate-800">需要協助嗎？</h3>
+                <p class="text-slate-600 mt-2">使用上如有任何疑問，請點下方加入官方 Line@ 帳號詢問。</p>
+                <a href="https://line.me/R/ti/p/@066hhxou" target="_blank"
+                    class="mt-4 text-2xl font-bold text-green-600 bg-green-50 hover:bg-green-100 transition-colors py-2 px-4 rounded-lg inline-block">@066hhxou</a>
+            </div>
+
+        </main>
+
+        <!-- 頁腳回目錄按鈕 -->
+        <div class="text-center mt-8">
+            <a href="index.html"
+                class="inline-block bg-sky-600 text-white font-semibold px-4 py-2 rounded-lg shadow hover:bg-sky-700 transition-colors">
+                &larr; 回說明書目錄
+            </a>
+        </div>
+
+        <!-- 頁腳 -->
+        <footer class="text-center mt-6 text-slate-500 text-sm">
+            <p>&copy; 2025 Simon IoT. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // 處理網址錨點，自動展開對應的 details 區塊並滾動至該處
+        function handleHashTarget() {
+            const hash = window.location.hash;
+            if (hash) {
+                const target = document.querySelector(hash);
+                if (target && target.tagName === 'DETAILS') {
+                    target.open = true;
+                    setTimeout(() => {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                }
+            }
+        }
+        document.addEventListener('DOMContentLoaded', handleHashTarget);
+        window.addEventListener('hashchange', handleHashTarget);
+    </script>
+</body>
+
+</html>
