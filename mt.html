@@ -106,7 +106,8 @@
                                 class="font-semibold text-sky-700">Home Assistant</span> 掃 QR code 加入控制。</p>
 
                         <p class="text-slate-600">若想在 <span class="font-semibold text-sky-700">Home Assistant</span>
-                            取得更完整的狀態資訊與更多可控項目，也可改用 <b>MQTT</b> 方式接入；不過受限於模組記憶體，<b>QR code 配對</b> 與 <b>MQTT</b> 兩種方式<b>只能擇一使用</b>。</p>
+                            取得更完整的狀態資訊與更多可控項目，可在完成 QR code 配對後，於「配對」分頁<b>加開 MQTT 併行接入</b>（選用，需自備
+                            MQTT broker）；QR code 配對與 MQTT 可同時使用。</p>
 
                         <p class="text-slate-600">目前支援以下廠牌空調：</p>
                         <ul class="ml-4 space-y-1 text-slate-600 list-disc list-inside">
@@ -114,6 +115,7 @@
                             <li><span class="font-semibold">日立 (Hitachi)</span></li>
                             <li><span class="font-semibold">大金 (Daikin)</span></li>
                             <li><span class="font-semibold">三菱重工 (Mitsubishi Heavy Industries)</span></li>
+                            <li><span class="font-semibold">三菱電機 (Mitsubishi Electric)</span></li>
                         </ul>
 
                         <p class="text-slate-600">除了平台配對外，模組本身內建一個<span class="font-semibold">網頁控制台</span>，連上家中 Wi-Fi
@@ -128,7 +130,8 @@
                                 <li>模式：冷氣／暖氣／除濕／送風／自動</li>
                                 <li>設定溫度</li>
                                 <li>風速：Auto 自動 + 各廠牌支援的數段（靜音／弱／中／強…）</li>
-                                <li>各廠牌專屬功能（依機型而異）：上下／左右葉片擺動位置、動向感應，以及如國際的 econavi、nanoeX、蜂鳴器等</li>
+                                <li>防霉乾燥：冷氣／除濕運轉關機後<b>自動送風</b>吹乾室內機（可開關、送風時間可調）</li>
+                                <li>各廠牌專屬功能（依機型而異）：上下／左右葉片擺動位置、動向感應，以及如國際的 econavi、nanoeX、蜂鳴器、三菱電機的 i-See 等</li>
                             </ul>
                         </div>
 
@@ -176,6 +179,7 @@
                                 <li>日立：<code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-ht</code></li>
                                 <li>大金：<code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-dk</code></li>
                                 <li>三菱重工：<code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-mhi</code></li>
+                                <li>三菱電機：<code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-mt</code></li>
                             </ul>
                         </li>
 
@@ -251,7 +255,7 @@
                             <img src="img/mt_control.png" alt="控制分頁" class="shot max-w-[16rem] mx-auto w-full sm:order-2">
                             <div class="sm:order-1">
                                 <h3 class="text-xl font-bold text-sky-700"><i class="fa-solid fa-sliders mr-2"></i>控制</h3>
-                                <p class="text-slate-600 mt-2 text-base">完整操控：模式（關機／冷氣／暖氣／除濕／送風／自動）、風速、溫度、上下／左右葉片擺動位置與動向感應，以及各廠牌專屬的功能切換（如蜂鳴器、econavi、nanoeX）與動作按鈕（清除濾網通知、重設耗電量）。操作為即時反饋，與
+                                <p class="text-slate-600 mt-2 text-base">完整操控：模式（關機／冷氣／暖氣／除濕／送風／自動）、風速、溫度、<b>防霉乾燥</b>（關機後自動送風、時間可調）、上下／左右葉片擺動位置與動向感應，以及各廠牌專屬的功能切換（如蜂鳴器、econavi、nanoeX）與動作按鈕（清除濾網通知、重設耗電量）。操作為即時反饋，與
                                     App 端雙向同步。</p>
                             </div>
                         </div>
@@ -262,8 +266,10 @@
                             <div>
                                 <h3 class="text-xl font-bold text-sky-700"><i class="fa-solid fa-qrcode mr-2"></i>配對</h3>
                                 <p class="text-slate-600 mt-2 text-base">顯示 QR code 與 11 碼配對碼，供 Google Home／Apple
-                                    家庭／Home Assistant 加入。也可看到目前已配對的 controller 數量。<br>
-                                    <span class="text-sm text-slate-500">※ 受限於模組記憶體，QR code 配對與 MQTT 兩種模式只能擇一使用。</span></p>
+                                    家庭／Home Assistant 加入。也可看到目前已配對的 controller 數量，並可在此<b>加開 MQTT 併行</b>（選用，需自備
+                                    broker）。<br>
+                                    <span class="text-sm text-slate-500">※ MQTT 併行需在 QR code 配對完成後才能啟用；配對進行期間會暫停
+                                        MQTT 以釋放記憶體。</span></p>
                             </div>
                         </div>
 
@@ -333,24 +339,27 @@
                         </ol>
                     </div>
 
-                    <!-- 方式三：USB 燒錄 -->
+                    <!-- 方式三：USB 線上燒錄（救機用） -->
                     <div>
                         <h3 class="text-xl font-bold text-sky-700 mb-4 border-b border-sky-200 pb-2"><i
-                                class="fa-brands fa-usb mr-2"></i>方式三：USB 燒錄（救機用）</h3>
+                                class="fa-brands fa-usb mr-2"></i>方式三：USB 線上燒錄（救機用）</h3>
                         <div class="bg-orange-100 border-l-4 border-orange-500 text-orange-800 p-3 rounded-r-lg mb-4">
-                            <p>USB 全燒會使用 <code class="bg-white/70 px-1 rounded font-mono">factory.bin</code>，<b>會清除包含 Wi-Fi
+                            <p>當模組 <b>OTA 失敗、開機異常或一直無法連線</b>時使用。重新燒錄<b>會清除包含 Wi-Fi
                                     與配對在內的所有設定</b>，需重新設定。一般情況請優先使用方式一或二。</p>
                         </div>
                         <ol class="list-decimal list-inside space-y-4 text-lg text-slate-700">
-                            <li>取得對應廠牌、結尾為 <code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">factory.bin</code> 的韌體檔。</li>
-                            <li>用支援資料傳輸的 USB 線將模組接上電腦。</li>
-                            <li>用 Chrome／Edge 前往 <a href="https://web.esphome.io" target="_blank"
-                                    class="text-sky-600 hover:text-sky-800 hover:underline">https://web.esphome.io</a>，點
-                                <span class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">CONNECT</span>，選擇帶「USB
-                                JTAG」字樣的連接埠。</li>
-                            <li>點 <span class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">INSTALL</span>，選擇
-                                <code class="bg-slate-200 text-slate-800 px-1 rounded-md font-mono">factory.bin</code>，等進度條跑完即完成，再依「設定步驟」重新設定。</li>
+                            <li>用<b>支援資料傳輸</b>的 USB 線將模組接上電腦（純充電線不行）。</li>
+                            <li>用電腦版 Chrome／Edge 前往
+                                <a href="https://flash.siot.cc" target="_blank"
+                                    class="text-sky-600 hover:text-sky-800 hover:underline font-semibold">https://flash.siot.cc</a>（ST01-MT版線上燒錄系統）。</li>
+                            <li>按「<span class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">連接
+                                    ST01 並開始燒錄</span>」，選擇帶「USB JTAG」字樣的連接埠，系統會<b>自動讀取模組、核對授權並抓取對應廠牌的最新韌體</b>。</li>
+                            <li>確認畫面顯示的廠牌版本無誤後按「確認無誤，開始燒錄」，等進度跑完模組會自動重啟，再依「設定步驟」重新設定。</li>
                         </ol>
+                        <div class="mt-4 bg-sky-50 border-l-4 border-sky-400 text-sky-800 p-3 rounded-r-lg">
+                            <p><i class="fa-solid fa-circle-info mr-1"></i>韌體與授權綁定模組本身，不需自行準備檔案。若畫面顯示「<b>查無授權</b>」（例如較早期出貨的模組），請記下畫面上的模組
+                                MAC，透過下方 LINE@ 聯絡我們開通後即可使用。</p>
+                        </div>
                     </div>
                 </div>
             </details>
