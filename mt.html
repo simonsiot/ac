@@ -199,11 +199,10 @@
                         </li>
 
                         <li>
-                            <span class="font-semibold text-emerald-700">直接看到裝置 IP（免去路由器查找）：</span>
-                            <p class="ml-6 mt-1 text-slate-600">連上成功後，頁面會<b>直接顯示模組取得的內網 IP 位址</b>。把手機切回家中 Wi-Fi，再於瀏覽器開啟該
-                                IP，即可進入控制台。</p>
-                            <img src="img/mt_connect.png" alt="連上家中 WiFi 後顯示裝置 IP"
-                                class="shot mt-3 max-w-[18rem] mx-auto w-full">
+                            <span class="font-semibold">查詢模組的內網 IP：</span>
+                            <p class="ml-6 mt-1 text-slate-600">連上家中 Wi-Fi 後，請登入您家中<b>路由器的裝置清單</b>，找到主機名稱為
+                                <code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-&lt;廠牌&gt;-XXXXXX</code>
+                                的裝置，記下它取得的 IP 位址。把手機切回家中 Wi-Fi，於瀏覽器開啟該 IP，即可進入控制台。</p>
                         </li>
 
                         <li>
@@ -266,10 +265,22 @@
                             <div>
                                 <h3 class="text-xl font-bold text-sky-700"><i class="fa-solid fa-qrcode mr-2"></i>配對</h3>
                                 <p class="text-slate-600 mt-2 text-base">顯示 QR code 與 11 碼配對碼，供 Google Home／Apple
-                                    家庭／Home Assistant 加入。也可看到目前已配對的 controller 數量，並可在此<b>加開 MQTT 併行</b>（選用，需自備
-                                    broker）。<br>
-                                    <span class="text-sm text-slate-500">※ MQTT 併行需在 QR code 配對完成後才能啟用；配對進行期間會暫停
-                                        MQTT 以釋放記憶體。</span></p>
+                                    家庭／Home Assistant 加入。也可看到目前已配對的 controller 數量。</p>
+                            </div>
+                        </div>
+
+                        <!-- MQTT 併行 -->
+                        <div class="grid sm:grid-cols-2 gap-4 items-start">
+                            <img src="img/mqtt_on.png" alt="配對分頁的 MQTT 併行設定" class="shot max-w-[16rem] mx-auto w-full sm:order-2">
+                            <div class="sm:order-1">
+                                <h3 class="text-xl font-bold text-sky-700"><i class="fa-solid fa-network-wired mr-2"></i>MQTT
+                                    併行（進階選用）</h3>
+                                <p class="text-slate-600 mt-2 text-base">配對分頁下半部提供 MQTT 設定，供想在 <b>Home Assistant</b>
+                                    取得更完整狀態與更多可控項目的進階使用者。打開「<b>啟用 MQTT</b>」開關並填入 Broker URI（帳號、密碼選填），按「儲存並重新連線」即可，模組會自動發佈
+                                    Home Assistant Auto Discovery，無需在 HA 手動新增實體。</p>
+                                <p class="text-slate-500 mt-2 text-sm">※ 需<b>自備 MQTT broker</b>（如 HA 的 Mosquitto
+                                    附加元件）。MQTT 與 QR code 配對可<b>同時運作</b>，但需在配對完成後才能啟用；一般使用者用平台配對即可，不需設定 MQTT。留空
+                                    Broker URI 或按「清除並停用」即可關閉。</p>
                             </div>
                         </div>
 
@@ -328,24 +339,13 @@
                             class="shot mt-4 max-w-[18rem] mx-auto w-full">
                     </div>
 
-                    <!-- 方式二：手動上傳 -->
-                    <div class="mb-10">
-                        <h3 class="text-xl font-bold text-sky-700 mb-4 border-b border-sky-200 pb-2"><i
-                                class="fa-solid fa-upload mr-2"></i>方式二：手動上傳 .bin</h3>
-                        <ol class="list-decimal list-inside space-y-4 text-lg text-slate-700">
-                            <li>取得對應廠牌、結尾為 <code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">ota.bin</code> 的韌體檔。</li>
-                            <li>在「系統」分頁的「韌體更新 (OTA)」展開「<span class="font-semibold">手動上傳 .bin</span>」，選擇該檔並上傳。</li>
-                            <li>上傳完成後模組會自動重開，即完成更新。</li>
-                        </ol>
-                    </div>
-
-                    <!-- 方式三：USB 線上燒錄（救機用） -->
+                    <!-- 方式二：USB 線上燒錄（救機用） -->
                     <div>
                         <h3 class="text-xl font-bold text-sky-700 mb-4 border-b border-sky-200 pb-2"><i
-                                class="fa-brands fa-usb mr-2"></i>方式三：USB 線上燒錄（救機用）</h3>
+                                class="fa-brands fa-usb mr-2"></i>方式二：USB 線上燒錄（救機用）</h3>
                         <div class="bg-orange-100 border-l-4 border-orange-500 text-orange-800 p-3 rounded-r-lg mb-4">
                             <p>當模組 <b>OTA 失敗、開機異常或一直無法連線</b>時使用。重新燒錄<b>會清除包含 Wi-Fi
-                                    與配對在內的所有設定</b>，需重新設定。一般情況請優先使用方式一或二。</p>
+                                    與配對在內的所有設定</b>，需重新設定。一般情況請優先使用方式一（線上檢查更新）。</p>
                         </div>
                         <ol class="list-decimal list-inside space-y-4 text-lg text-slate-700">
                             <li>用<b>支援資料傳輸</b>的 USB 線將模組接上電腦（純充電線不行）。</li>
