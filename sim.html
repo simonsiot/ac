@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESPhome 模組實體模擬 — Simon IoT</title>
+<link rel="icon" href="img/favicon.png" type="image/png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { background: #111111; }
+  body {
+    font-family: Roboto, "Noto Sans TC", "Segoe UI", sans-serif;
+    background: #111111; color: #e1e1e1;
+    -webkit-font-smoothing: antialiased; padding: 0 0 64px;
+  }
+
+  /* ===== 頂部品牌分頁 ===== */
+  .topbar {
+    position: sticky; top: 0; z-index: 40;
+    background: #151515; border-bottom: 1px solid rgba(255,255,255,0.10);
+    padding: 6px 16px 0;
+  }
+  .topbar-inner { max-width: 1280px; margin: 0 auto; }
+  .topbar h1 {
+    font-size: 15px; font-weight: 500; color: #9aa0a6;
+    padding: 8px 4px 4px; letter-spacing: 0.2px;
+  }
+  .tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: none; background: none; border: none;
+    border-bottom: 3px solid transparent; padding: 10px 20px 12px;
+    cursor: pointer; font-family: inherit; text-align: center;
+    color: #8a8a8a; transition: color .15s;
+  }
+  .tab .zh {
+    display: block; font-size: 22px; font-weight: 700; color: #ffffff;
+    line-height: 1.2; opacity: 0.55; transition: opacity .15s; white-space: nowrap;
+  }
+  .tab .en {
+    display: block; font-size: 12px; color: #8a8a8a; margin-top: 2px;
+    letter-spacing: 0.3px; white-space: nowrap;
+  }
+  .tab:hover .zh { opacity: 0.85; }
+  .tab.active { border-bottom-color: #3b8af8; }
+  .tab.active .zh { opacity: 1; }
+  .tab.active .en { color: #7cb0f5; }
+
+  .sim-note {
+    max-width: 1280px; margin: 16px auto 0; padding: 0 24px;
+    font-size: 13px; color: #6f6f6f; line-height: 1.6;
+  }
+
+  .topbar .back {
+    display: inline-flex; align-items: center; gap: 5px;
+    color: #7cb0f5; font-size: 13px; text-decoration: none;
+    padding: 4px 4px 6px;
+  }
+  .topbar .back:hover { text-decoration: underline; }
+  .topbar .back .mdi { font-size: 17px; }
+
+  .site-footer {
+    max-width: 1280px; margin: 40px auto 0; padding: 24px;
+    border-top: 1px solid rgba(255,255,255,0.10);
+    text-align: center;
+  }
+  .site-footer .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: #3b8af8; font-size: 14px; font-weight: 500; text-decoration: none;
+  }
+  .site-footer .back-link:hover { text-decoration: underline; }
+  .site-footer .back-link .mdi { font-size: 18px; }
+  .site-footer .copyright { color: #6f6f6f; font-size: 12.5px; margin-top: 12px; line-height: 1.6; }
+  .layout {
+    max-width: 1280px; margin: 18px auto 0; padding: 0 24px;
+    display: grid; grid-template-columns: minmax(340px, 430px) 1fr;
+    gap: 16px; align-items: start;
+  }
+  .col { display: flex; flex-direction: column; gap: 16px; }
+  @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+
+  .card {
+    background: #1c1c1c; border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px; overflow: visible;
+  }
+  .card-title {
+    font-size: 24px; font-weight: 400; color: #ffffff;
+    letter-spacing: 0.1px; padding: 14px 16px 10px;
+  }
+
+  /* ===== 實體列 ===== */
+  .row {
+    position: relative; display: flex; align-items: center; gap: 16px;
+    padding: 9px 16px; min-height: 40px; cursor: default;
+  }
+  .row:hover { background: rgba(255,255,255,0.045); }
+  .row.disabled { opacity: 0.5; }
+  .row .icon { font-size: 24px; color: #4d82b0; width: 24px; flex: none; text-align: center; }
+  .row .icon.on { color: #ffc107; }
+  .row .icon.cool { color: #2196f3; }
+  .row .name {
+    flex: 1; font-size: 16px; color: #e1e1e1;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .row .tag-off {
+    font-size: 11px; color: #8a8a8a; border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px; padding: 1px 6px; margin-left: 8px; flex: none;
+  }
+  .row .state {
+    font-size: 14px; color: #d0d0d0; text-align: right;
+    white-space: nowrap; flex: none; max-width: 45%;
+  }
+  .row .state.wrap { white-space: normal; max-width: 42%; line-height: 1.4; }
+  .row .state.action { color: #3b8af8; cursor: pointer; }
+  .row .state.action:hover { text-decoration: underline; }
+  .row .state-2line { text-align: right; flex: none; }
+  .row .state-2line .main { font-size: 16px; color: #ffffff; }
+  .row .state-2line .sub { font-size: 13px; color: #9b9b9b; margin-top: 2px; }
+
+  .esphome-logo { width: 26px; height: 26px; flex: none; margin: 0 -1px; }
+
+  /* 切換開關 (switch) */
+  .toggle {
+    width: 40px; height: 22px; border-radius: 11px; background: #555;
+    position: relative; cursor: pointer; flex: none; transition: background .15s;
+  }
+  .toggle.on { background: #3b8af8; }
+  .toggle::after {
+    content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%;
+    background: #fff; top: 2px; left: 2px; transition: left .15s;
+  }
+  .toggle.on::after { left: 20px; }
+
+  /* 下拉選擇 (select) */
+  .select-ctrl {
+    display: inline-flex; align-items: center; gap: 1px;
+    color: #ffffff; font-size: 14px; cursor: pointer;
+    padding: 5px 6px 5px 12px; border-radius: 8px; flex: none; max-width: 55%;
+  }
+  .select-ctrl:hover { background: rgba(255,255,255,0.08); }
+  .select-ctrl .sv { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .select-ctrl .mdi { font-size: 20px; color: #b8b8b8; flex: none; }
+
+  /* ===== Tooltip ===== */
+  .tip {
+    position: absolute; left: 44px; top: calc(100% - 4px); z-index: 30;
+    background: #3a3f47; color: #f1f1f1; font-size: 13.5px; line-height: 1.55;
+    padding: 9px 13px; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,0.55);
+    max-width: 340px; width: max-content; opacity: 0; visibility: hidden;
+    transform: translateY(-2px);
+    transition: opacity .15s ease .25s, transform .15s ease .25s, visibility 0s linear .4s;
+    pointer-events: none;
+  }
+  .tip::before {
+    content: ""; position: absolute; top: -5px; left: 18px;
+    border-left: 6px solid transparent; border-right: 6px solid transparent;
+    border-bottom: 6px solid #3a3f47;
+  }
+  .row:hover .tip {
+    opacity: 1; visibility: visible; transform: translateY(2px); transition-delay: .35s;
+  }
+
+  .card-footer { border-top: 1px solid rgba(255,255,255,0.12); padding: 14px 16px; }
+  .card-footer a {
+    color: #3b8af8; font-size: 14px; font-weight: 500;
+    text-decoration: none; letter-spacing: 0.2px;
+  }
+  .card-footer a:hover { text-decoration: underline; }
+
+  /* ===== 裝置資訊卡 ===== */
+  .device-info-body { padding: 4px 16px 18px; }
+  .device-info-body .line { font-size: 15px; color: #9e9e9e; margin-bottom: 7px; line-height: 1.45; }
+  .device-info-body .line a { color: #3b8af8; text-decoration: none; }
+  .device-info-body .line a:hover { text-decoration: underline; }
+  .integration-row {
+    display: flex; align-items: center; gap: 14px; padding: 12px 16px;
+    border-top: 1px solid rgba(255,255,255,0.12); cursor: pointer;
+  }
+  .integration-row:hover { background: rgba(255,255,255,0.045); }
+  .integration-row .int-name { flex: 1; font-size: 16px; color: #e1e1e1; }
+  .integration-row .mdi-chevron-right { color: #9b9b9b; font-size: 24px; }
+  .device-actions {
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid rgba(255,255,255,0.12); padding: 10px 8px 10px 16px;
+  }
+  .visit-link {
+    display: inline-flex; align-items: center; gap: 9px;
+    color: #3b8af8; font-size: 14.5px; font-weight: 500; text-decoration: none; cursor: pointer;
+  }
+  .visit-link .mdi-cog { font-size: 22px; }
+  .visit-link .mdi-open-in-new { font-size: 17px; }
+  .visit-link:hover { text-decoration: underline; }
+  .kebab { color: #c7c7c7; font-size: 24px; padding: 6px 10px; border-radius: 50%; cursor: pointer; }
+  .kebab:hover { background: rgba(255,255,255,0.08); }
+
+  .related-head {
+    display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 6px;
+  }
+  .related-head .card-title { padding: 0; }
+  .chip-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(59,138,248,0.15); color: #8ab4f8; font-size: 14px; font-weight: 500;
+    border: none; border-radius: 18px; padding: 8px 18px; cursor: pointer; font-family: inherit;
+  }
+  .chip-btn:hover { background: rgba(59,138,248,0.25); }
+  .related-body { padding: 12px 16px 20px; font-size: 15px; color: #cfcfcf; line-height: 1.6; }
+
+  #rows-controls .row.climate-row { cursor: pointer; }
+
+  /* row 內下拉選單 */
+  .row-menu {
+    position: absolute; right: 12px; top: calc(100% - 4px); z-index: 60;
+    width: 210px; max-height: 300px; overflow-y: auto;
+    background: #2e2e2e; border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.55); padding: 6px; display: none;
+  }
+  .row-menu.open { display: block; }
+
+  /* ===== more-info climate 對話框 ===== */
+  .dialog-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.72);
+    display: none; align-items: center; justify-content: center; z-index: 100;
+  }
+  .dialog-overlay.open { display: flex; }
+  .dialog {
+    position: relative; width: 100%; max-width: 500px; max-height: 92vh;
+    background: #1f1f1f; border-radius: 16px; overflow: hidden;
+    display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+  }
+  @media (max-width: 540px) { .dialog { max-width: 100%; height: 100%; max-height: 100%; border-radius: 0; } }
+  .dialog-header { display: flex; align-items: center; gap: 8px; padding: 10px 12px; flex: none; }
+  .dialog-header .hbtn {
+    color: #dcdcdc; font-size: 24px; width: 42px; height: 42px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 50%; cursor: pointer; flex: none;
+  }
+  .dialog-header .hbtn:hover { background: rgba(255,255,255,0.09); }
+  .dialog-title { flex: 1; min-width: 0; padding-left: 4px; }
+  .dialog-title .obj { font-size: 12.5px; color: #9a9a9a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dialog-title .fname { font-size: 21px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dialog-body { padding: 8px 20px 28px; overflow-y: auto; flex: 1; }
+
+  .dial-wrap { position: relative; width: 320px; max-width: 100%; margin: 8px auto 22px; aspect-ratio: 1; }
+  .dial-wrap svg { width: 100%; height: 100%; display: block; }
+  .dial-track { fill: none; stroke: #333333; stroke-linecap: round; }
+  .dial-active { fill: none; stroke-linecap: round; transition: stroke .2s; }
+  .dial-knob { transition: fill .2s; }
+  .dial-center {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; pointer-events: none;
+  }
+  .dial-center .action { font-size: 15px; color: #b7b7b7; margin-bottom: 2px; }
+  .dial-center .cur-label { font-size: 17px; color: #cfcfcf; }
+  .dial-center .cur-big { font-size: 44px; font-weight: 400; color: #fff; margin-top: 2px; }
+  .temp-adjust { display: flex; align-items: center; gap: 14px; pointer-events: auto; }
+  .temp-adjust .step {
+    width: 46px; height: 46px; border-radius: 50%; border: none;
+    background: rgba(255,255,255,0.09); color: #eaeaea; font-size: 26px;
+    display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-family: inherit;
+  }
+  .temp-adjust .step:hover { background: rgba(255,255,255,0.16); }
+  .temp-adjust .target { font-size: 48px; font-weight: 400; color: #fff; min-width: 118px; }
+  .temp-adjust .target span { font-size: 22px; color: #bdbdbd; margin-left: 2px; }
+  .dial-center .cur-sub { font-size: 14.5px; color: #9a9a9a; margin-top: 10px; }
+
+  .ctrl-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .ctrl-btn {
+    position: relative; flex: 1 1 0; min-width: 108px; max-width: 160px;
+    background: #2c2c2c; border: none; border-radius: 14px; padding: 14px 10px;
+    display: flex; align-items: center; gap: 12px; cursor: pointer; font-family: inherit; text-align: left;
+  }
+  .ctrl-btn:hover { background: #363636; }
+  .ctrl-btn .cb-icon { font-size: 22px; color: #dcdcdc; flex: none; }
+  .ctrl-btn .cb-text { min-width: 0; }
+  .ctrl-btn .cb-label { font-size: 13px; color: #9a9a9a; line-height: 1.3; }
+  .ctrl-btn .cb-value { font-size: 15px; color: #fff; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .opt-menu {
+    position: absolute; z-index: 120; bottom: calc(100% + 8px); left: 50%;
+    transform: translateX(-50%); width: 200px; max-height: 300px; overflow-y: auto;
+    background: #2e2e2e; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.55); padding: 6px; display: none;
+  }
+  .opt-menu.open { display: block; }
+  .opt-item {
+    display: flex; align-items: center; gap: 14px; padding: 12px 14px;
+    border-radius: 10px; cursor: pointer; font-size: 16px; color: #e6e6e6;
+  }
+  .opt-item:hover { background: rgba(255,255,255,0.06); }
+  .opt-item .dot { width: 9px; height: 9px; border-radius: 50%; background: #7a7a7a; flex: none; }
+  .opt-item.sel { background: rgba(59,138,248,0.14); color: #64b5f6; font-weight: 500; }
+  .opt-item.sel .dot { background: #2196f3; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="back" href="esphome.html"><span class="mdi mdi-arrow-left"></span> ESPhome 標準版說明</a>
+    <h1>Home Assistant · 裝置頁模擬</h1>
+    <div class="tabs" id="tabs"></div>
+  </div>
+</div>
+
+<div class="sim-note" id="sim-note"></div>
+
+<div class="layout">
+  <div class="col">
+    <div class="card">
+      <div class="card-title">裝置資訊</div>
+      <div class="device-info-body">
+        <div class="line" id="dev-title"></div>
+        <div class="line">廠牌：SimonIoT</div>
+        <div class="line" id="dev-fw"></div>
+        <div class="line">MAC: <a href="javascript:void(0)" id="dev-mac"></a></div>
+      </div>
+      <div class="integration-row">
+        <svg class="esphome-logo" viewBox="0 0 24 24"><path fill="#3b8af8" d="M12 3 2 11h2v9h16v-9h2L12 3zm0 2.5 6 4.8V18H6v-7.7l6-4.8z"/><path fill="#3b8af8" d="M8.5 11.2h7v1.5h-7zM8.5 13.9h7v1.5h-7zM10.2 16.5h3.6V18h-3.6z"/></svg>
+        <div class="int-name">ESPHome</div>
+        <span class="mdi mdi-chevron-right"></span>
+      </div>
+      <div class="device-actions">
+        <span class="visit-link"><span class="mdi mdi-cog"></span>造訪<span class="mdi mdi-open-in-new"></span></span>
+        <span class="kebab mdi mdi-dots-vertical"></span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="related-head">
+        <div class="card-title">相關</div>
+        <button class="chip-btn"><span class="mdi mdi-plus"></span>新增至...</button>
+      </div>
+      <div class="related-body">還未使用裝置增加任何自動化、腳本或場景。 可按下上方的 + 按鈕進行增加。</div>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="card">
+      <div class="card-title">控制</div>
+      <div id="rows-controls"></div>
+      <div class="card-footer"><a href="javascript:void(0)">增加至儀表板</a></div>
+    </div>
+    <div class="card">
+      <div class="card-title">感測器</div>
+      <div id="rows-sensors"></div>
+      <div class="card-footer"><a href="javascript:void(0)">增加至儀表板</a></div>
+    </div>
+    <div class="card">
+      <div class="card-title">設定</div>
+      <div id="rows-config"></div>
+      <div class="card-footer"><a href="javascript:void(0)">增加至儀表板</a></div>
+    </div>
+    <div class="card">
+      <div class="card-title">診斷資料</div>
+      <div id="rows-diag"></div>
+      <div class="card-footer"><a href="javascript:void(0)">增加至儀表板</a></div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <a class="back-link" href="esphome.html"><span class="mdi mdi-arrow-left"></span> 回 ESPhome 標準版說明</a>
+  <p class="copyright">本頁為模擬示意，實際實體會依機型與韌體版本略有不同。</p>
+  <p class="copyright">&copy; 2025 Simon IoT. All Rights Reserved.</p>
+</footer>
+
+<div class="dialog-overlay" id="climate-dialog">
+  <div class="dialog">
+    <div class="dialog-header">
+      <span class="hbtn mdi mdi-close" id="dlg-close" title="關閉"></span>
+      <div class="dialog-title"><div class="obj" id="dlg-obj"></div><div class="fname" id="dlg-fname"></div></div>
+      <span class="hbtn mdi mdi-chart-box-outline" title="歷史紀錄"></span>
+      <span class="hbtn mdi mdi-cog" title="設定"></span>
+      <span class="hbtn mdi mdi-dots-vertical" title="更多"></span>
+    </div>
+    <div class="dialog-body">
+      <div class="dial-wrap">
+        <svg viewBox="0 0 320 320">
+          <path class="dial-track" id="dial-track" stroke-width="20"></path>
+          <path class="dial-active" id="dial-active" stroke-width="20"></path>
+          <circle class="dial-knob" id="dial-knob" r="13"></circle>
+        </svg>
+        <div class="dial-center" id="dial-center"></div>
+      </div>
+      <div class="ctrl-buttons" id="ctrl-buttons"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ESPHOME_SVG = '<svg class="esphome-logo" viewBox="0 0 24 24"><path fill="#3b8af8" d="M12 3 2 11h2v9h16v-9h2L12 3zm0 2.5 6 4.8V18H6v-7.7l6-4.8z"/><path fill="#3b8af8" d="M8.5 11.2h7v1.5h-7zM8.5 13.9h7v1.5h-7zM10.2 16.5h3.6V18h-3.6z"/></svg>';
+const MODE_META = {
+  off:       { label: '關閉', icon: 'power',         color: '#8a8a8a', action: '' },
+  cool:      { label: '冷氣', icon: 'snowflake',     color: '#2196f3', action: '製冷中' },
+  heat:      { label: '暖氣', icon: 'fire',          color: '#ff9800', action: '製熱中' },
+  dry:       { label: '除濕', icon: 'water-percent', color: '#26c6da', action: '除濕中' },
+  fan_only:  { label: '送風', icon: 'fan',           color: '#00bcd4', action: '送風中' },
+  heat_cool: { label: '自動', icon: 'sync',          color: '#4caf50', action: '自動調節' },
+};
+const SWING_ICON = { '關閉': 'arrow-oscillating-off', '垂直': 'arrow-up-down', '水平': 'arrow-left-right', '兩者': 'arrow-all' };
+
+// ---- 共用 base 實體（每個廠牌都一樣）----
+function baseSensors(d) {
+  return [
+    { icon: 'wifi', name: 'WiFi Signal', state: d.wifi,
+      tip: 'Wi-Fi 訊號強度，越接近 0 越好：-50 左右很棒，低於 -75 建議調整分享器或模組位置。' },
+    { icon: 'timer-outline', name: 'Uptime', state: d.uptime, tip: '模組這次開機到現在累積的時數。' },
+  ];
+}
+function baseConfig(d) {
+  return [
+    { svg: true, name: 'Online Firmware Update', state: '已最新',
+      tip: '線上韌體更新：有新版時這裡會出現「更新」按鈕，按下就能透過網路更新，不用接電腦。' },
+    { icon: 'restart', kind: 'button', name: 'Restart 重開機', state: '按下',
+      tip: '把模組重新開機，不會影響冷氣本身設定。模組怪怪的時候可以先試這招。' },
+  ];
+}
+function baseDiag(d) {
+  return [
+    { icon: 'cloud-search', kind: 'button', name: 'Check Update 檢查韌體更新', state: '按下',
+      tip: '手動檢查有沒有新韌體。模組每週五凌晨 3 點也會自動檢查一次，平常不用特別按。' },
+    { icon: 'thermometer', name: 'ESP32 Temperature', state: d.esp32temp, tip: '模組本身晶片的溫度，比室溫高是正常的。' },
+    { icon: 'new-box', name: 'ESPHome Version', state: d.esphomeVer, wrap: true, tip: '這顆韌體使用的 ESPHome 版本與編譯時間。' },
+    { icon: 'eye', name: 'IP Address', state: d.ip, tip: '模組在家中網路拿到的 IP。用瀏覽器打開這個 IP 可進入模組內建設定頁。' },
+    { icon: 'alpha-p-box', name: 'Project Version', state: d.project, tip: '出貨韌體的版本日期。回報問題時提供這個數字更容易找到原因。' },
+    { icon: 'check-network-outline', name: d.prefix + ' Status', state: '已連線', tip: '模組與 Home Assistant 之間的連線狀態。' },
+    { icon: 'alpha-s-box', name: 'SW Version', state: d.sw, tip: '冷氣控制程式的版本日期。' },
+  ];
+}
+// taixia 共用：SA 資訊（感測器）與診斷（Error Code、Safe Mode）
+function saSensors(p, brand, model) {
+  return [
+    { icon: 'chip', name: p + ' SA ID', state: brand === 'ERV' ? '14' : (p.indexOf('Dehu') >= 0 ? '4' : '1'), tip: 'TaiSEIA 設備位址（冷氣=1／除濕機=4／全熱交換=14）。' },
+    { icon: 'watermark', name: p + ' SA Brand', state: brand, tip: '模組向主機讀到的實際品牌。' },
+    { icon: 'earth', name: p + ' SA Model', state: model, tip: '模組讀到的機型型號。' },
+    { icon: 'new-box', name: p + ' SA Version', state: '1.00', tip: '主機端 TaiSEIA 協定版本。' },
+    { icon: 'format-list-bulleted', name: p + ' SA Services', state: '已讀取', tip: '主機回報支援的服務清單。' },
+  ];
+}
+function taixiaDiag(p) {
+  return [
+    { icon: 'chip', name: p + ' Error Code', state: '0', tip: '故障碼，0 代表正常；非 0 時可對照維修碼。（診斷類別）' },
+    { icon: 'shield-refresh', kind: 'button', name: p + ' Safe Mode Boot', state: '按下', tip: '進入安全模式重開機，救援用（韌體有問題時使用）。' },
+  ];
+}
+
+/* ============================ 各廠牌資料 ============================ */
+const BRANDS = [
+  /* ---------- 大金 Daikin (daikin_s21) ---------- */
+  {
+    id: 'dk', tab: '大金', en: 'Daikin',
+    device: { title: 'ST01-Daikin-AC', prefix: 'ST01-DK', obj: 'ST01-DK 5d4c0c',
+      fw: '26.07.13 (ESPHome 2025.11.2)', mac: '70:AF:09:5D:4C:0C', ip: '192.168.123.79',
+      sw: '2026.06.18', project: '26.07.13', esphomeVer: '2025.11.2 Jul 13 2026, 20:58:33',
+      esp32temp: '48.6 °C', uptime: '128.4 h', wifi: '-52 dBm' },
+    climate: {
+      name: 'ST01-DK', current: 26.5, target: 26.0, min: 18, max: 32, heatMax: 30, mode: 'cool',
+      modes: ['cool', 'heat', 'heat_cool', 'dry', 'fan_only', 'off'],
+      fan: 'Automatic', fanModes: ['Automatic', 'Silent', '1', '2', '3', '4', '5'],
+      swing: '關閉', swingModes: ['關閉', '垂直', '水平', '兩者'],
+    },
+    controls: [],
+    sensors: [
+      { icon: 'thermometer', name: 'ST01-DK Coil Temperature', state: '9.5 °C', tip: '室內機冷排（蒸發器）溫度。冷氣運轉時會比室溫低很多，也能確認關機防霉是否把冷排吹乾。' },
+      { icon: 'pump', name: 'ST01-DK Compressor Frequency', state: '46 Hz', tip: '室外機壓縮機頻率。0 Hz 代表休息中，數字越大越用力運轉，是觀察負載最好的指標。' },
+      { icon: 'thermometer', name: 'ST01-DK Defrost', state: '正常', tip: '室外機除霜狀態。冬天暖氣時室外機會結霜，除霜期間暖氣暫停是正常現象。' },
+      { icon: 'fan', name: 'ST01-DK Fan Speed', state: '820 RPM', tip: '室內機風扇的實際轉速。' },
+      { icon: 'water-percent', name: 'ST01-DK Humidity', state: '62 %', tip: '冷氣偵測到的室內濕度，部分機型才支援。' },
+      { icon: 'thermometer', name: 'ST01-DK Inside Temperature', state: '26.5 °C', tip: '室內機偵測到的室內溫度（回風溫度）。' },
+      { icon: 'lock', name: 'ST01-DK Multizone Conflict', state: '已上鎖', tip: '一對多主機專用：與其他室內機冷暖模式衝突時提示。一對一機型「已上鎖」代表無衝突。' },
+      { icon: 'power-plug', iconClass: 'on', name: 'ST01-DK Online', state: '開啟', tip: '模組與冷氣主機通訊狀態，「開啟」代表正常。長時間關閉請確認排線。' },
+      { icon: 'thermometer', name: 'ST01-DK Outside Temperature', state: '34.2 °C', tip: '室外機偵測到的室外溫度。' },
+      { icon: 'lightning-bolt', name: 'ST01-DK Power Consumption', state: '12.68 kWh', tip: '累積用電量，可加進 HA 能源儀表板做每日／每月統計。' },
+      { icon: 'arm-flex', name: 'ST01-DK Powerful', state: '關閉', tip: '強力（Powerful）模式是否運轉中。' },
+      { icon: 'lock', name: 'ST01-DK Short Cycle', state: '已上鎖', tip: '壓縮機保護：剛停機又馬上開機時會先等待再啟動。「已上鎖」代表沒在保護等待。' },
+      { icon: 'pan-vertical', name: 'ST01-DK Swing Vertical Angle', state: '35 °', tip: '上下擺葉目前的角度。' },
+      { icon: 'thermometer', name: 'ST01-DK System Defrost', state: '正常', tip: '整個系統的除霜狀態，多聯式主機除霜時作動。' },
+      { icon: 'square', name: 'ST01-DK Valve', state: '關閉', tip: '室外機四通閥狀態，冷暖切換時位置不同，一般不用理會。' },
+    ],
+  },
+
+  /* ---------- 國際 Panasonic (TaiSEIA) ---------- */
+  {
+    id: 'pa', tab: '國際', en: 'Panasonic',
+    device: { title: 'ST01-Panasonic-AC', prefix: 'ST01-PA', obj: 'ST01-PA 512a3f',
+      fw: '26.07.13 (ESPHome 2025.11.2)', mac: '70:AF:09:5D:51:2A', ip: '192.168.123.80',
+      sw: '2026.05.20', project: '26.07.13', esphomeVer: '2025.11.2 Jul 13 2026, 21:10:04',
+      esp32temp: '47.1 °C', uptime: '96.2 h', wifi: '-58 dBm' },
+    climate: {
+      name: 'ST01-PA Climate', current: 27.0, target: 25.0, min: 16, max: 32, mode: 'cool',
+      modes: ['cool', 'heat', 'dry', 'fan_only', 'off'],
+      fan: '自動', fanModes: ['低', '中', '高', '自動'],
+      swing: '關閉', swingModes: ['關閉', '垂直', '水平', '兩者'],
+      preset: '無', presets: ['無', '強力', '活動偵測', '舒眠'],
+    },
+    controls: [
+      { kind: 'switch', icon: 'power', name: 'ST01-PA Power Switch', on: true, tip: '冷氣電源開關（等同遙控器開／關）。' },
+      { kind: 'switch', icon: 'volume-high', name: 'ST01-PA Buzzer', on: true, tip: '操作時主機是否發出「嗶」聲。' },
+      { kind: 'switch', icon: 'shield-sun', name: 'ST01-PA Mildew Proof', on: true, tip: '關機防霉：關機後自動送風把冷排吹乾，減少發霉與異味。' },
+      { kind: 'switch', icon: 'broom', name: 'ST01-PA Self Cleaning', on: false, tip: '自清潔功能，讓機體內部進行清潔程序。' },
+      { kind: 'switch', icon: 'leaf', name: 'ST01-PA ECONAVI', on: true, tip: '國際牌 ECONAVI 節電運轉，依環境自動省電。' },
+      { kind: 'switch', icon: 'air-filter', name: 'ST01-PA nanoeX', on: true, tip: '國際牌 nanoeX 空氣清淨功能。' },
+      { kind: 'switch', icon: 'rocket-launch', name: 'ST01-PA Boost', on: false, tip: '急速模式，短時間內快速降溫／升溫。' },
+      { kind: 'number', icon: 'timer-sand', name: 'ST01-PA Off Timer', state: '0 h', tip: '關機定時（幾小時後自動關機），0 代表未設定。' },
+      { kind: 'number', icon: 'timer-sand', name: 'ST01-PA On Timer', state: '0 h', tip: '開機定時（幾小時後自動開機），0 代表未設定。' },
+      { kind: 'select', icon: 'lightbulb-on-outline', name: 'ST01-PA [1F] 面板燈光', value: '0最亮',
+        options: ['0最亮', '1稍暗', '2稍暗2'], tip: '機體面板顯示燈亮度段位。' },
+      { kind: 'select', icon: 'motion-sensor', name: 'ST01-PA [19] 動向感應', value: '3自動',
+        options: ['0關閉', '1對人', '2不對人', '3自動'], tip: '人體動向感應：可設定對人／不對人吹或自動。' },
+      { kind: 'select', icon: 'pan-vertical', name: 'ST01-PA [0F] 上下擺動位置', value: '0自動擺動',
+        options: ['0自動擺動', '1上', '2中上', '3中', '4中下', '5下'], tip: '上下風向段位，可固定角度或自動擺動。' },
+      { kind: 'select', icon: 'pan-horizontal', name: 'ST01-PA [11] 左右擺動位置', value: '0自動擺動',
+        options: ['0自動擺動', '1中｜中', '2右｜左', '3左｜右', '4左｜左', '5左｜中', '6中｜右', '7右｜右'], tip: '左右風向段位（左葉片｜右葉片），可固定或自動擺動。' },
+      { kind: 'button', icon: 'information-outline', name: 'ST01-PA Get Info', state: '按下', tip: '讓模組重新向主機詢問一次完整狀態。' },
+      { kind: 'button', icon: 'lightning-bolt', name: 'ST01-PA Reset Energy', state: '按下', tip: '把累積用電量歸零重新計算。' },
+      { kind: 'button', icon: 'air-filter', name: 'ST01-PA Clear Filter Notify', state: '按下', tip: '清除濾網清潔提示（洗完濾網後按）。' },
+    ],
+    sensors: [
+      { icon: 'thermometer', name: 'ST01-PA Temperature Indoor', state: '27.0 °C', tip: '室內溫度。' },
+      { icon: 'thermometer', name: 'ST01-PA Temperature Outdoor', state: '34.5 °C', tip: '室外溫度。' },
+      { icon: 'current-ac', name: 'ST01-PA Current', state: '3.2 A', tip: '目前運轉電流。' },
+      { icon: 'lightning-bolt', name: 'ST01-PA Energy', state: '45.6 kWh', tip: '累積用電量，可加進 HA 能源儀表板。' },
+      { icon: 'flash', name: 'ST01-PA Power', state: '720 W', tip: '目前耗電功率（瓦）。' },
+      { icon: 'air-filter', name: 'ST01-PA Filter Notify', state: '正常', tip: '濾網清潔提示，顯示「開啟」代表該洗濾網了。' },
+      { icon: 'speedometer', name: 'ST01-PA Boost Mode', state: 'normal', tip: '目前急速／靜音狀態（normal／boost／quiet）。' },
+      ...saSensors('ST01-PA', 'Panasonic', 'CS-QX28FA2'),
+    ],
+    diagExtra: taixiaDiag('ST01-PA'),
+  },
+
+  /* ---------- 日立 Hitachi (ac-st01-ht / TaiSEIA) ---------- */
+  {
+    id: 'ht', tab: '日立', en: 'Hitachi',
+    device: { title: 'ST01-Hitachi-AC', prefix: 'ST01-HT', obj: 'ST01-HT 631b7c',
+      fw: '26.07.13 (ESPHome 2025.11.2)', mac: '70:AF:09:5D:63:1B', ip: '192.168.123.81',
+      sw: '2025.11.15', project: '26.07.13', esphomeVer: '2025.11.2 Jul 13 2026, 21:02:47',
+      esp32temp: '46.5 °C', uptime: '211.7 h', wifi: '-49 dBm' },
+    climate: {
+      name: 'ST01-HT Climate', current: 28.0, target: 26.0, min: 16, max: 32, mode: 'cool',
+      modes: ['cool', 'heat', 'dry', 'fan_only', 'off'],
+      fan: '自動', fanModes: ['低', '中', '高', '自動'],
+      swing: '關閉', swingModes: ['關閉', '垂直', '水平', '兩者'],
+      preset: '無', presets: ['無', '強力', '節能', '舒適'],
+    },
+    controls: [
+      { kind: 'switch', icon: 'power', name: 'ST01-HT Power Switch', on: true, tip: '冷氣電源開關。' },
+      { kind: 'switch', icon: 'volume-high', name: 'ST01-HT Buzzer', on: true, tip: '操作提示音開關。' },
+      { kind: 'switch', icon: 'shield-sun', name: 'ST01-HT Mildew Proof', on: true, tip: '關機防霉：關機後自動送風把冷排吹乾。' },
+      { kind: 'switch', icon: 'pan-vertical', name: 'ST01-HT Swing Vertical', on: true, tip: '上下擺葉開關。' },
+      { kind: 'switch', icon: 'pan-horizontal', name: 'ST01-HT Swing Horizontal', on: false, tip: '左右擺葉開關。' },
+      { kind: 'switch', icon: 'snowflake-melt', name: 'ST01-HT Frost Wash', on: false, tip: '日立凍結洗淨：結霜後再融霜沖走髒污的清潔功能。' },
+      { kind: 'number', icon: 'timer-sand', name: 'ST01-HT Sleep Timer', state: '0 h', tip: '睡眠定時關機，0 代表未設定。' },
+      { kind: 'number', icon: 'timer-sand', name: 'ST01-HT Off Timer', state: '0 h', tip: '關機定時，0 代表未設定。' },
+      { kind: 'number', icon: 'timer-sand', name: 'ST01-HT On Timer', state: '0 h', tip: '開機定時，0 代表未設定。' },
+      { kind: 'select', icon: 'lightbulb-on-outline', name: 'ST01-HT Display Mode', value: 'Bright',
+        options: ['Bright', 'On', 'Dim', 'Off'], tip: '機體面板顯示模式（亮／開／暗／關）。' },
+      { kind: 'select', icon: 'pan-horizontal', name: 'ST01-HT Swing Horizontal Level', value: '0',
+        options: ['0', '1', '2', '3', '4', '5', '6', '7'], tip: '左右風向段位（0 為自動擺動）。' },
+      { kind: 'button', icon: 'information-outline', name: 'ST01-HT Get Info', state: '按下', tip: '讓模組重新向主機詢問一次完整狀態。' },
+      { kind: 'button', icon: 'timer-outline', name: 'ST01-HT Reset Operating Hours', state: '按下', tip: '把累積運轉時數歸零。' },
+      { kind: 'button', icon: 'lightning-bolt', name: 'ST01-HT Reset Energy Consumption', state: '按下', tip: '把累積用電量歸零。' },
+      { kind: 'button', icon: 'air-filter', name: 'ST01-HT Reset Filter Clean Hours', state: '按下', tip: '把濾網清潔時數歸零（洗完濾網後按）。' },
+    ],
+    sensors: [
+      { icon: 'thermometer', name: 'ST01-HT Temperature Indoor', state: '28.0 °C', tip: '室內溫度。' },
+      { icon: 'water-percent', name: 'ST01-HT Humidity Indoor', state: '65 %', tip: '室內濕度。' },
+      { icon: 'thermometer', name: 'ST01-HT Temperature Outdoor', state: '33.8 °C', tip: '室外溫度。' },
+      { icon: 'lightning-bolt', name: 'ST01-HT Energy', state: '156.2 kWh', tip: '累積用電量，可加進 HA 能源儀表板。' },
+      { icon: 'timer-outline', name: 'ST01-HT Operating Hours', state: '1240 h', tip: '累積運轉時數。' },
+      { icon: 'air-filter', name: 'ST01-HT Filter Clean Hours', state: '320 h', tip: '距上次清潔濾網的累積時數。' },
+      ...saSensors('ST01-HT', 'Hitachi', 'RAS-40NJP'),
+    ],
+    diagExtra: taixiaDiag('ST01-HT'),
+  },
+
+  /* ---------- 三菱電機 Mitsubishi Electric (CN105) ---------- */
+  {
+    id: 'mt', tab: '三菱電機', en: 'Mitsubishi Electric',
+    device: { title: 'ST01-Mitsubishi-AC', prefix: 'ST01-MT', obj: 'ST01-MT 748e1d',
+      fw: '26.07.13 (ESPHome 2025.11.2)', mac: '70:AF:09:5D:74:8E', ip: '192.168.123.82',
+      sw: '2025.11.15', project: '26.07.13', esphomeVer: '2025.11.2 Jul 13 2026, 20:55:19',
+      esp32temp: '49.8 °C', uptime: '58.9 h', wifi: '-61 dBm' },
+    climate: {
+      name: 'ST01-MT MT AC', current: 27.0, target: 25.0, min: 16, max: 31, mode: 'cool',
+      modes: ['cool', 'heat', 'heat_cool', 'dry', 'fan_only', 'off'],
+      fan: '自動', fanModes: ['自動', '靜音', '1', '2', '3', '4'],
+    },
+    controls: [
+      { kind: 'select', icon: 'pan-vertical', name: 'ST01-MT Vertical Vane', value: '自動',
+        options: ['自動', '1', '2', '3', '4', '5', '擺動'], tip: '垂直（上下）葉片方向，可固定 1~5 段或設自動／擺動。' },
+      { kind: 'select', icon: 'pan-horizontal', name: 'ST01-MT Horizontal Vane', value: '自動',
+        options: ['自動', '最左', '左', '中', '右', '最右', '擺動'], tip: '水平（左右）葉片方向。' },
+    ],
+    sensors: [
+      { icon: 'lightning-bolt', name: 'ST01-MT Energy Usage', state: '128.5 kWh', tip: '累積用電量，可加進 HA 能源儀表板。' },
+      { icon: 'thermometer', name: 'ST01-MT Outside Air Temp', state: '—', disabled: true, tip: '室外溫度。此感測器預設停用，需要時可在 HA 手動啟用。' },
+      { icon: 'pump', name: 'ST01-MT Compressor Frequency', state: '—', disabled: true, tip: '壓縮機頻率。預設停用，可手動啟用。' },
+      { icon: 'flash', name: 'ST01-MT Input Power', state: '—', disabled: true, tip: '即時功率。預設停用，可手動啟用。' },
+      { icon: 'timer-outline', name: 'ST01-MT Runtime Hours', state: '—', disabled: true, tip: '累積運轉時數。預設停用，可手動啟用。' },
+      { icon: 'eye-outline', name: 'ST01-MT ISEE Sensor', state: '—', disabled: true, tip: '三菱 i-see 人體感應。預設停用，可手動啟用。' },
+    ],
+  },
+
+  /* ---------- 三菱重工 Mitsubishi Heavy (MHI-AC-Ctrl) ---------- */
+  {
+    id: 'mhi', tab: '三菱重工', en: 'Mitsubishi Heavy',
+    device: { title: 'ST01-MHI-Wall-AC', prefix: 'ST01-MHI-WALL', obj: 'ST01-MHI-WALL 88f4a0',
+      fw: '26.07.13 (ESPHome 2025.11.2)', mac: '70:AF:09:5D:88:F4', ip: '192.168.123.83',
+      sw: '2025.12.15', project: '26.07.13', esphomeVer: '2025.11.2 Jul 13 2026, 21:15:33',
+      esp32temp: '50.3 °C', uptime: '34.1 h', wifi: '-55 dBm' },
+    climate: {
+      name: 'ST01-MHI-WALL Climate', current: 26.0, target: 24.0, min: 18, max: 30, mode: 'cool',
+      modes: ['cool', 'heat', 'heat_cool', 'dry', 'fan_only', 'off'],
+      fan: '自動', fanModes: ['自動', '1', '2', '3', '4'],
+    },
+    controls: [
+      { kind: 'select', icon: 'pan-vertical', name: 'ST01-MHI-WALL Vanes Up Down', value: '擺動',
+        options: ['1', '2', '3', '4', '擺動'], tip: '上下葉片方向，可固定段位或設擺動。' },
+      { kind: 'select', icon: 'pan-horizontal', name: 'ST01-MHI-WALL Vanes Left Right', value: '4',
+        options: ['1', '2', '3', '4', '5', '6', '7', '擺動'], tip: '左右葉片方向。' },
+      { kind: 'switch', icon: 'sync', name: 'ST01-MHI-WALL Active mode', on: true, tip: '模組與主機的連線保持開關，需保持「開啟」才能持續控制（開機自動維持）。' },
+    ],
+    sensors: [
+      { icon: 'thermometer', name: 'ST01-MHI-WALL Indoor temperature', state: '26 °C', tip: '室內溫度。' },
+      { icon: 'thermometer', name: 'ST01-MHI-WALL Outdoor temperature', state: '33 °C', tip: '室外溫度。' },
+      { icon: 'lightning-bolt', name: 'ST01-MHI-WALL Energy', state: '88.4 kWh', tip: '累積用電量，可加進 HA 能源儀表板。' },
+      { icon: 'flash', name: 'ST01-MHI-WALL Power', state: '640 W', tip: '目前耗電功率（瓦）。' },
+      { icon: 'current-ac', name: 'ST01-MHI-WALL Current', state: '2.8 A', tip: '目前運轉電流。' },
+      { icon: 'thermometer', name: 'ST01-MHI-WALL Defrosting', state: '正常', tip: '室外機除霜狀態，暖氣時會作動。' },
+      { icon: 'alert-circle-outline', name: 'ST01-MHI-WALL Frame errors', state: '0', tip: '通訊封包錯誤次數，長期為 0 代表通訊穩定。' },
+    ],
+  },
+
+  /* ---------- 日立除濕機 Dehumidifier (ac-st01-dehu / TaiSEIA) ---------- */
+  {
+    id: 'dehu', tab: '日立除濕機', en: 'Hitachi Dehumidifier',
+    device: { title: 'ST01-Dehumidifier', prefix: 'ST01-Dehumidifier', obj: 'ST01-Dehumidifier 9a2c1b',
+      fw: '26.07.13 (ESPHome 2025.11.2)', mac: '70:AF:09:5D:9A:2C', ip: '192.168.123.84',
+      sw: '2026.03.07', project: '26.07.13', esphomeVer: '2025.11.2 Jul 13 2026, 20:48:12',
+      esp32temp: '44.8 °C', uptime: '402.5 h', wifi: '-47 dBm' },
+    // 除濕機沒有 climate；主控是 Fan 實體 + 目標濕度 + 運轉模式 select
+    controls: [
+      { kind: 'switch', icon: 'fan', name: 'ST01-Dehumidifier Fan', on: true, tip: '除濕機主風扇：開關與 4 段風速、預設模式都在這個 Fan 實體上控制。' },
+      { kind: 'number', icon: 'water-percent', name: 'ST01-Dehumidifier Relative Humidity', state: '55 %', tip: '目標濕度：除濕到這個濕度就會停，可自行調整。' },
+      { kind: 'select', icon: 'state-machine', name: 'ST01-Dehumidifier Operation Mode', value: 'normal',
+        options: ['normal', 'eco', 'home', 'boost', 'sleep'], tip: '運轉模式：一般／節能／居家／強力／舒眠。' },
+      { kind: 'number', icon: 'timer-sand', name: 'ST01-Dehumidifier Operating Time', state: '0 h', tip: '定時運轉時數，0 代表未設定。' },
+      { kind: 'number', icon: 'volume-source', name: 'ST01-Dehumidifier Sound Mode', state: '2', tip: '提示音／音量段位。' },
+      { kind: 'number', icon: 'brightness-6', name: 'ST01-Dehumidifier Light Level', state: '3', tip: '面板燈亮度段位。' },
+      { kind: 'switch', icon: 'power', name: 'ST01-Dehumidifier Power Switch', on: true, tip: '除濕機電源開關。' },
+      { kind: 'switch', icon: 'lock', name: 'ST01-Dehumidifier Lock', on: false, tip: '兒童鎖：鎖住面板避免誤觸。' },
+      { kind: 'switch', icon: 'air-conditioner', name: 'ST01-Dehumidifier Auto Air Flow', on: true, tip: '自動擺風（左右送風）。' },
+      { kind: 'switch', icon: 'shield-sun', name: 'ST01-Dehumidifier Mildew Proof', on: true, tip: '防霉：關機後短暫送風把內部吹乾。' },
+      { kind: 'switch', icon: 'water-alert', name: 'ST01-Dehumidifier Humidity Notify', on: false, tip: '濕度到達提示。' },
+      { kind: 'switch', icon: 'volume-high', name: 'ST01-Dehumidifier Beeper', on: true, tip: '操作提示音開關。' },
+      { kind: 'switch', icon: 'air-filter', name: 'ST01-Dehumidifier Air Purifier', on: true, tip: '空氣清淨功能。' },
+      { kind: 'switch', icon: 'blur', name: 'ST01-Dehumidifier PM2.5 Detect', on: true, tip: 'PM2.5 偵測功能。' },
+      { kind: 'button', icon: 'information-outline', name: 'ST01-Dehumidifier Get Info', state: '按下', tip: '讓模組重新向主機詢問一次完整狀態。' },
+    ],
+    sensors: [
+      { icon: 'water-percent', name: 'ST01-Dehumidifier Humidity Indoor', state: '68 %', tip: '目前室內濕度。' },
+      { icon: 'lightning-bolt', name: 'ST01-Dehumidifier Energy', state: '22.4 kWh', tip: '累積用電量，可加進 HA 能源儀表板。' },
+      { icon: 'blur', name: 'ST01-Dehumidifier PM 2.5', state: '12 µg/m³', tip: '空氣中 PM2.5 濃度。' },
+      { icon: 'cup-water', name: 'ST01-Dehumidifier Water Tank Full', state: '正常', tip: '水箱滿水偵測，「開啟」代表水箱滿了要倒水。' },
+      { icon: 'air-filter', name: 'ST01-Dehumidifier Filter Notify', state: '正常', tip: '濾網清潔提示。' },
+      { icon: 'weather-windy', name: 'ST01-Dehumidifier Side Air Flow', state: '關閉', tip: '側吹送風狀態。' },
+      { icon: 'thermometer', name: 'ST01-Dehumidifier Defrost', state: '正常', tip: '除霜狀態（低溫除濕時作動）。' },
+      ...saSensors('ST01-Dehumidifier', 'Hitachi', 'RD-200JX'),
+    ],
+    diagExtra: taixiaDiag('ST01-Dehumidifier'),
+  },
+
+  /* ---------- 日立全熱交換 ERV (erv-st01-ht / TaiSEIA) ---------- */
+  {
+    id: 'erv', tab: '日立全熱交換', en: 'Hitachi ERV',
+    device: { title: 'ERV-ST01-HT', prefix: 'ERV-ST01-HT', obj: 'ERV-ST01-HT ab70e2',
+      fw: '26.07.13+1 (ESPHome 2025.11.2)', mac: '70:AF:09:5D:AB:70', ip: '192.168.123.85',
+      sw: '2026.07.13', project: '26.07.13+1', esphomeVer: '2025.11.2 Jul 13 2026, 21:20:58',
+      esp32temp: '43.2 °C', uptime: '88.0 h', wifi: '-53 dBm' },
+    // 全熱交換只有送風，沒有設定溫度
+    climate: {
+      name: 'ERV-ST01-HT Climate', current: 28.0, mode: 'fan_only', min: 16, max: 32,
+      modes: ['fan_only', 'off'],
+      fan: '高', fanModes: ['低', '高'],
+    },
+    controls: [
+      { kind: 'select', icon: 'home-thermometer', name: 'ERV-ST01-HT Ventilate Mode', value: '自動',
+        options: ['自動', '全熱', '普通'], tip: '換氣模式：自動／全熱交換（回收室內冷暖）／普通換氣（直接進氣）。' },
+      { kind: 'select', icon: 'fan', name: 'ERV-ST01-HT Fan Level', value: '高',
+        options: ['低', '高'], tip: '風量段位，全熱交換機實機為低／高兩段。' },
+      { kind: 'switch', icon: 'power', name: 'ERV-ST01-HT Power Switch', on: true, tip: '全熱交換機電源開關。' },
+      { kind: 'button', icon: 'information-outline', name: 'ERV-ST01-HT Get Info', state: '按下', tip: '讓模組重新向主機詢問一次完整狀態。' },
+      { kind: 'button', icon: 'air-filter', name: 'ERV-ST01-HT Reset Filter Notify', state: '按下', tip: '清除主濾網清潔提示。' },
+      { kind: 'button', icon: 'air-filter', name: 'ERV-ST01-HT Reset Front Filter Notify', state: '按下', tip: '清除前置濾網清潔提示。' },
+      { kind: 'button', icon: 'air-filter', name: 'ERV-ST01-HT Reset PM2.5 Filter Notify', state: '按下', tip: '清除 PM2.5 濾網清潔提示。' },
+    ],
+    sensors: [
+      { icon: 'thermometer', name: 'ERV-ST01-HT Temperature Indoor', state: '28.0 °C', tip: '室內溫度。' },
+      { icon: 'tag', name: 'ERV-ST01-HT Model Type', state: '1', tip: '機型代碼。' },
+      { icon: 'air-filter', name: 'ERV-ST01-HT Filter Notify', state: '正常', tip: '主濾網清潔提示。' },
+      { icon: 'air-filter', name: 'ERV-ST01-HT Front Filter Notify', state: '正常', tip: '前置濾網清潔提示。' },
+      { icon: 'air-filter', name: 'ERV-ST01-HT PM2.5 Filter Notify', state: '正常', tip: 'PM2.5 濾網清潔提示。' },
+      ...saSensors('ERV-ST01-HT', 'Hitachi', 'KPI-252A'),
+    ],
+    diagExtra: taixiaDiag('ERV-ST01-HT'),
+  },
+];
+
+/* ============================ 渲染 ============================ */
+let activeIdx = 0;
+const brand = () => BRANDS[activeIdx];
+const cl = () => brand().climate;
+
+function renderTabs() {
+  document.getElementById('tabs').innerHTML = BRANDS.map((b, i) =>
+    `<button class="tab ${i === activeIdx ? 'active' : ''}" data-i="${i}"><span class="zh">${b.tab}</span><span class="en">${b.en}</span></button>`
+  ).join('');
+  document.querySelectorAll('.tab').forEach(t => { t.onclick = () => { activeIdx = +t.dataset.i; renderBrand(); }; });
+}
+
+// 依 kind 產生右側控制元件
+function rightHtml(e) {
+  if (e.kind === 'switch') return `<div class="toggle ${e.on ? 'on' : ''}"></div>`;
+  if (e.kind === 'select') return `<div class="select-ctrl"><span class="sv">${e.value}</span><span class="mdi mdi-menu-down"></span></div>`;
+  if (e.state2) return `<div class="state-2line"><div class="main">${e.state2[0]}</div><div class="sub">${e.state2[1]}</div></div>`;
+  return `<div class="state ${e.kind === 'button' ? 'action' : ''} ${e.wrap ? 'wrap' : ''}">${e.state}</div>`;
+}
+function rowHtml(e, i) {
+  const icon = e.svg ? ESPHOME_SVG : `<span class="mdi mdi-${e.icon} icon ${e.iconClass || ''}"></span>`;
+  const tag = e.disabled ? '<span class="tag-off">預設停用</span>' : '';
+  const cls = 'row' + (e.disabled ? ' disabled' : '') + (e.climate ? ' climate-row' : '');
+  const idx = i === undefined ? '' : ` data-idx="${i}"`;
+  return `<div class="${cls}"${idx}>${icon}<div class="name">${e.name}</div>${tag}${rightHtml(e)}<div class="tip">${e.tip}</div></div>`;
+}
+function renderRows(list, id) { document.getElementById(id).innerHTML = list.map(e => rowHtml(e)).join(''); }
+
+function climateRow() {
+  const c = cl(), m = MODE_META[c.mode];
+  const hasTarget = c.mode !== 'off' && c.mode !== 'fan_only';
+  const sub = hasTarget
+    ? `目標 ${c.target.toFixed(1)} °C · 目前 ${c.current.toFixed(1)} °C`
+    : `目前狀態: ${c.current.toFixed(1)} °C`;
+  return { icon: 'thermostat', iconClass: c.mode === 'off' ? '' : 'cool', climate: true, name: c.name, state2: [m.label, sub],
+    tip: '冷氣的主要控制實體。點一下打開溫控面板，可調模式／溫度／風速／擺動，也能加到儀表板變成溫控卡片。' };
+}
+
+function controlList() {
+  const b = brand();
+  return b.climate ? [climateRow(), ...b.controls] : [...b.controls];
+}
+function renderControls() {
+  const list = controlList();
+  document.getElementById('rows-controls').innerHTML = list.map((e, i) => rowHtml(e, i)).join('');
+  list.forEach((e, i) => {
+    const row = document.querySelector(`#rows-controls .row[data-idx="${i}"]`);
+    if (!row) return;
+    if (e.climate) row.addEventListener('click', openDialog);
+    else if (e.kind === 'switch') row.querySelector('.toggle').onclick = ev => { ev.stopPropagation(); e.on = !e.on; renderControls(); };
+    else if (e.kind === 'select') row.querySelector('.select-ctrl').onclick = ev => { ev.stopPropagation(); openRowMenu(row, e); };
+  });
+}
+
+function openRowMenu(row, e) {
+  const existing = row.querySelector('.row-menu');
+  const wasOpen = existing && existing.classList.contains('open');
+  closeMenus();
+  if (wasOpen) return;
+  const menu = document.createElement('div');
+  menu.className = 'row-menu open';
+  menu.innerHTML = e.options.map(o =>
+    `<div class="opt-item ${o === e.value ? 'sel' : ''}" data-v="${o}"><span class="dot"></span>${o}</div>`
+  ).join('');
+  menu.querySelectorAll('.opt-item').forEach(el => {
+    el.onclick = ev => { ev.stopPropagation(); e.value = el.dataset.v; renderControls(); };
+  });
+  row.appendChild(menu);
+}
+function closeMenus() {
+  document.querySelectorAll('.opt-menu.open').forEach(m => m.classList.remove('open'));
+  document.querySelectorAll('.row-menu').forEach(m => m.remove());
+}
+document.addEventListener('click', closeMenus);
+
+function renderBrand() {
+  const b = brand(), d = b.device;
+  renderTabs();
+  document.getElementById('sim-note').textContent =
+    `模擬畫面：${b.tab}（${b.en}）ESPhome 模組加入 Home Assistant 後的裝置頁。${b.climate ? '點「控制」裡的冷氣可展開溫控面板；' : ''}select 實體可點開下拉、switch 可切換；滑鼠移到任一實體會顯示中文說明。`;
+  document.getElementById('dev-title').textContent = d.title;
+  document.getElementById('dev-fw').textContent = '韌體：' + d.fw;
+  document.getElementById('dev-mac').textContent = d.mac;
+
+  renderControls();
+  renderRows([...b.sensors, ...baseSensors(d)], 'rows-sensors');
+  renderRows(baseConfig(d), 'rows-config');
+  renderRows([...baseDiag(d), ...(b.diagExtra || [])], 'rows-diag');
+}
+
+/* ===================== 溫控對話框 ===================== */
+const CX = 160, CY = 160, R = 132, START = 135, SWEEP = 270;
+function polar(a) { a = a * Math.PI / 180; return [CX + R * Math.cos(a), CY + R * Math.sin(a)]; }
+function arcPath(f, t) {
+  const [x1, y1] = polar(f), [x2, y2] = polar(t);
+  return `M ${x1} ${y1} A ${R} ${R} 0 ${(t - f) > 180 ? 1 : 0} 1 ${x2} ${y2}`;
+}
+function tempRange() { const c = cl(); return (c.mode === 'heat' && c.heatMax) ? [c.min, c.heatMax] : [c.min, c.max]; }
+
+function renderDial() {
+  const c = cl(), m = MODE_META[c.mode];
+  const on = c.mode !== 'off', hasTarget = on && c.mode !== 'fan_only';
+  document.getElementById('dial-track').setAttribute('d', arcPath(START, START + SWEEP));
+  const active = document.getElementById('dial-active'), knob = document.getElementById('dial-knob');
+  if (hasTarget) {
+    const [min, max] = tempRange(), frac = Math.min(1, Math.max(0, (c.target - min) / (max - min)));
+    active.style.display = ''; knob.style.display = '';
+    active.setAttribute('d', arcPath(START, START + SWEEP * frac));
+    active.setAttribute('stroke', m.color);
+    const [kx, ky] = polar(START + SWEEP * frac);
+    knob.setAttribute('cx', kx); knob.setAttribute('cy', ky); knob.setAttribute('fill', m.color);
+  } else {
+    active.style.display = 'none'; knob.style.display = 'none';
+  }
+  const center = document.getElementById('dial-center');
+  if (hasTarget) {
+    center.innerHTML = `<div class="action">${m.action}</div>` +
+      `<div class="temp-adjust"><button class="step" id="temp-dn">&minus;</button>` +
+      `<div class="target">${c.target.toFixed(1)}<span>°C</span></div>` +
+      `<button class="step" id="temp-up">+</button></div>` +
+      `<div class="cur-sub">目前 ${c.current.toFixed(1)} °C</div>`;
+    document.getElementById('temp-up').onclick = () => bumpTemp(0.5);
+    document.getElementById('temp-dn').onclick = () => bumpTemp(-0.5);
+  } else if (on) {
+    center.innerHTML = `<div class="action">${m.action}</div><div class="cur-big">${c.current.toFixed(1)} °C</div><div class="cur-sub">目前溫度</div>`;
+  } else {
+    center.innerHTML = `<div class="cur-label">目前溫度</div><div class="cur-big">${c.current.toFixed(1)} °C</div>`;
+  }
+}
+function bumpTemp(delta) {
+  const c = cl(), [min, max] = tempRange();
+  c.target = Math.min(max, Math.max(min, Math.round((c.target + delta) / 0.5) * 0.5));
+  renderDial(); syncControlRow();
+}
+
+function ctrlBtnHtml(kind, icon, label, value) {
+  return `<button class="ctrl-btn" data-kind="${kind}"><span class="cb-icon mdi mdi-${icon}"></span>` +
+    `<span class="cb-text"><span class="cb-label">${label}</span><span class="cb-value">${value}</span></span><div class="opt-menu"></div></button>`;
+}
+function renderButtons() {
+  const c = cl();
+  const btns = [ctrlBtnHtml('mode', MODE_META[c.mode].icon, '模式', MODE_META[c.mode].label),
+                ctrlBtnHtml('fan', 'fan', '風速模式', c.fan)];
+  if (c.swingModes) btns.push(ctrlBtnHtml('swing', SWING_ICON[c.swing] || 'arrow-oscillating-off', '擺動模式', c.swing));
+  if (c.presets) btns.push(ctrlBtnHtml('preset', 'star-outline', '預設模式', c.preset));
+  const wrap = document.getElementById('ctrl-buttons');
+  wrap.innerHTML = btns.join('');
+  wrap.querySelectorAll('.ctrl-btn').forEach(btn => { btn.onclick = e => { e.stopPropagation(); openDialogMenu(btn); }; });
+}
+function openDialogMenu(btn) {
+  const kind = btn.dataset.kind, menu = btn.querySelector('.opt-menu'), c = cl();
+  const wasOpen = menu.classList.contains('open');
+  document.querySelectorAll('#ctrl-buttons .opt-menu.open').forEach(m => m.classList.remove('open'));
+  if (wasOpen) return;
+  let items, current, onPick;
+  if (kind === 'mode') { items = c.modes.map(k => ({ v: k, label: MODE_META[k].label })); current = c.mode;
+    onPick = v => { c.mode = v; if (c.mode !== 'off' && c.mode !== 'fan_only') { const [mn, mx] = tempRange(); c.target = Math.min(mx, Math.max(mn, c.target || mn)); } renderDial(); renderButtons(); syncControlRow(); }; }
+  else if (kind === 'fan') { items = c.fanModes.map(f => ({ v: f, label: f })); current = c.fan; onPick = v => { c.fan = v; renderButtons(); }; }
+  else if (kind === 'swing') { items = c.swingModes.map(s => ({ v: s, label: s })); current = c.swing; onPick = v => { c.swing = v; renderButtons(); }; }
+  else { items = c.presets.map(p => ({ v: p, label: p })); current = c.preset; onPick = v => { c.preset = v; renderButtons(); }; }
+  menu.innerHTML = items.map(it => `<div class="opt-item ${it.v === current ? 'sel' : ''}" data-v="${it.v}"><span class="dot"></span>${it.label}</div>`).join('');
+  menu.querySelectorAll('.opt-item').forEach(el => { el.onclick = ev => { ev.stopPropagation(); onPick(el.dataset.v); menu.classList.remove('open'); }; });
+  menu.classList.add('open');
+}
+
+function syncControlRow() {
+  const el = document.querySelector('#rows-controls .climate-row .state-2line');
+  if (!el) return;
+  const c = cl(), m = MODE_META[c.mode], hasTarget = c.mode !== 'off' && c.mode !== 'fan_only';
+  el.querySelector('.main').textContent = m.label;
+  el.querySelector('.sub').textContent = hasTarget
+    ? `目標 ${c.target.toFixed(1)} °C · 目前 ${c.current.toFixed(1)} °C`
+    : `目前狀態: ${c.current.toFixed(1)} °C`;
+  const icon = document.querySelector('#rows-controls .climate-row .icon');
+  if (icon) icon.className = 'mdi mdi-thermostat icon ' + (c.mode === 'off' ? '' : 'cool');
+}
+
+function openDialog() {
+  const d = brand().device;
+  document.getElementById('dlg-obj').textContent = d.obj;
+  document.getElementById('dlg-fname').textContent = cl().name;
+  renderDial(); renderButtons();
+  document.getElementById('climate-dialog').classList.add('open');
+}
+function closeDialog() {
+  document.querySelectorAll('#ctrl-buttons .opt-menu.open').forEach(m => m.classList.remove('open'));
+  document.getElementById('climate-dialog').classList.remove('open');
+}
+document.getElementById('dlg-close').onclick = closeDialog;
+document.getElementById('climate-dialog').addEventListener('click', e => {
+  if (e.target.id === 'climate-dialog') closeDialog();
+  else if (!e.target.closest('.ctrl-btn')) document.querySelectorAll('#ctrl-buttons .opt-menu.open').forEach(m => m.classList.remove('open'));
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDialog(); });
+
+renderBrand();
+</script>
+</body>
+</html>

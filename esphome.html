@@ -83,6 +83,47 @@
             </div>
 
 
+            <!-- 產品介紹 (Collapsible) -->
+            <details id="pd"
+                class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                <summary
+                    class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-2xl font-bold text-slate-900">產品介紹</h2>
+                        <a href="#pd" class="text-slate-400 hover:text-sky-600 transition-colors"
+                            onclick="event.stopPropagation();">
+                            <i class="fa-solid fa-link text-lg"></i>
+                        </a>
+                    </div>
+                    <span class="text-slate-500 group-open:rotate-180 transition-transform duration-300">
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </span>
+                </summary>
+
+                <div class="p-6 border-t border-slate-200 bg-white">
+                    <div class="space-y-6 text-lg text-slate-700">
+                        <p class="text-slate-600">本模組透過 <span class="font-semibold">ESPhome</span> 將您的空調接入 <span
+                                class="font-semibold">Home Assistant (HA)</span>，讓冷氣、除濕機或全熱交換都能用手機 App、語音助理或自動化來控制，
+                            所有資料都留在家中本地、不需要經過外部雲端。目前支援國際、日立、大金、三菱<b>電機</b>及三菱<b>重工</b>空調，以及日立除濕機與日立全熱交換。</p>
+
+                        <p class="mt-4 text-slate-600">接入 HA 後，除了基本的開關、模式、溫度與風速控制，還能依機型讀取室內外溫度、濕度、用電量、壓縮機頻率等豐富的運轉資訊，
+                            並搭配自動化、場景與語音助理使用。</p>
+
+                        <!-- 實體模擬畫面引導 -->
+                        <div class="mt-2 bg-sky-50 border-l-4 border-sky-500 p-4 rounded-r-lg">
+                            <p class="text-slate-700">
+                                想先知道模組接上 Home Assistant 後，會出現哪些可控制與可監看的「實體」嗎？
+                                我們做了一個模擬畫面，可依品牌切換查看。
+                            </p>
+                            <a href="sim.html"
+                                class="mt-3 inline-block bg-sky-600 text-white text-sm font-semibold px-4 py-2 rounded shadow hover:bg-sky-700 transition-colors">
+                                查看各品牌實體模擬畫面 &rarr;
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
             <!-- 設定步驟 (Collapsible) -->
             <details
                 class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
