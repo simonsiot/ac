@@ -305,6 +305,77 @@
                 </div>
             </details>
 
+            <!-- ========== 在 Apple 家庭中的顯示與操作 ========== -->
+            <details id="home"
+                class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                <summary
+                    class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-2xl font-bold text-slate-900">在 Apple 家庭中的操作</h2>
+                        <a href="#home" class="text-slate-400 hover:text-sky-600 transition-colors"
+                            onclick="event.stopPropagation();"><i class="fa-solid fa-link text-lg"></i></a>
+                    </div>
+                    <span class="text-slate-500 group-open:rotate-180 transition-transform duration-300"><i
+                            class="fa-solid fa-chevron-down"></i></span>
+                </summary>
+
+                <div class="p-6 border-t border-slate-200 bg-white">
+                    <div class="space-y-6 text-lg text-slate-700">
+                        <p class="text-slate-600">依照上方「<a href="#set"
+                                class="text-sky-600 hover:underline font-semibold">設定步驟</a>」用 Apple「家庭 (Home)」App
+                            掃描配對分頁的 QR code 加入後（無需橋接器），即可直接在 App 中控制冷氣。以下是加入後在「家庭」App
+                            裡的實際顯示與操作方式。</p>
+
+                        <!-- 模式顏色變化 -->
+                        <div>
+                            <h3 class="text-xl font-bold text-sky-700 mb-2"><i
+                                    class="fa-solid fa-palette mr-2"></i>模式配色一眼辨識</h3>
+                            <p class="text-slate-600">在「家庭」App 的總覽畫面中，裝置圖示會依您選擇的運作模式自動變換色彩。例如啟動「<span
+                                    class="font-semibold text-sky-600">冷氣模式</span>」時數值顯示藍色；切換至「<span
+                                    class="font-semibold text-orange-500">暖氣模式</span>」則轉為橘色，讓您一眼就能掌握當前的空調狀態。</p>
+                            <img src="img/hk_mode_color.jpg" alt="Apple 家庭 冷暖氣模式顏色變化"
+                                class="shot mt-4 max-w-md mx-auto w-full">
+                        </div>
+
+                        <!-- 風速調整 -->
+                        <div>
+                            <h3 class="text-xl font-bold text-sky-700 mb-2"><i
+                                    class="fa-solid fa-fan mr-2"></i>風速調整（滑桿）</h3>
+                            <p class="text-slate-600">風速在「家庭」App 中以 0%～100% 的滑桿呈現。設定為 <span
+                                    class="font-semibold">0% 時即為自動風速（Auto）</span>，由空調本身依室溫自動決定風速；其餘數值則對應由弱至強的各段風速。<br>
+                                由於各品牌支援的風速段數不同，滑桿並非每 1% 都有實際效果，而是會依廠牌對應至各自支援的風速檔位：</p>
+                            <ul class="mt-3 ml-4 space-y-1 text-slate-600 text-base list-disc list-inside">
+                                <li><span class="font-semibold">國際 (Panasonic)</span>：靜音、弱、中、強，共 4 段</li>
+                                <li><span class="font-semibold">日立 (Hitachi)</span>：靜音、弱、中、強，共 4 段</li>
+                                <li><span class="font-semibold">大金 (Daikin)</span>：靜音、1、2、3、4、5，共 6 段</li>
+                                <li><span class="font-semibold">三菱電機 (Mitsubishi Electric)</span>：靜音、1、2、3、4，共 5 段</li>
+                                <li><span class="font-semibold">三菱重工 (Mitsubishi Heavy Industries)</span>：超低、弱、中、強，共 4 段
+                                </li>
+                            </ul>
+                            <img src="img/hk_fan.png" alt="Apple 家庭 風速調整滑桿"
+                                class="shot mt-4 max-w-[16rem] mx-auto w-full">
+                        </div>
+
+                        <!-- 遷移房間注意事項 -->
+                        <div class="bg-red-50 border-l-4 border-red-500 text-red-800 p-4 rounded-r-lg">
+                            <p class="font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>遷移房間注意事項（重要！）</p>
+                            <p class="mt-1 text-slate-700">由於自動調溫器（空調）本身並不含風速控制，模組會另外以一個獨立的「<span
+                                    class="font-semibold">風扇</span>」配件來提供風速調整。加入「家庭」App 後，如需將裝置遷移到其他房間，請<span
+                                    class="font-bold underline text-red-600">務必將「冷氣（自動調溫器）」與「風扇」一起遷移</span>，否則會造成風速調整功能消失。</p>
+                            <div class="mt-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-3 rounded-r-lg">
+                                <p><span class="font-bold"><i class="fa-solid fa-screwdriver-wrench mr-1"></i>補救方式：</span>若風速功能已消失或配件遍尋不著，請至控制台「<a
+                                        href="#reset" class="font-semibold underline hover:text-yellow-900">系統</a>」分頁的「配對重置」按下「<span
+                                        class="font-bold">清除配對</span>」，模組重開後會重新進入配對狀態，再依「<a href="#set"
+                                        class="font-semibold underline hover:text-yellow-900">設定步驟</a>」用 QR code 重新加入即可。</p>
+                            </div>
+                        </div>
+
+                        <p class="text-slate-500 text-base"><i class="fa-solid fa-circle-info text-sky-600 mr-1"></i>
+                            從「家庭」App 調整溫度、模式、風速等，模組內建的網頁控制台與 Home Assistant 也會即時同步顯示；反之亦然。</p>
+                    </div>
+                </div>
+            </details>
+
             <!-- ========== 韌體更新 ========== -->
             <details id="ota"
                 class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
