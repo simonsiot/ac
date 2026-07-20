@@ -100,14 +100,18 @@
 
                 <div class="p-6 border-t border-slate-200 bg-white">
                     <div class="space-y-5 text-lg text-slate-700">
-                        <p class="text-slate-600">本模組純跑 WiFi，無需雲端、無需橋接器，可直接被
+                        <p class="text-slate-600">本模組純跑Matter over WiFi，無需雲端、無需橋接器，可直接被
                             <span class="font-semibold text-sky-700">Google Home</span>、<span
                                 class="font-semibold text-sky-700">Apple 家庭</span>、<span
-                                class="font-semibold text-sky-700">Home Assistant</span> 掃 QR code 加入控制。</p>
+                                class="font-semibold text-sky-700">Home Assistant</span> 等Matter平台，透過掃 QR code 加入控制。</p>
 
-                        <p class="text-slate-600">若想在 <span class="font-semibold text-sky-700">Home Assistant</span>
-                            取得更完整的狀態資訊與更多可控項目，可在完成 QR code 配對後，於「配對」分頁<b>加開 MQTT 併行接入</b>（選用，需自備
-                            MQTT broker）；QR code 配對與 MQTT 可同時使用。</p>
+                        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-r-lg text-base">
+                            <p><span class="font-bold"><i class="fa-solid fa-qrcode mr-1"></i>請注意：</span>必須先完成 <b>QR code 配對</b>，才能正常控制裝置。請依下方「<a
+                                    href="#set" class="font-semibold underline hover:text-yellow-900">設定步驟</a>」連上 Wi-Fi 並掃 QR code 加入平台。</p>
+                        </div>
+
+                        <p class="text-slate-600">若要取得更多冷氣資訊，可用MQTT接入 <span class="font-semibold text-sky-700">Home
+                                Assistant</span>，完成 QR code 配對後，到「配對」分頁啟用 MQTT 即可。需先準備 MQTT broker。</p>
 
                         <p class="text-slate-600">目前支援以下廠牌空調：</p>
                         <ul class="ml-4 space-y-1 text-slate-600 list-disc list-inside">
@@ -210,9 +214,13 @@
                             <p class="ml-6 mt-1 text-slate-600">在控制台切換到「<b>配對</b>」分頁，會看到 QR code 與 11 碼配對碼。打開 <span
                                     class="font-semibold">Google Home</span>／<span class="font-semibold">Apple
                                     家庭</span>／<span class="font-semibold">Home Assistant</span>，新增裝置並掃描此 QR
-                                code（或手動輸入配對碼）即可完成。</p>
+                                code（或手動輸入配對碼）即可完成。<b>必須完成此配對，才能正常控制裝置</b>。</p>
                             <img src="img/mt_pairing.png" alt="配對分頁 QR code 與配對碼"
                                 class="shot mt-3 max-w-[18rem] mx-auto w-full">
+                            <div class="ml-6 mt-3 bg-sky-50 border-l-4 border-sky-400 text-sky-800 p-3 rounded-r-lg">
+                                <p><span class="font-bold"><i class="fa-solid fa-circle-info mr-1"></i>同一組 QR code 可重複使用：</span>配對完成後，還可以再掃<b>同一個 QR code</b>，直接把裝置加入其他平台。例如已加入
+                                    Google Home，仍可再掃一次加入 Apple 家庭與 Home Assistant，<b>不需清除配對</b>，多個平台可同時控制。</p>
+                            </div>
                             <div class="ml-6 mt-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-3 rounded-r-lg">
                                 <p><span class="font-bold"><i class="fa-solid fa-lightbulb mr-1"></i>小提醒：</span>若配對遲遲無法成功，請將模組重新上電，再回配對分頁確認配對碼後重試。</p>
                             </div>
@@ -265,29 +273,28 @@
                             <div>
                                 <h3 class="text-xl font-bold text-sky-700"><i class="fa-solid fa-qrcode mr-2"></i>配對</h3>
                                 <p class="text-slate-600 mt-2 text-base">顯示 QR code 與 11 碼配對碼，供 Google Home／Apple
-                                    家庭／Home Assistant 加入。也可看到目前已配對的 controller 數量。</p>
+                                    家庭／Home Assistant 加入。也可看到目前已配對的 controller 數量。<b>必須先完成配對，才能正常控制裝置</b>。</p>
+                                <p class="text-slate-600 mt-2 text-base">同一組 QR code 可<b>重複掃描</b>，直接把裝置再加入其他平台（不需清除配對），多個平台可同時控制。</p>
                             </div>
                         </div>
 
-                        <!-- MQTT 併行 -->
+                        <!-- MQTT（接入 HA） -->
                         <div class="grid sm:grid-cols-2 gap-4 items-start">
-                            <img src="img/mqtt_on.png" alt="配對分頁的 MQTT 併行設定" class="shot max-w-[16rem] mx-auto w-full sm:order-2">
+                            <img src="img/mqtt_on.png" alt="配對分頁的 MQTT 設定" class="shot max-w-[16rem] mx-auto w-full sm:order-2">
                             <div class="sm:order-1">
-                                <h3 class="text-xl font-bold text-sky-700"><i class="fa-solid fa-network-wired mr-2"></i>MQTT
-                                    併行（進階選用）</h3>
-                                <p class="text-slate-600 mt-2 text-base">配對分頁下半部提供 MQTT 設定，供想在 <b>Home Assistant</b>
-                                    取得更完整狀態與更多可控項目的進階使用者。打開「<b>啟用 MQTT</b>」開關並填入 Broker URI（帳號、密碼選填），按「儲存並重新連線」即可，模組會自動發佈
-                                    Home Assistant Auto Discovery，無需在 HA 手動新增實體。</p>
-                                <p class="text-slate-500 mt-2 text-sm">※ 需<b>自備 MQTT broker</b>（如 HA 的 Mosquitto
-                                    附加元件）。MQTT 與 QR code 配對可<b>同時運作</b>，但需在配對完成後才能啟用；一般使用者用平台配對即可，不需設定 MQTT。留空
-                                    Broker URI 或按「清除並停用」即可關閉。</p>
+                                <h3 class="text-xl font-bold text-sky-700"><i
+                                        class="fa-solid fa-network-wired mr-2"></i>MQTT（接入 HA）</h3>
+                                <p class="text-slate-600 mt-2 text-base">完成 QR code 配對後，開啟「<b>啟用
+                                        MQTT</b>」，填入 Broker URI 並儲存，模組就會自動出現在 Home Assistant。</p>
+                                <p class="text-slate-500 mt-2 text-sm">※ 需先準備 <b>MQTT broker</b>（例如 HA 的 Mosquitto）。只使用
+                                    Apple 家庭或 Google Home 時，不用設定 MQTT。</p>
                             </div>
                         </div>
 
                         <!-- Log -->
                         <div class="grid sm:grid-cols-2 gap-4 items-start">
-                            <img src="img/mt_log.png" alt="Log 分頁" class="shot max-w-[16rem] mx-auto w-full sm:order-2">
-                            <div class="sm:order-1">
+                            <img src="img/mt_log.png" alt="Log 分頁" class="shot max-w-[16rem] mx-auto w-full">
+                            <div>
                                 <h3 class="text-xl font-bold text-sky-700"><i class="fa-solid fa-clipboard-list mr-2"></i>Log</h3>
                                 <p class="text-slate-600 mt-2 text-base">記錄系統的<b>警告／錯誤</b>訊息，方便在沒有接電腦的情況下排查冷氣通訊問題。為節省配對期間的記憶體，需<b>配對完成後</b>才能啟用。</p>
                             </div>
@@ -295,8 +302,8 @@
 
                         <!-- 系統 -->
                         <div class="grid sm:grid-cols-2 gap-4 items-start">
-                            <img src="img/mt_system.png" alt="系統分頁" class="shot max-w-[16rem] mx-auto w-full">
-                            <div>
+                            <img src="img/mt_system.png" alt="系統分頁" class="shot max-w-[16rem] mx-auto w-full sm:order-2">
+                            <div class="sm:order-1">
                                 <h3 class="text-xl font-bold text-sky-700"><i class="fa-solid fa-gear mr-2"></i>系統</h3>
                                 <p class="text-slate-600 mt-2 text-base">提供管理功能：<b>WiFi 設定</b>（變更／清除）、<b>韌體更新（OTA）</b>（線上檢查更新或手動上傳）、<b>配對重置</b>、<b>恢復出廠設定</b>，以及<b>重新開機</b>。</p>
                             </div>
@@ -422,14 +429,14 @@
                             <li>用<b>支援資料傳輸</b>的 USB 線將模組接上電腦（純充電線不行）。</li>
                             <li>用電腦版 Chrome／Edge 前往
                                 <a href="https://flash.siot.cc" target="_blank"
-                                    class="text-sky-600 hover:text-sky-800 hover:underline font-semibold">https://flash.siot.cc</a>（ST01-MT版線上燒錄系統）。</li>
+                                    class="text-sky-600 hover:text-sky-800 hover:underline font-semibold">線上燒錄系統</a>。</li>
                             <li>按「<span class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">連接
                                     ST01 並開始燒錄</span>」，選擇帶「USB JTAG」字樣的連接埠，系統會<b>自動讀取模組、核對授權並抓取對應廠牌的最新韌體</b>。</li>
                             <li>確認畫面顯示的廠牌版本無誤後按「確認無誤，開始燒錄」，等進度跑完模組會自動重啟，再依「設定步驟」重新設定。</li>
                         </ol>
                         <div class="mt-4 bg-sky-50 border-l-4 border-sky-400 text-sky-800 p-3 rounded-r-lg">
-                            <p><i class="fa-solid fa-circle-info mr-1"></i>韌體與授權綁定模組本身，不需自行準備檔案。若畫面顯示「<b>查無授權</b>」（例如較早期出貨的模組），請記下畫面上的模組
-                                MAC，透過下方 LINE@ 聯絡我們開通後即可使用。</p>
+                            <p><i class="fa-solid fa-circle-info mr-1"></i>若畫面顯示「<b>查無授權</b>」或廠牌跟您購買的有出入，請記下畫面上的模組
+                                MAC，透過下方 LINE@ 聯絡我們。</p>
                         </div>
                     </div>
                 </div>
@@ -469,6 +476,52 @@
                     </ol>
                 </div>
             </details>
+
+            <!-- 購買連結區塊 -->
+            <div
+                class="mt-8 bg-gradient-to-br from-sky-50 to-white border-2 border-sky-100 rounded-xl p-6 text-center shadow-sm">
+                <h3 class="text-2xl font-bold text-slate-800 mb-3">立即購買</h3>
+
+                <!-- 說明提示 -->
+                <div
+                    class="bg-yellow-50 text-yellow-800 text-sm sm:text-base py-2 px-4 rounded-lg inline-block mb-4 border border-yellow-100">
+                    <span class="font-bold mr-1">🔔 下單提醒：</span>
+                    此賣場連結沒有問題，請依照廠牌選擇對應名稱，安心下單。
+                </div>
+
+                <br>
+
+                <a href="https://famistore.famiport.com.tw/famistore/users/239261/merchandises/691adf08240f36870f5c9a62"
+                    target="_blank"
+                    class="group inline-flex items-center justify-center px-8 py-3 text-lg font-bold text-white transition-all duration-200 bg-sky-600 rounded-full hover:bg-sky-700 hover:shadow-lg hover:-translate-y-0.5">
+                    前往全家好賣+ 下單
+                    <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </a>
+                <p class="text-slate-400 text-xs mt-3">點擊將開啟新視窗前往賣場</p>
+            </div>
+
+            <!-- 先看常見問題 -->
+            <div class="border-t border-slate-200 pt-6">
+                <a href="qa.html"
+                    class="flex items-center justify-between gap-3 bg-violet-50 hover:bg-violet-100 border border-violet-200 rounded-xl p-4 transition-colors group">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-violet-100 text-violet-600 p-2.5 rounded-full">
+                            <i class="fa-solid fa-circle-question text-lg"></i>
+                        </div>
+                        <div class="text-left">
+                            <p class="font-bold text-slate-800">詢問客服前，請先看看常見問題</p>
+                            <p class="text-sm text-slate-600">整理最常被問到的問題，看完多數都能自助解決。</p>
+                        </div>
+                    </div>
+                    <span class="text-violet-600 font-bold whitespace-nowrap group-hover:translate-x-1 transition-transform">
+                        前往 <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </span>
+                </a>
+            </div>
 
             <!-- 聯絡方式 -->
             <div class="text-center border-t border-slate-200 pt-6">

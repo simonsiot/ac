@@ -136,6 +136,12 @@
                 </summary>
 
                 <div class="p-6 border-t border-slate-200 bg-white">
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-r-lg mb-6"
+                        role="alert">
+                        <p class="font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>請先確認 Home Assistant 版本！</p>
+                        <p class="mt-1">Home Assistant Core 必須為 <b>2025.11（含）以後</b>的版本，否則模組加入後會<b>看不到任何實體</b>。可在 HA
+                            的「設定」&gt;「關於」查看目前版本，太舊請先更新 HA 再繼續以下步驟。</p>
+                    </div>
                     <ol class="list-decimal list-inside space-y-6 text-lg text-slate-700">
                         <!-- 步驟 1 -->
                         <li>
@@ -210,7 +216,8 @@
                         <li>
                             <span class="font-semibold">整合至 Home Assistant：</span>
                             <p class="ml-6 mt-1 text-slate-600">Home Assistant (HA) 通常會自動提示發現新設備，點擊加入即可。若無自動提示，請至 HA
-                                的「設定」>「裝置與服務」>「新增整合」，搜尋並選擇 <span class="font-bold">ESPhome</span>，然後輸入模組的 IP 位址手動加入。</p>
+                                的「設定」>「裝置與服務」>「新增整合」，搜尋並選擇 <span class="font-bold">ESPhome</span>，然後輸入模組的 IP 位址手動加入。
+                                加入後若<b>看不到任何實體</b>，請確認 HA Core 已更新到 <b>2025.11 以後</b>的版本。</p>
                         </li>
 
                         <!-- 步驟 7 -->
@@ -259,6 +266,17 @@
                         <p class="mt-2 font-semibold text-red-600">※ 若 OTA 更新失敗或出現異常，將需要把模組拆下，並透過 USB 接上電腦重新燒錄韌體喔！</p>
                     </div>
 
+                    <!-- 26.7.13 之後的更新改善 -->
+                    <div class="bg-sky-50 border-l-4 border-sky-400 text-sky-800 p-4 rounded-r-lg mb-8" role="alert">
+                        <p class="font-bold"><i class="fa-solid fa-circle-check mr-1"></i>好消息：更新到 26.7.13 版後，日後更新更輕鬆</p>
+                        <p class="mt-1">只要先更新到 <b>26.7.13（含）以後</b>的版本，之後就不必再手動下載韌體檔：</p>
+                        <ul class="list-disc list-inside mt-2 space-y-1">
+                            <li>裝置頁面會出現「<b>檢查更新</b>」按鈕，可隨時手動檢查是否有新版。</li>
+                            <li>模組<b>每週會定時自動檢查一次</b>更新。</li>
+                            <li>OTA 更新後<b>不會再需要重新設定 Wi-Fi</b>。</li>
+                        </ul>
+                    </div>
+
                     <!-- 方式一：OTA 無線更新 -->
                     <div class="mb-10">
                         <h3 class="text-xl font-bold text-sky-700 mb-4 border-b border-sky-200 pb-2"><i
@@ -267,7 +285,7 @@
                             <!-- 步驟 a -->
                             <li>
                                 <span class="font-semibold">下載 OTA 韌體檔案：</span>
-                                <p class="ml-6 mt-1 text-slate-600">請前往上方的 <a href="https://fw.siot.cc" target="_blank"
+                                <p class="ml-6 mt-1 text-slate-600">請前往 <a href="https://fw.siot.cc" target="_blank"
                                         class="text-sky-600 hover:text-sky-800 hover:underline transition-colors">fw.siot.cc</a>，輸入訂單編號後，下載檔名結尾為
                                     <code
                                         class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">ota.bin</code>
@@ -299,7 +317,8 @@
                             <li>
                                 <span class="font-semibold">重新設定 Wi-Fi（若有需要）：</span>
                                 <p class="ml-6 mt-1 text-slate-600">若更新後裝置 Wi-Fi 設定被清除，模組將重新建立熱點。請依照上方「設定步驟」中的 Wi-Fi
-                                    連線說明，重新完成網路設定，Home Assistant 即會自動恢復連線。</p>
+                                    連線說明，重新完成網路設定，Home Assistant 即會自動恢復連線。（更新到 <b>26.7.13 以後</b>的版本，OTA 不會再需要重新設定
+                                    Wi-Fi。）</p>
                             </li>
                         </ol>
                     </div>
@@ -312,7 +331,7 @@
                             <!-- 步驟 1 -->
                             <li>
                                 <span class="font-semibold">下載 USB 韌體檔案：</span>
-                                <p class="ml-6 mt-1 text-slate-600">請前往上方的 <a href="https://fw.siot.cc" target="_blank"
+                                <p class="ml-6 mt-1 text-slate-600">請前往 <a href="https://fw.siot.cc" target="_blank"
                                         class="text-sky-600 hover:text-sky-800 hover:underline transition-colors">fw.siot.cc</a>，輸入訂單編號後，下載檔名結尾為
                                     <code
                                         class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">factory.bin</code>
