@@ -137,7 +137,7 @@
                     </div>
                     <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
                         <p class="font-bold text-red-800 mb-1">3. 確認版本買對</p>
-                        <p class="text-sm text-red-700 leading-relaxed">標準版需 HA、HK 版功能少、終極版可切換廠牌，<a href="#q1-2"
+                        <p class="text-sm text-red-700 leading-relaxed">MT 版免 HA 就能用、ESPhome 標準版需要 HA，<a href="#q1-2"
                                 class="underline font-semibold">先看 Q1.2 對照表</a>。</p>
                     </div>
                 </div>
@@ -175,8 +175,8 @@
                             <p>看的是冷氣有沒有「<b>可外接 Wi-Fi 模組</b>」這項規格，<b>不是看年份</b>。各品牌對應的接頭如下：</p>
                             <ul class="space-y-1.5 ml-1">
                                 <li>📌 <b>日立壁掛 / 吊隱</b>：<code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN10</code>（部分新機型 CN30）</li>
-                                <li>📌 <b>大金</b>：<code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN-SAA</code></li>
-                                <li>📌 <b>國際 Panasonic</b>：<code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN-CNT</code></li>
+                                <li>📌 <b>大金</b>：<code class="bg-slate-100 px-2 py-0.5 rounded text-sm">S21</code>／<code class="bg-slate-100 px-2 py-0.5 rounded text-sm">S21 mini</code>／<code class="bg-slate-100 px-2 py-0.5 rounded text-sm">S403</code>／<code class="bg-slate-100 px-2 py-0.5 rounded text-sm">S403 mini</code> 四種規格之一</li>
+                                <li>📌 <b>國際 Panasonic</b>：一般壁掛為機身右下方外接模組接頭；K 系列／吊隱為 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN-SAA</code>（4-pin）＋<code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN-12V</code>（2-pin）；內建 Wi-Fi 機型為綠色 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN-SAA</code>（5-pin）</li>
                                 <li>📌 <b>三菱電機</b>：<code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN105</code></li>
                                 <li>📌 <b>三菱重工</b>：<code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CNS</code></li>
                             </ul>
@@ -194,7 +194,7 @@
                             class="flex items-center justify-between p-4 cursor-pointer bg-sky-50/60 hover:bg-sky-50 transition-colors list-none select-none">
                             <div class="flex items-center gap-2">
                                 <span class="text-sky-600 font-mono font-bold text-sm">Q1.2</span>
-                                <h3 class="text-lg font-semibold text-slate-900">標準版 / HK 版 / 終極版，我該選哪個？</h3>
+                                <h3 class="text-lg font-semibold text-slate-900">MT 版 / ESPhome 標準版，我該選哪個？</h3>
                             </div>
                             <span class="text-slate-400 group-open:rotate-180 transition-transform duration-300 shrink-0 ml-2">
                                 <i class="fa-solid fa-chevron-down"></i>
@@ -204,9 +204,8 @@
                             <div class="bg-sky-50 border border-sky-200 rounded-lg p-4">
                                 <p class="font-bold text-sky-800 mb-2">📌 30 秒快速選擇</p>
                                 <ul class="space-y-1.5 text-slate-700">
-                                    <li>只想用 <b>Siri / Apple 家庭</b> 開關冷氣 → <b class="text-indigo-700">HK 版</b></li>
-                                    <li>想做自動化、看耗電量、整合其他家電 → <b class="text-sky-700">標準版</b>（需要 HA）</li>
-                                    <li>多個品牌或想常換 → <b class="text-amber-700">終極版</b>（一機四廠牌切換）</li>
+                                    <li>沒有 HA，想直接用 <b>Google Home / Apple 家庭</b> 控制 → <b class="text-teal-700">MT 版</b>（掃 QR code 即可加入）</li>
+                                    <li>有 HA，想看最完整的運轉資訊、深度整合自動化 → <b class="text-sky-700">ESPhome 標準版</b>（需要 HA）</li>
                                 </ul>
                             </div>
 
@@ -215,9 +214,8 @@
                                     <thead>
                                         <tr class="bg-slate-100">
                                             <th class="border border-slate-200 p-2 text-left">比較項目</th>
-                                            <th class="border border-slate-200 p-2 text-center">HK 版</th>
-                                            <th class="border border-slate-200 p-2 text-center">標準版</th>
-                                            <th class="border border-slate-200 p-2 text-center">終極版</th>
+                                            <th class="border border-slate-200 p-2 text-center">MT 版</th>
+                                            <th class="border border-slate-200 p-2 text-center">ESPhome 標準版</th>
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white">
@@ -225,25 +223,26 @@
                                             <td class="border border-slate-200 p-2 font-semibold">需要 HA Server</td>
                                             <td class="border border-slate-200 p-2 text-center text-green-600">❌ 不用</td>
                                             <td class="border border-slate-200 p-2 text-center text-rose-600">✅ 要</td>
-                                            <td class="border border-slate-200 p-2 text-center text-rose-600">✅ 要</td>
                                         </tr>
                                         <tr class="bg-slate-50">
-                                            <td class="border border-slate-200 p-2 font-semibold">完整功能（送風 / 除濕 / 自動）</td>
-                                            <td class="border border-slate-200 p-2 text-center text-rose-600">❌ 沒有</td>
-                                            <td class="border border-slate-200 p-2 text-center text-green-600">✅</td>
-                                            <td class="border border-slate-200 p-2 text-center text-green-600">✅</td>
+                                            <td class="border border-slate-200 p-2 font-semibold">支援平台</td>
+                                            <td class="border border-slate-200 p-2 text-center">Google Home / Apple 家庭 / HA</td>
+                                            <td class="border border-slate-200 p-2 text-center">HA 專用</td>
                                         </tr>
                                         <tr>
-                                            <td class="border border-slate-200 p-2 font-semibold">多品牌切換</td>
-                                            <td class="border border-slate-200 p-2 text-center text-rose-600">❌</td>
-                                            <td class="border border-slate-200 p-2 text-center text-rose-600">❌</td>
-                                            <td class="border border-slate-200 p-2 text-center text-green-600">✅ 4 牌</td>
+                                            <td class="border border-slate-200 p-2 font-semibold">完整功能（送風 / 除濕 / 自動）</td>
+                                            <td class="border border-slate-200 p-2 text-center text-green-600">✅</td>
+                                            <td class="border border-slate-200 p-2 text-center text-green-600">✅</td>
                                         </tr>
                                         <tr class="bg-slate-50">
-                                            <td class="border border-slate-200 p-2 font-semibold">價格</td>
-                                            <td class="border border-slate-200 p-2 text-center">+150 元</td>
-                                            <td class="border border-slate-200 p-2 text-center">基本款</td>
-                                            <td class="border border-slate-200 p-2 text-center">最高</td>
+                                            <td class="border border-slate-200 p-2 font-semibold">詳細運轉資訊（室內外溫度 / 耗電量等）</td>
+                                            <td class="border border-slate-200 p-2 text-center">網頁控制台可看，接 HA 需啟用 MQTT</td>
+                                            <td class="border border-slate-200 p-2 text-center text-green-600">✅ 最完整</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border border-slate-200 p-2 font-semibold">內建網頁控制台（區網直接控制）</td>
+                                            <td class="border border-slate-200 p-2 text-center text-green-600">✅</td>
+                                            <td class="border border-slate-200 p-2 text-center">基本頁面（OTA 更新用）</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -252,8 +251,8 @@
                             <div class="bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded-r-md space-y-2">
                                 <p class="font-bold text-yellow-800">⚠️ 常見誤解</p>
                                 <ul class="text-yellow-800 text-sm space-y-1">
-                                    <li>• <b>Apple TV ≠ HA Server</b>。Apple TV 只是 HomeKit Hub，沒辦法跑 HA。</li>
-                                    <li>• <b>「HomeKit 直連」≠「全功能」</b>。HK 版受 Apple 協議限制，沒有送風、除濕、自動模式。</li>
+                                    <li>• <b>Apple TV ≠ HA Server</b>。Apple TV 只是家庭中樞，沒辦法跑 HA；標準版需要的是 HA。</li>
+                                    <li>• <b>兩版都支援完整模式</b>，但各平台 App 顯示的功能會依平台介面而異，最完整的資訊在 HA（標準版）或 MT 版的網頁控制台。</li>
                                 </ul>
                             </div>
                         </div>
@@ -343,7 +342,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <p class="text-slate-600">簡單一句話：<b>花錢省時間</b> 就買原廠 HK；<b>省錢花時間</b> 就選我的搭 HA 或 HK。</p>
+                            <p class="text-slate-600">簡單一句話：<b>花錢省時間</b> 就買原廠 HK；<b>省錢花時間</b> 就選我的（標準版搭 HA，或 MT 版直接加入 Google Home / Apple 家庭）。</p>
                         </div>
                     </details>
                 </div>
@@ -378,18 +377,20 @@
                             </span>
                         </summary>
                         <div class="p-5 border-t border-emerald-100 bg-white text-slate-700 leading-relaxed space-y-3">
-                            <p><b>不用先燒韌體</b>，出貨前我已經燒好了。請務必照順序：</p>
+                            <p><b>不用先燒韌體</b>，出貨前我已經燒好了。請先確認您購買的版本，再依照下列順序操作：</p>
                             <ol class="space-y-3 ml-1">
                                 <li><b>1. ⚡ 先用 Type-C 接電腦 / 充電器供電</b><br>
-                                    <span class="text-sm text-slate-600 ml-5">模組約 30 秒後會自動建立 Wi-Fi 熱點</span>
+                                    <span class="text-sm text-slate-600 ml-5">ESPHome 標準版／HK 版／終極版約 30 秒後會建立熱點；MT（Matter）版在全新或清除設定後會直接進入配對模式，若無法連上已設定的 Wi-Fi，約 60 秒後會重新建立熱點。</span>
                                 </li>
                                 <li><b>2. 📱 連上模組的熱點</b><br>
-                                    <span class="text-sm text-slate-600 ml-5">密碼固定：<code class="bg-slate-100 px-2 py-0.5 rounded text-sm">12345678</code></span>
+                                    <span class="text-sm text-slate-600 ml-5"><b>MT（Matter）版：</b>熱點為開放網路，<b>不需要密碼</b>。<br>
+                                        <b>ESPHome 標準版／HK 版／終極版：</b>密碼固定為 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">12345678</code>。</span>
                                 </li>
                                 <li><b>3. 🌐 設定 Wi-Fi</b><br>
-                                    <span class="text-sm text-slate-600 ml-5">瀏覽器開 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">192.168.4.1/wifi</code>，選您家 2.4GHz Wi-Fi、輸入密碼、按 SAVE</span>
+                                    <span class="text-sm text-slate-600 ml-5"><b>MT（Matter）版：</b>通常會自動開啟設定頁；若沒有，請開啟 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">192.168.4.1</code>。<br>
+                                        <b>ESPHome 標準版／HK 版／終極版：</b>開啟 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">192.168.4.1/wifi</code>。接著選擇家中 2.4GHz Wi-Fi 並輸入密碼。</span>
                                 </li>
-                                <li><b>4. ✅ 確認加入 HA / HomeKit 並能正常控制</b><br>
+                                <li><b>4. ✅ 確認加入對應平台並能正常控制</b><br>
                                     <span class="text-sm text-slate-600 ml-5">至少先確認「看得到裝置 + 開關有反應」</span>
                                 </li>
                                 <li><b>5. 🔌 都正常後，才把模組接到冷氣</b></li>
@@ -427,8 +428,8 @@
                                 <li>🔌 <b>三菱重工</b>：5-pin，標示 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CNS</code></li>
                                 <li>🔌 <b>日立壁掛</b>：黑色 4-pin <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN10</code>（部分新機 CN30）</li>
                                 <li>🔌 <b>日立吊隱</b>：同 CN10 系列，位置不同（拆殼找「黑色那一顆」）</li>
-                                <li>🔌 <b>大金</b>：標示 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN-SAA</code></li>
-                                <li>🔌 <b>國際 Panasonic</b>：標示 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN-CNT</code></li>
+                                <li>🔌 <b>大金</b>：找主機板標示 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">S21</code> 或 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">S403</code> 的插座；依機型分為標準／mini，共四種接頭，請對照安裝圖</li>
+                                <li>🔌 <b>國際 Panasonic</b>：一般壁掛接機身右下方外接模組接頭；K 系列／吊隱找 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN-SAA</code>（4-pin）＋<code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN-12V</code>（2-pin）；內建 Wi-Fi 機型找綠色 <code class="bg-slate-100 px-2 py-0.5 rounded text-sm">CN-SAA</code>（5-pin）</li>
                             </ul>
                             <p class="text-slate-700"><b>不確定時的標準動作</b>：拆殼後拍主機板照片 → LINE 傳給我 → 我幫您圈出正確接頭再裝。<b>花 5 分鐘確認，勝過燒一個模組</b>。</p>
                             <div class="text-center mt-4">
