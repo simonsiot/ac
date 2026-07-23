@@ -663,13 +663,19 @@
 
                     <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-lg">
                         <p class="font-bold text-emerald-800"><i class="fa-solid fa-qrcode mr-1"></i>配對貼紙不見了？線上就能查</p>
-                        <ol class="list-decimal list-inside ml-1 mt-2 space-y-1 text-base text-emerald-900">
-                            <li>找出模組的 <b>MAC 位址</b>：路由器的裝置清單、模組網頁控制台「狀態」分頁的裝置資訊，或購買時的出貨資訊都查得到。</li>
-                            <li>前往 <a href="https://flash.siot.cc" target="_blank"
-                                    class="font-bold underline">線上燒錄系統</a>，捲到「<b>配對 QR／配對碼查詢</b>」，輸入 MAC。</li>
-                            <li>頁面會顯示這顆模組的 QR code 與配對碼 — 與原貼紙完全相同，可直接掃描使用。</li>
+                        <p class="mt-2 text-base text-emerald-900 font-semibold">方法一：用 USB 接電腦查（最簡單，一定查得到）</p>
+                        <ol class="list-decimal list-inside ml-1 mt-1 space-y-1 text-base text-emerald-900">
+                            <li>用<b>支援資料傳輸</b>的 USB 線把模組接上電腦（純充電線不行）。</li>
+                            <li>用電腦版 Chrome／Edge 開啟 <a href="https://flash.siot.cc" target="_blank"
+                                    class="font-bold underline">線上燒錄系統</a>，按「連接」選擇模組。</li>
+                            <li>連接後頁面會<b>直接顯示這顆模組的配對 QR code 與配對碼</b>（與原貼紙完全相同），不需要燒錄，直接掃描使用即可。</li>
                         </ol>
-                        <p class="mt-2 text-sm text-emerald-800">找不到 MAC 也沒關係，LINE@ 提供購買資訊，我們幫您查。</p>
+                        <p class="mt-3 text-base text-emerald-900 font-semibold">方法二：知道模組 MAC 的話，直接輸入查詢</p>
+                        <ol class="list-decimal list-inside ml-1 mt-1 space-y-1 text-base text-emerald-900">
+                            <li>MAC 位址可從<b>路由器的裝置清單</b>或模組網頁控制台「狀態」分頁的裝置資訊查到（模組要連得上網）。</li>
+                            <li>到<a href="https://flash.siot.cc" target="_blank"
+                                    class="font-bold underline">線上燒錄系統</a>捲到「<b>配對 QR／配對碼查詢</b>」，輸入 MAC 即顯示。</li>
+                        </ol>
                     </div>
 
                     <div>
