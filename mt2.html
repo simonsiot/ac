@@ -54,7 +54,7 @@
             border-radius: 9999px;
             vertical-align: -0.1rem;
         }
-        .led-on { background: #2563eb; box-shadow: 0 0 6px #60a5fa; }
+        .led-on { background: #16a34a; box-shadow: 0 0 6px #4ade80; }
         .led-off { background: #cbd5e1; }
     </style>
 </head>
@@ -177,17 +177,32 @@
                 </summary>
 
                 <div class="p-6 border-t border-slate-200 bg-white">
-                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-r-lg mb-6"
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-r-lg mb-4"
                         role="alert">
                         <p class="font-bold">請先透過 USB 測試配對！</p>
                         <p>先插上 USB 電源，依下列步驟完成配對、確認 App 可正常控制後，再安裝到電器上。
-                            配對時請把手機<b>靠近模組</b>（透過藍牙傳輸），並確認家中 Wi-Fi 有 <b>2.4GHz</b>。</p>
+                            配對時請把手機<b>靠近模組</b>（透過藍牙傳輸）。</p>
+                    </div>
+
+                    <div class="bg-sky-50 border-l-4 border-sky-400 text-sky-800 p-4 rounded-r-lg mb-6">
+                        <p class="font-bold"><i class="fa-solid fa-list-check mr-1"></i>配對前置需求（缺一不可）</p>
+                        <ul class="list-disc list-inside mt-2 space-y-1 text-base">
+                            <li><b>手機請先連上家中 2.4GHz 的 Wi-Fi</b> — 手機連在 5GHz 或行動網路下會無法完成配對。</li>
+                            <li>家中要有<b>該平台的 Matter 網關</b>且在線，例如：
+                                <ul class="list-[circle] list-inside ml-6 mt-1 space-y-1">
+                                    <li><b>Google Home</b>：Google Nest 音箱／Nest 顯示器，或 Chromecast（Google TV）</li>
+                                    <li><b>Apple 家庭</b>：HomePod／HomePod mini，或 Apple TV 4K（家庭中樞）</li>
+                                    <li><b>Home Assistant</b>：已啟用 Matter 整合（Matter Server）的 HA 主機，配對用手機的 HA App</li>
+                                </ul>
+                            </li>
+                            <li>手機<b>藍牙開啟</b>、不要開 VPN。</li>
+                        </ul>
                     </div>
 
                     <ol class="list-decimal list-inside space-y-6 text-lg text-slate-700">
                         <li>
                             <span class="font-semibold">上電：</span>
-                            <p class="ml-6 mt-1 text-slate-600">從模組的 USB-C 孔上電。藍色 LED 會先<b>恆亮</b>幾秒（開機中），
+                            <p class="ml-6 mt-1 text-slate-600">從模組的 USB-C 孔上電。綠色 LED 會先<b>恆亮</b>幾秒（開機中），
                                 接著轉為<b>呼吸燈</b>（緩慢漸亮漸暗）— 代表模組已進入配對模式，等待掃描。
                                 模組未配對前<b>隨時可配對</b>，不用趕時間。</p>
                         </li>
@@ -247,7 +262,7 @@
                 </summary>
 
                 <div class="p-6 border-t border-slate-200 bg-white">
-                    <p class="text-slate-600 mb-4">模組上有一顆<b>藍色 LED</b>，不同閃法代表不同狀態：</p>
+                    <p class="text-slate-600 mb-4">模組上有一顆<b>綠色 LED</b>，不同閃法代表不同狀態：</p>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-base">
                             <thead>
@@ -630,14 +645,15 @@
                         <ul class="list-disc list-inside ml-4 mt-2 space-y-1 text-base text-slate-600">
                             <li>確認 LED 是<b>呼吸燈</b>（等待配對）。若不是，將模組重新上電。</li>
                             <li>確認手機<b>藍牙已開啟</b>，並把手機拿到模組旁邊。</li>
-                            <li>確認手機連的是家中 Wi-Fi（不要開 VPN）。</li>
+                            <li>確認手機連上<b>家中 2.4GHz 的 Wi-Fi</b>（不要用 5GHz 或行動網路，不要開 VPN）。</li>
                         </ul>
                     </div>
 
                     <div>
                         <p class="font-bold text-slate-800"><i class="fa-solid fa-circle-question text-sky-600 mr-1"></i>配對到一半失敗？</p>
                         <ul class="list-disc list-inside ml-4 mt-2 space-y-1 text-base text-slate-600">
-                            <li>確認家中 Wi-Fi 有 <b>2.4GHz</b>（若 App 讓您選網路，請選 2.4GHz 的）。</li>
+                            <li>確認手機連在家中 <b>2.4GHz</b> Wi-Fi（若 App 讓您選網路，也請選 2.4GHz 的）。</li>
+                            <li>確認家中有<b>該平台的 Matter 網關</b>且在線（見「設定步驟」的配對前置需求）。</li>
                             <li>將模組重新上電，等 LED 回到呼吸燈後再試一次。</li>
                             <li>若之前配對過，請先在 App 中移除舊裝置，再到「系統」分頁按「清除配對」後重試。</li>
                         </ul>
