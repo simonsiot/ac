@@ -304,9 +304,9 @@
                                             class="text-sky-600 hover:underline">Wi-Fi 相關</a>」）</td>
                                 </tr>
                                 <tr class="border-b border-slate-100">
-                                    <td class="py-3 pr-4 whitespace-nowrap"><span class="led led-on"></span> 三短閃循環（約 10 秒）</td>
-                                    <td class="py-3 pr-4">辨識模式 — 在 App 按「識別裝置」時閃</td>
-                                    <td class="py-3">用來確認「是哪一台」，多台同型機時很好用</td>
+                                    <td class="py-3 pr-4 whitespace-nowrap"><span class="led led-on"></span> 三短閃循環</td>
+                                    <td class="py-3 pr-4">①辨識模式 — 在 App 按「識別裝置」時閃約 10 秒<br>②長按 BOOT 鍵重設時＝「已觸發，可以放手了」</td>
+                                    <td class="py-3">①確認「是哪一台」，多台同型機時很好用<br>②放開按鍵即完成重設（見「重設步驟」）</td>
                                 </tr>
                                 <tr>
                                     <td class="py-3 pr-4 whitespace-nowrap"><span class="led led-on"></span> 極速閃（非常快）</td>
@@ -624,6 +624,17 @@
                                 與配對等<b>全部資料</b>。模組重開後 LED 回到<b>呼吸燈</b>（等待配對），依「設定步驟」用貼紙上的 QR code
                                 重新配對。<b>轉讓、出售模組前請務必執行此動作。</b></p>
                         </li>
+                        <li>
+                            <span class="font-semibold text-red-600">實體重設按鈕（網頁進不去時的最後手段）：</span>
+                            <p class="ml-6 mt-1 text-slate-600">當網頁控制台完全連不上、上述方式都無法操作時：</p>
+                            <ol class="list-decimal list-inside ml-10 mt-2 space-y-1 text-slate-600 text-base">
+                                <li>模組<b>維持通電</b>，拆開模組外殼，找到電路板上的 <b>BOOT 按鍵</b>。</li>
+                                <li><b>長按 BOOT 鍵約 10 秒</b>，直到綠色 LED 出現<b>三短閃</b>。</li>
+                                <li>看到三短閃後<b>放開按鍵</b>，模組隨即清除全部資料並自動重開機，回到<b>呼吸燈</b>（等待配對）。</li>
+                            </ol>
+                            <p class="ml-6 mt-2 text-slate-500 text-base">※ 效果等同「恢復出廠設定」。請務必<b>看到三短閃才放手</b>；
+                                按著不放模組不會重開機。此操作需在<b>通電運作中</b>進行（按著按鍵接上電源會進入燒錄模式，屬正常現象，放開重新上電即可）。</p>
+                        </li>
                     </ol>
                 </div>
             </details>
@@ -701,6 +712,13 @@
                     <div>
                         <p class="font-bold text-slate-800"><i class="fa-solid fa-circle-question text-sky-600 mr-1"></i>LED 極速閃（非常快）？</p>
                         <p class="ml-4 mt-2 text-base text-slate-600">授權驗證異常。請記下模組 MAC，透過下方 LINE@ 聯絡我們處理。</p>
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-slate-800"><i class="fa-solid fa-circle-question text-sky-600 mr-1"></i>網頁控制台連不上、什麼都動不了？</p>
+                        <p class="ml-4 mt-2 text-base text-slate-600">用「<a href="#reset"
+                                class="text-sky-600 hover:underline">重設步驟</a>」的<b>實體重設按鈕</b>：通電中拆殼長按 BOOT 鍵約 10 秒，
+                            看到 LED <b>三短閃</b>再放手，即完全重設回到可配對狀態。</p>
                     </div>
 
                     <div>
