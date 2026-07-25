@@ -45,6 +45,17 @@
             border-radius: 0.75rem;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
+
+        /* LED 燈號示意圓點 */
+        .led {
+            display: inline-block;
+            width: 0.9rem;
+            height: 0.9rem;
+            border-radius: 9999px;
+            vertical-align: -0.1rem;
+        }
+        .led-on { background: #16a34a; box-shadow: 0 0 6px #4ade80; }
+        .led-off { background: #cbd5e1; }
     </style>
 </head>
 
@@ -105,9 +116,15 @@
                                 class="font-semibold text-sky-700">Apple 家庭</span>、<span
                                 class="font-semibold text-sky-700">Home Assistant</span> 等Matter平台，透過掃 QR code 加入控制。</p>
 
+                        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-lg text-base">
+                            <p class="text-emerald-800"><span class="font-bold"><i class="fa-solid fa-bolt mr-1"></i>掃配對碼，一次完成 Wi-Fi 設定與配對：</span>
+                                <b>免連熱點、免輸入 Wi-Fi 密碼給模組</b> — 用 App 掃描<b>貼紙上的 QR code</b>，
+                                手機會透過藍牙把家中 Wi-Fi 自動交給模組，配網＋配對一個動作完成。</p>
+                        </div>
+
                         <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-r-lg text-base">
                             <p><span class="font-bold"><i class="fa-solid fa-qrcode mr-1"></i>請注意：</span>必須先完成 <b>QR code 配對</b>，才能正常控制裝置。請依下方「<a
-                                    href="#set" class="font-semibold underline hover:text-yellow-900">設定步驟</a>」連上 Wi-Fi 並掃 QR code 加入平台。</p>
+                                    href="#set" class="font-semibold underline hover:text-yellow-900">設定步驟</a>」掃 QR code 加入平台（Wi-Fi 會在配對過程中自動設定）。</p>
                         </div>
 
                         <p class="text-slate-600">若要取得更多冷氣資訊，可用MQTT接入 <span class="font-semibold text-sky-700">Home
@@ -160,72 +177,200 @@
                 </summary>
 
                 <div class="p-6 border-t border-slate-200 bg-white">
-                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-r-lg mb-6"
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-r-lg mb-4"
                         role="alert">
-                        <p class="font-bold">請先透過 USB 測試連線！</p>
-                        <p>先插上 USB 電源，確認模組可成功連上家中網路並完成配對後，再安裝到電器上。</p>
+                        <p class="font-bold">請先透過 USB 測試配對！</p>
+                        <p>先插上 USB 電源，依下列步驟完成配對、確認 App 可正常控制後，再安裝到電器上。
+                            配對時請把手機<b>靠近模組</b>（透過藍牙傳輸）。</p>
+                        <p class="mt-2 font-bold text-red-700"><i class="fa-solid fa-hand mr-1"></i>App
+                            顯示配對成功後，請等模組的 <b>LED 完全熄滅</b>（約再 10～20 秒）才拔電安裝 —
+                            呼吸燈還亮著代表模組還在儲存設定，太早拔電會需要重新設定。</p>
+                    </div>
+
+                    <div class="bg-sky-50 border-l-4 border-sky-400 text-sky-800 p-4 rounded-r-lg mb-6">
+                        <p class="font-bold"><i class="fa-solid fa-list-check mr-1"></i>配對前置需求（缺一不可）</p>
+                        <ul class="list-disc list-inside mt-2 space-y-1 text-base">
+                            <li><b>手機請先連上家中 2.4GHz 的 Wi-Fi</b> — 手機連在 5GHz 或行動網路下會無法完成配對。</li>
+                            <li>家中要有<b>該平台的 Matter 網關</b>且在線，例如：
+                                <ul class="list-[circle] list-inside ml-6 mt-1 space-y-1">
+                                    <li><b>Google Home</b>：Nest Hub（第 2 代）或 Google TV Streamer（4K 電視盒）— 台灣目前僅這兩款支援，<b>Nest 音箱不支援</b></li>
+                                    <li><b>Apple 家庭</b>：HomePod／HomePod mini，或 Apple TV 4K（家庭中樞）</li>
+                                    <li><b>Home Assistant</b>：已啟用 Matter 整合（Matter Server）的 HA 主機，配對用手機的 HA App</li>
+                                </ul>
+                            </li>
+                            <li>手機<b>藍牙開啟</b>、不要開 VPN。</li>
+                        </ul>
                     </div>
 
                     <ol class="list-decimal list-inside space-y-6 text-lg text-slate-700">
                         <li>
-                            <span class="font-semibold">開啟 Wi-Fi 熱點：</span>
-                            <p class="ml-6 mt-1 text-slate-600">從模組的 USB-C 孔上電，若約 <b>60 秒</b>內沒有連上已設定的 Wi-Fi，模組會自動建立一個 Wi-Fi
-                                熱點（全新或清除設定後也會直接進入此模式）。</p>
+                            <span class="font-semibold">上電：</span>
+                            <p class="ml-6 mt-1 text-slate-600">從模組的 USB-C 孔上電。綠色 LED 會先<b>恆亮</b>幾秒（開機中），
+                                接著轉為<b>呼吸燈</b>（緩慢漸亮漸暗）— 代表模組已進入配對模式，等待掃描。
+                                模組未配對前<b>隨時可配對</b>，不用趕時間。</p>
                         </li>
 
                         <li>
-                            <span class="font-semibold">辨識並連上熱點：</span>
-                            <p class="ml-6 mt-1 text-slate-600">熱點名稱為 <code
-                                    class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-&lt;廠牌&gt;-XXXXXX</code>（XXXXXX
-                                為 MAC 末六碼），<b>開放無密碼</b>，依廠牌：</p>
-                            <ul class="list-disc list-inside ml-10 mt-2 space-y-1 text-slate-600">
-                                <li>國際：<code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-pa</code></li>
-                                <li>日立：<code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-ht</code></li>
-                                <li>大金：<code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-dk</code></li>
-                                <li>三菱重工：<code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-mhi</code></li>
-                                <li>三菱電機：<code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-mt</code></li>
-                            </ul>
+                            <span class="font-semibold">打開智慧家庭 App 掃描配對 QR code：</span>
+                            <p class="ml-6 mt-1 text-slate-600">打開 <span class="font-semibold">Google Home</span>／<span
+                                    class="font-semibold">Apple 家庭</span>／<span class="font-semibold">Home
+                                    Assistant</span>，選「新增裝置」，掃描<b>模組背面貼紙上的 QR code</b>（或手動輸入 11 碼配對碼）。</p>
+                            <p class="ml-6 mt-2 text-slate-500 text-base">※ App 若出現「未經認證的配件」提示，選擇「仍要加入／繼續」即可。</p>
                         </li>
 
                         <li>
-                            <span class="font-semibold">進入設定頁：</span>
-                            <p class="ml-6 mt-1 text-slate-600">手機連上熱點後通常會<b>自動跳出</b>設定頁；若沒有，請開瀏覽器輸入
-                                <a href="http://192.168.4.1" target="_blank"
-                                    class="text-sky-600 hover:underline">192.168.4.1</a>。</p>
-                            <img src="img/mt_captive_portal.png" alt="AP 配對模式設定頁"
-                                class="shot mt-3 max-w-[18rem] mx-auto w-full">
+                            <span class="font-semibold">等待 App 自動完成 Wi-Fi 設定與配對：</span>
+                            <p class="ml-6 mt-1 text-slate-600">手機會<b>自動把家中 Wi-Fi 傳給模組</b>
+                                （部分手機會先詢問「允許分享 Wi-Fi 資訊」或讓您選擇要連的網路，請選 <b>2.4GHz</b> 的網路）。
+                                過程約 1～2 分鐘，App 顯示配對成功後，模組的燈光會<b>繼續閃爍約 10～20 秒</b>，<b>請等熄滅後再拔電</b>，即可接上電器開始控制。</p>
                         </li>
 
                         <li>
-                            <span class="font-semibold">設定家中 Wi-Fi：</span>
-                            <p class="ml-6 mt-1 text-slate-600">在「附近網路」點選您家中的 <b>2.4GHz</b> Wi-Fi（或手動輸入名稱），輸入密碼後按下 <span
-                                    class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">連線</span>。</p>
+                            <span class="font-semibold">（選用）開啟網頁控制台：</span>
+                            <p class="ml-6 mt-1 text-slate-600">模組已連上家中 Wi-Fi。請登入您家中<b>路由器的裝置清單</b>，找到主機名稱為
+                                <code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-&lt;廠牌&gt;-XXXXXX</code>（XXXXXX
+                                為 MAC 末六碼）的裝置，記下它取得的 IP 位址，於瀏覽器開啟該 IP，即可進入控制台查看狀態、控制冷氣與管理設定。</p>
                         </li>
 
                         <li>
-                            <span class="font-semibold">查詢模組的內網 IP：</span>
-                            <p class="ml-6 mt-1 text-slate-600">連上家中 Wi-Fi 後，請登入您家中<b>路由器的裝置清單</b>，找到主機名稱為
-                                <code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-&lt;廠牌&gt;-XXXXXX</code>
-                                的裝置，記下它取得的 IP 位址。把手機切回家中 Wi-Fi，於瀏覽器開啟該 IP，即可進入控制台。</p>
-                        </li>
-
-                        <li>
-                            <span class="font-semibold">加入智慧家庭平台（掃 QR code）：</span>
-                            <p class="ml-6 mt-1 text-slate-600">在控制台切換到「<b>配對</b>」分頁，會看到 QR code 與 11 碼配對碼。打開 <span
-                                    class="font-semibold">Google Home</span>／<span class="font-semibold">Apple
-                                    家庭</span>／<span class="font-semibold">Home Assistant</span>，新增裝置並掃描此 QR
-                                code（或手動輸入配對碼）即可完成。<b>必須完成此配對，才能正常控制裝置</b>。</p>
+                            <span class="font-semibold">（選用）加入其他平台（多平台同時控制）：</span>
+                            <p class="ml-6 mt-1 text-slate-600">已配對後想再加入另一個平台（例如已加入 Google Home，想再加 Apple
+                                家庭）：進入網頁控制台「<b>配對</b>」分頁，按「<b>開啟配對窗口（15 分鐘）</b>」，再到新平台掃<b>同一組 QR
+                                code</b>（貼紙上那組）即可加入。<b>不需清除配對</b>，已配對的平台不受影響，多個平台可同時控制。</p>
                             <img src="img/mt_pairing.png" alt="配對分頁 QR code 與配對碼"
                                 class="shot mt-3 max-w-[18rem] mx-auto w-full">
-                            <div class="ml-6 mt-3 bg-sky-50 border-l-4 border-sky-400 text-sky-800 p-3 rounded-r-lg">
-                                <p><span class="font-bold"><i class="fa-solid fa-circle-info mr-1"></i>同一組 QR code 可重複使用：</span>配對完成後，還可以再掃<b>同一個 QR code</b>，直接把裝置加入其他平台。例如已加入
-                                    Google Home，仍可再掃一次加入 Apple 家庭與 Home Assistant，<b>不需清除配對</b>，多個平台可同時控制。</p>
-                            </div>
-                            <div class="ml-6 mt-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-3 rounded-r-lg">
-                                <p><span class="font-bold"><i class="fa-solid fa-lightbulb mr-1"></i>小提醒：</span>若配對遲遲無法成功，請將模組重新上電，再回配對分頁確認配對碼後重試。</p>
-                            </div>
                         </li>
                     </ol>
+
+                    <div class="mt-6 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-3 rounded-r-lg">
+                        <p><span class="font-bold"><i class="fa-solid fa-lightbulb mr-1"></i>小提醒：</span>若配對遲遲無法成功，請將模組重新上電，等
+                            LED 回到<b>呼吸燈</b>後再試一次；更多情況請見「<a href="#ts"
+                                class="font-semibold underline hover:text-yellow-900">故障排除</a>」。</p>
+                    </div>
+                </div>
+            </details>
+
+            <!-- ========== LED 燈號說明 ========== -->
+            <details id="led"
+                class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                <summary
+                    class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-2xl font-bold text-slate-900">LED 燈號說明</h2>
+                        <a href="#led" class="text-slate-400 hover:text-sky-600 transition-colors"
+                            onclick="event.stopPropagation();"><i class="fa-solid fa-link text-lg"></i></a>
+                    </div>
+                    <span class="text-slate-500 group-open:rotate-180 transition-transform duration-300"><i
+                            class="fa-solid fa-chevron-down"></i></span>
+                </summary>
+
+                <div class="p-6 border-t border-slate-200 bg-white">
+                    <p class="text-slate-600 mb-4">模組上有一顆<b>綠色 LED</b>，不同閃法代表不同狀態：</p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-base">
+                            <thead>
+                                <tr class="border-b-2 border-slate-200 text-slate-700">
+                                    <th class="py-2 pr-4">燈號</th>
+                                    <th class="py-2 pr-4">意思</th>
+                                    <th class="py-2">您需要做什麼</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-slate-600">
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-3 pr-4 whitespace-nowrap"><span class="led led-off"></span> 恆滅</td>
+                                    <td class="py-3 pr-4">正常運作中（已連網）</td>
+                                    <td class="py-3">不用做任何事</td>
+                                </tr>
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-3 pr-4 whitespace-nowrap"><span class="led led-on"></span> 恆亮</td>
+                                    <td class="py-3 pr-4">開機初始化中（僅幾秒）</td>
+                                    <td class="py-3">稍等即可</td>
+                                </tr>
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-3 pr-4 whitespace-nowrap"><span class="led led-on"></span> 呼吸燈（緩慢漸亮漸暗）</td>
+                                    <td class="py-3 pr-4">等待配對（未配對），或配對窗口開啟中</td>
+                                    <td class="py-3">用 App 掃描貼紙上的 QR code 配對</td>
+                                </tr>
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-3 pr-4 whitespace-nowrap"><span class="led led-on"></span> 短雙閃（每 2 秒「噠噠」兩下）</td>
+                                    <td class="py-3 pr-4">Wi-Fi 斷線，自動重連中</td>
+                                    <td class="py-3">檢查路由器；連不上持續 2 分鐘會自動開設定熱點</td>
+                                </tr>
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-3 pr-4 whitespace-nowrap"><span class="led led-on"></span> 快閃（每秒 2 下）</td>
+                                    <td class="py-3 pr-4">設定熱點已開啟</td>
+                                    <td class="py-3">手機連上模組熱點，開 192.168.4.1 重新設定 Wi-Fi（見「<a href="#wifi"
+                                            class="text-sky-600 hover:underline">Wi-Fi 相關</a>」）</td>
+                                </tr>
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-3 pr-4 whitespace-nowrap"><span class="led led-on"></span> 三短閃循環</td>
+                                    <td class="py-3 pr-4">①辨識模式 — 在 App 按「識別裝置」時閃約 10 秒<br>②長按 BOOT 鍵重設時＝「已觸發，可以放手了」</td>
+                                    <td class="py-3">①確認「是哪一台」，多台同型機時很好用<br>②放開按鍵即完成重設（見「重設步驟」）</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 pr-4 whitespace-nowrap"><span class="led led-on"></span> 極速閃（非常快）</td>
+                                    <td class="py-3 pr-4">授權驗證異常</td>
+                                    <td class="py-3">請記下模組 MAC，透過 LINE@ 聯絡我們</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </details>
+
+            <!-- ========== Wi-Fi 相關（換 Wi-Fi／設定熱點） ========== -->
+            <details id="wifi"
+                class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                <summary
+                    class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-2xl font-bold text-slate-900">Wi-Fi 相關（換 Wi-Fi／設定熱點）</h2>
+                        <a href="#wifi" class="text-slate-400 hover:text-sky-600 transition-colors"
+                            onclick="event.stopPropagation();"><i class="fa-solid fa-link text-lg"></i></a>
+                    </div>
+                    <span class="text-slate-500 group-open:rotate-180 transition-transform duration-300"><i
+                            class="fa-solid fa-chevron-down"></i></span>
+                </summary>
+
+                <div class="p-6 border-t border-slate-200 bg-white space-y-8">
+
+                    <!-- 單純換 Wi-Fi -->
+                    <div>
+                        <h3 class="text-xl font-bold text-sky-700 mb-3"><i class="fa-solid fa-wifi mr-2"></i>單純換 Wi-Fi（模組還連得上網時）</h3>
+                        <ol class="list-decimal list-inside space-y-3 text-lg text-slate-700">
+                            <li>用瀏覽器開啟模組的網頁控制台（裝置 IP）。</li>
+                            <li>到「<b>系統</b>」分頁 →「WiFi 設定」→ 按「<span
+                                    class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">變更 WiFi</span>」。</li>
+                            <li>選擇新的 <b>2.4GHz</b> 網路、輸入密碼後送出，模組會自動重開並連上新網路。</li>
+                        </ol>
+                        <p class="text-slate-600 mt-2"><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i>
+                            這樣換 Wi-Fi <b>不會影響已完成的配對</b>，Google Home／Apple 家庭連線會自動恢復。</p>
+                    </div>
+
+                    <!-- 什麼時候會出現設定熱點 -->
+                    <div>
+                        <h3 class="text-xl font-bold text-sky-700 mb-3"><i class="fa-solid fa-tower-broadcast mr-2"></i>什麼時候會出現「設定熱點」？</h3>
+                        <p class="text-slate-600 text-lg">已完成設定的模組若<b>連續 2 分鐘</b>連不上原本的
+                            Wi-Fi（例如換了路由器、改了 Wi-Fi 名稱或密碼、路由器故障），會<b>自動開出設定熱點</b>（LED 轉為<b>快閃</b>）：</p>
+                        <ol class="list-decimal list-inside space-y-3 text-lg text-slate-700 mt-3">
+                            <li>用手機搜尋 Wi-Fi，連上名稱為
+                                <code class="bg-slate-200 text-slate-800 px-2 py-1 rounded-md font-mono">mt-st01-&lt;廠牌&gt;-XXXXXX</code>
+                                的熱點（<b>開放無密碼</b>；國際 <code class="bg-slate-200 px-1 rounded font-mono">pa</code>、日立
+                                <code class="bg-slate-200 px-1 rounded font-mono">ht</code>、大金
+                                <code class="bg-slate-200 px-1 rounded font-mono">dk</code>、三菱重工
+                                <code class="bg-slate-200 px-1 rounded font-mono">mhi</code>、三菱電機
+                                <code class="bg-slate-200 px-1 rounded font-mono">mt</code>）。</li>
+                            <li>手機通常會<b>自動跳出</b>設定頁；沒有的話開瀏覽器輸入
+                                <a href="http://192.168.4.1" target="_blank" class="text-sky-600 hover:underline">192.168.4.1</a>。</li>
+                            <li>選擇家中新的 <b>2.4GHz</b> Wi-Fi、輸入密碼後按連線 — 完成後模組自動連回網路，<b>配對照樣保留</b>。</li>
+                        </ol>
+                        <img src="img/mt_captive_portal.png" alt="設定熱點的 WiFi 設定頁"
+                            class="shot mt-3 max-w-[18rem] mx-auto w-full">
+                        <div class="mt-3 bg-sky-50 border-l-4 border-sky-400 text-sky-800 p-3 rounded-r-lg text-base">
+                            <p><i class="fa-solid fa-circle-info mr-1"></i>熱點每次開啟約 8 分鐘，之後模組會自動重開再試著連線（再連不上會再開熱點，循環直到設定完成）。
+                                <b>全新未配對的模組不會開熱點</b> — 直接掃 QR code 配對即可。</p>
+                        </div>
+                    </div>
                 </div>
             </details>
 
@@ -274,7 +419,8 @@
                                 <h3 class="text-xl font-bold text-sky-700"><i class="fa-solid fa-qrcode mr-2"></i>配對</h3>
                                 <p class="text-slate-600 mt-2 text-base">顯示 QR code 與 11 碼配對碼，供 Google Home／Apple
                                     家庭／Home Assistant 加入。也可看到目前已配對的 controller 數量。<b>必須先完成配對，才能正常控制裝置</b>。</p>
-                                <p class="text-slate-600 mt-2 text-base">同一組 QR code 可<b>重複掃描</b>，直接把裝置再加入其他平台（不需清除配對），多個平台可同時控制。</p>
+                                <p class="text-slate-600 mt-2 text-base">要加入其他平台時，按「<b>開啟配對窗口（15 分鐘）</b>」，再到新平台掃<b>同一組 QR
+                                        code</b> 即可（不需清除配對），多個平台可同時控制；也可提前關閉窗口。</p>
                             </div>
                         </div>
 
@@ -305,7 +451,7 @@
                             <img src="img/mt_system.png" alt="系統分頁" class="shot max-w-[16rem] mx-auto w-full sm:order-2">
                             <div class="sm:order-1">
                                 <h3 class="text-xl font-bold text-sky-700"><i class="fa-solid fa-gear mr-2"></i>系統</h3>
-                                <p class="text-slate-600 mt-2 text-base">提供管理功能：<b>WiFi 設定</b>（變更／清除）、<b>韌體更新（OTA）</b>（線上檢查更新或手動上傳）、<b>配對重置</b>、<b>恢復出廠設定</b>，以及<b>重新開機</b>。</p>
+                                <p class="text-slate-600 mt-2 text-base">提供管理功能：<b>變更 WiFi</b>、<b>韌體更新（OTA）</b>（線上檢查更新或手動上傳）、<b>配對重置</b>、<b>恢復出廠設定</b>，以及<b>重新開機</b>。</p>
                             </div>
                         </div>
                     </div>
@@ -432,7 +578,8 @@
                                     class="text-sky-600 hover:text-sky-800 hover:underline font-semibold">線上燒錄系統</a>。</li>
                             <li>按「<span class="font-bold bg-slate-100 border border-slate-300 px-2 py-1 rounded text-sm">連接
                                     ST01 並開始燒錄</span>」，選擇帶「USB JTAG」字樣的連接埠，系統會<b>自動讀取模組、核對授權並抓取對應廠牌的最新韌體</b>。</li>
-                            <li>確認畫面顯示的廠牌版本無誤後按「確認無誤，開始燒錄」，等進度跑完模組會自動重啟，再依「設定步驟」重新設定。</li>
+                            <li>確認畫面顯示的廠牌版本無誤後按「確認無誤，開始燒錄」，等進度跑完模組會自動重啟。燒錄完成頁會直接顯示這顆模組的<b>配對
+                                    QR code 與配對碼</b>（與貼紙相同），依「設定步驟」重新配對即可。</li>
                         </ol>
                         <div class="mt-4 bg-sky-50 border-l-4 border-sky-400 text-sky-800 p-3 rounded-r-lg">
                             <p><i class="fa-solid fa-circle-info mr-1"></i>若畫面顯示「<b>查無授權</b>」或廠牌跟您購買的有出入，請記下畫面上的模組
@@ -459,21 +606,126 @@
                 <div class="p-6 border-t border-slate-200 bg-white">
                     <ol class="list-decimal list-inside space-y-6 text-lg text-slate-700">
                         <li>
-                            <span class="font-semibold">清除配對（重新配對）：</span>
-                            <p class="ml-6 mt-1 text-slate-600">若從 Google Home／Apple Home 移除裝置後配對碼失效、無法重新加入，請至「系統」分頁的「配對重置」按下「<span
-                                    class="font-bold">清除配對</span>」，模組重開後會重新進入配對狀態。</p>
+                            <span class="font-semibold">清除配對（重新配對，Wi-Fi 保留）：</span>
+                            <p class="ml-6 mt-1 text-slate-600">若從 Google Home／Apple 家庭移除裝置後無法重新加入，請至「系統」分頁的「配對重置」按下「<span
+                                    class="font-bold">清除配對</span>」。模組重開後 LED 回到<b>呼吸燈</b>，用貼紙上的 QR code
+                                重新配對即可（Wi-Fi 設定不受影響）。</p>
                         </li>
                         <li>
-                            <span class="font-semibold">清除 Wi-Fi（換網路）：</span>
-                            <p class="ml-6 mt-1 text-slate-600">在「系統」分頁按「<span class="font-bold">清除 WiFi 設定</span>」，模組會重開並回到
-                                AP 配對模式，可重新設定要連線的 Wi-Fi。</p>
+                            <span class="font-semibold">換 Wi-Fi：</span>
+                            <p class="ml-6 mt-1 text-slate-600">不需要清除任何東西 — 見「<a href="#wifi"
+                                    class="text-sky-600 hover:underline">Wi-Fi 相關</a>」：模組連得上網時用「變更
+                                WiFi」；連不上時等 2 分鐘讓設定熱點自動出現。兩種方式<b>配對都會保留</b>。</p>
                         </li>
                         <li>
-                            <span class="font-semibold text-red-600">恢復出廠設定：</span>
+                            <span class="font-semibold text-red-600">恢復出廠設定（全部清除）：</span>
                             <p class="ml-6 mt-1 text-slate-600">在「系統」分頁按「<span class="font-bold">恢復出廠設定</span>」，會清除 Wi-Fi、MQTT
-                                與配對等<b>全部資料</b>，回到初始狀態，需重新設定 Wi-Fi 並重新配對。</p>
+                                與配對等<b>全部資料</b>。模組重開後 LED 回到<b>呼吸燈</b>（等待配對），依「設定步驟」用貼紙上的 QR code
+                                重新配對。<b>轉讓、出售模組前請務必執行此動作。</b></p>
+                        </li>
+                        <li>
+                            <span class="font-semibold text-red-600">實體重設按鈕（網頁進不去時的最後手段）：</span>
+                            <p class="ml-6 mt-1 text-slate-600">當網頁控制台完全連不上、上述方式都無法操作時：</p>
+                            <ol class="list-decimal list-inside ml-10 mt-2 space-y-1 text-slate-600 text-base">
+                                <li>模組<b>維持通電</b>，拆開模組外殼，找到電路板上的 <b>BOOT 按鍵</b>。</li>
+                                <li><b>長按 BOOT 鍵約 10 秒</b>，直到綠色 LED 出現<b>三短閃</b>。</li>
+                                <li>看到三短閃後<b>放開按鍵</b>，模組隨即清除全部資料並自動重開機，回到<b>呼吸燈</b>（等待配對）。</li>
+                            </ol>
+                            <p class="ml-6 mt-2 text-slate-500 text-base">※ 效果等同「恢復出廠設定」。請務必<b>看到三短閃才放手</b>；
+                                按著不放模組不會重開機。此操作需在<b>通電運作中</b>進行（按著按鍵接上電源會進入燒錄模式，屬正常現象，放開重新上電即可）。</p>
                         </li>
                     </ol>
+                </div>
+            </details>
+
+            <!-- ========== 故障排除 ========== -->
+            <details id="ts"
+                class="group border border-slate-200 rounded-xl overflow-hidden open:shadow-md transition-all duration-300">
+                <summary
+                    class="flex items-center justify-between p-4 cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors list-none select-none">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-2xl font-bold text-slate-900">故障排除</h2>
+                        <a href="#ts" class="text-slate-400 hover:text-sky-600 transition-colors"
+                            onclick="event.stopPropagation();"><i class="fa-solid fa-link text-lg"></i></a>
+                    </div>
+                    <span class="text-slate-500 group-open:rotate-180 transition-transform duration-300"><i
+                            class="fa-solid fa-chevron-down"></i></span>
+                </summary>
+
+                <div class="p-6 border-t border-slate-200 bg-white space-y-6 text-lg text-slate-700">
+
+                    <div>
+                        <p class="font-bold text-slate-800"><i class="fa-solid fa-circle-question text-sky-600 mr-1"></i>掃 QR code 後 App 找不到裝置？</p>
+                        <ul class="list-disc list-inside ml-4 mt-2 space-y-1 text-base text-slate-600">
+                            <li>確認 LED 是<b>呼吸燈</b>（等待配對）。若不是，將模組重新上電。</li>
+                            <li>確認手機<b>藍牙已開啟</b>，並把手機拿到模組旁邊。</li>
+                            <li>確認手機連上<b>家中 2.4GHz 的 Wi-Fi</b>（不要用 5GHz 或行動網路，不要開 VPN）。</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-slate-800"><i class="fa-solid fa-circle-question text-sky-600 mr-1"></i>配對到一半失敗？</p>
+                        <ul class="list-disc list-inside ml-4 mt-2 space-y-1 text-base text-slate-600">
+                            <li>確認手機連在家中 <b>2.4GHz</b> Wi-Fi（若 App 讓您選網路，也請選 2.4GHz 的）。</li>
+                            <li>確認家中有<b>該平台的 Matter 網關</b>且在線（見「設定步驟」的配對前置需求）。</li>
+                            <li>將模組重新上電，等 LED 回到呼吸燈後再試一次。</li>
+                            <li>若之前配對過，請先在 App 中移除舊裝置，再到「系統」分頁按「清除配對」後重試。</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-slate-800"><i class="fa-solid fa-circle-question text-sky-600 mr-1"></i>配對成功，但 App 顯示「離線」？</p>
+                        <ul class="list-disc list-inside ml-4 mt-2 space-y-1 text-base text-slate-600">
+                            <li>看模組 LED：<b>恆滅</b>＝模組其實在線，問題多半在平台端 —
+                                <b>把家中的 Matter 網關重新啟動</b>（Google：Nest Hub 第 2 代或 Google TV Streamer；
+                                Apple：HomePod 或 Apple TV），等它上線後通常就恢復。</li>
+                            <li>LED <b>短雙閃</b>＝模組斷線中，請檢查路由器。</li>
+                            <li>都排除後仍離線：在 App 移除裝置 → 模組「清除配對」→ 重新配對一次。</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-slate-800"><i class="fa-solid fa-circle-question text-sky-600 mr-1"></i>換了路由器／改了 Wi-Fi 密碼，模組連不上？</p>
+                        <p class="ml-4 mt-2 text-base text-slate-600">什麼都不用按 — 模組連不上舊 Wi-Fi <b>2 分鐘後會自動開出設定熱點</b>（LED
+                            快閃），連上熱點到 192.168.4.1 設定新 Wi-Fi 即可，配對不會掉。詳見「<a href="#wifi"
+                                class="text-sky-600 hover:underline">Wi-Fi 相關</a>」。</p>
+                    </div>
+
+                    <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-lg">
+                        <p class="font-bold text-emerald-800"><i class="fa-solid fa-qrcode mr-1"></i>配對貼紙不見了？線上就能查</p>
+                        <p class="mt-2 text-base text-emerald-900 font-semibold">方法一：用 USB 接電腦查（最簡單，一定查得到）</p>
+                        <ol class="list-decimal list-inside ml-1 mt-1 space-y-1 text-base text-emerald-900">
+                            <li>用<b>支援資料傳輸</b>的 USB 線把模組接上電腦（純充電線不行）。</li>
+                            <li>用電腦版 Chrome／Edge 開啟 <a href="https://flash.siot.cc" target="_blank"
+                                    class="font-bold underline">線上燒錄系統</a>，按「連接」選擇模組。</li>
+                            <li>連接後頁面會<b>直接顯示這顆模組的配對 QR code 與配對碼</b>（與原貼紙完全相同），不需要燒錄，直接掃描使用即可。</li>
+                        </ol>
+                        <p class="mt-3 text-base text-emerald-900 font-semibold">方法二：知道模組 MAC 的話，直接輸入查詢</p>
+                        <ol class="list-decimal list-inside ml-1 mt-1 space-y-1 text-base text-emerald-900">
+                            <li>MAC 位址可從<b>路由器的裝置清單</b>或模組網頁控制台「狀態」分頁的裝置資訊查到（模組要連得上網）。</li>
+                            <li>到<a href="https://flash.siot.cc" target="_blank"
+                                    class="font-bold underline">線上燒錄系統</a>捲到「<b>配對 QR／配對碼查詢</b>」，輸入 MAC 即顯示。</li>
+                        </ol>
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-slate-800"><i class="fa-solid fa-circle-question text-sky-600 mr-1"></i>LED 極速閃（非常快）？</p>
+                        <p class="ml-4 mt-2 text-base text-slate-600">授權驗證異常。請記下模組 MAC，透過下方 LINE@ 聯絡我們處理。</p>
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-slate-800"><i class="fa-solid fa-circle-question text-sky-600 mr-1"></i>網頁控制台連不上、什麼都動不了？</p>
+                        <p class="ml-4 mt-2 text-base text-slate-600">用「<a href="#reset"
+                                class="text-sky-600 hover:underline">重設步驟</a>」的<b>實體重設按鈕</b>：通電中拆殼長按 BOOT 鍵約 10 秒，
+                            看到 LED <b>三短閃</b>再放手，即完全重設回到可配對狀態。</p>
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-slate-800"><i class="fa-solid fa-circle-question text-sky-600 mr-1"></i>模組完全沒反應／反覆重開？</p>
+                        <p class="ml-4 mt-2 text-base text-slate-600">改用「<a href="#ota"
+                                class="text-sky-600 hover:underline">韌體更新</a>」章節的<b>方式二：USB 線上燒錄</b>（線上燒錄系統）。
+                            重灌後用頁面顯示的 QR code 重新配對即可。</p>
+                    </div>
                 </div>
             </details>
 
@@ -543,7 +795,7 @@
 
         <!-- 頁腳 -->
         <footer class="text-center mt-6 text-slate-500 text-sm">
-            <p>&copy; 2025 Simon IoT. All Rights Reserved.</p>
+            <p>&copy; 2026 Simon IoT. All Rights Reserved.</p>
         </footer>
     </div>
 
