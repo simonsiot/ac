@@ -639,37 +639,42 @@ const BRANDS = [
   {
     id: 'dehu', tab: '日立除濕機', en: 'Hitachi Dehumidifier',
     device: { title: 'ST01-Dehumidifier', prefix: 'ST01-Dehumidifier', obj: 'ST01-Dehumidifier 9a2c1b',
-      fw: '26.07.13 (ESPHome 2025.11.2)', mac: '70:AF:09:5D:9A:2C', ip: '192.168.123.84',
-      sw: '2026.03.07', project: '26.07.13', esphomeVer: '2025.11.2 Jul 13 2026, 20:48:12',
+      fw: '26.09.02 (ESPHome 2025.11.2)', mac: '70:AF:09:5D:9A:2C', ip: '192.168.123.84',
+      sw: '2026.03.07', project: '26.09.02', esphomeVer: '2025.11.2 Sep 2 2026, 20:48:12',
       esp32temp: '44.8 °C', uptime: '402.5 h', wifi: '-47 dBm' },
     // 除濕機沒有 climate；主控是 Fan 實體 + 目標濕度 + 運轉模式 select
     controls: [
-      { kind: 'switch', icon: 'fan', name: 'ST01-Dehumidifier Fan', on: true, tip: '除濕機主風扇：開關與 4 段風速、預設模式都在這個 Fan 實體上控制。' },
-      { kind: 'number', icon: 'water-percent', name: 'ST01-Dehumidifier Relative Humidity', state: '55 %', tip: '目標濕度：除濕到這個濕度就會停，可自行調整。' },
+      { kind: 'switch', icon: 'fan', name: 'ST01-Dehumidifier Fan', on: true, tip: '除濕機主風扇實體：這裡切換開／關，點進去還能調 4 段風速，以及 normal／home／boost／sleep／eco 五種預設模式。' },
+      { kind: 'number', icon: 'water-percent', name: 'ST01-Dehumidifier Relative Humidity', state: '55 %', tip: '目標濕度（40～70%）：室內濕度降到這個值除濕機就會停下來，跟遙控器上設定的濕度是同一個。' },
       { kind: 'select', icon: 'state-machine', name: 'ST01-Dehumidifier Operation Mode', value: 'normal',
-        options: ['normal', 'eco', 'home', 'boost', 'sleep'], tip: '運轉模式：一般／節能／居家／強力／舒眠。' },
-      { kind: 'number', icon: 'timer-sand', name: 'ST01-Dehumidifier Operating Time', state: '0 h', tip: '定時運轉時數，0 代表未設定。' },
-      { kind: 'number', icon: 'volume-source', name: 'ST01-Dehumidifier Sound Mode', state: '2', tip: '提示音／音量段位。' },
-      { kind: 'number', icon: 'brightness-6', name: 'ST01-Dehumidifier Light Level', state: '3', tip: '面板燈亮度段位。' },
-      { kind: 'switch', icon: 'power', name: 'ST01-Dehumidifier Power Switch', on: true, tip: '除濕機電源開關。' },
-      { kind: 'switch', icon: 'lock', name: 'ST01-Dehumidifier Lock', on: false, tip: '兒童鎖：鎖住面板避免誤觸。' },
-      { kind: 'switch', icon: 'air-conditioner', name: 'ST01-Dehumidifier Auto Air Flow', on: true, tip: '自動擺風（左右送風）。' },
-      { kind: 'switch', icon: 'shield-sun', name: 'ST01-Dehumidifier Mildew Proof', on: true, tip: '防霉：關機後短暫送風把內部吹乾。' },
-      { kind: 'switch', icon: 'water-alert', name: 'ST01-Dehumidifier Humidity Notify', on: false, tip: '濕度到達提示。' },
-      { kind: 'switch', icon: 'volume-high', name: 'ST01-Dehumidifier Beeper', on: true, tip: '操作提示音開關。' },
-      { kind: 'switch', icon: 'air-filter', name: 'ST01-Dehumidifier Air Purifier', on: true, tip: '空氣清淨功能。' },
-      { kind: 'switch', icon: 'blur', name: 'ST01-Dehumidifier PM2.5 Detect', on: true, tip: 'PM2.5 偵測功能。' },
-      { kind: 'button', icon: 'information-outline', name: 'ST01-Dehumidifier Get Info', state: '按下', tip: '讓模組重新向主機詢問一次完整狀態。' },
+        options: ['normal', 'eco', 'home', 'boost', 'sleep'], tip: '運轉模式：normal 一般／eco 節能／home 居家／boost 強力／sleep 舒眠。' },
+      { kind: 'number', icon: 'timer-sand', name: 'ST01-Dehumidifier Operating Time', state: '0 h', tip: '定時運轉時數（0～99 小時），時間到自動關機，0 代表不定時。' },
+      { kind: 'number', icon: 'volume-source', name: 'ST01-Dehumidifier Sound Mode', state: '2', tip: '提示音段位（0～2），0 為靜音。' },
+      { kind: 'number', icon: 'brightness-6', name: 'ST01-Dehumidifier Light Level', state: '3', tip: '面板燈亮度段位（0～3），0 為全暗。' },
+      { kind: 'switch', icon: 'power', name: 'ST01-Dehumidifier Power Switch', on: true, tip: '除濕機電源開關（等同遙控器開／關）。' },
+      { kind: 'switch', icon: 'lock', name: 'ST01-Dehumidifier Lock', on: false, tip: '兒童鎖：鎖住面板按鍵避免誤觸。' },
+      { kind: 'switch', icon: 'air-conditioner', name: 'ST01-Dehumidifier Auto Air Flow', on: true, tip: '自動擺風：出風口左右自動擺動送風。' },
+      { kind: 'switch', icon: 'shield-sun', name: 'ST01-Dehumidifier Mildew Proof', on: true, tip: '關機防霉：關機後先短暫送風把機器內部吹乾，減少發霉與異味。' },
+      { kind: 'switch', icon: 'water-alert', name: 'ST01-Dehumidifier Humidity Notify', on: false, tip: '濕度到達提示：除濕到目標濕度時機器會提示。' },
+      { kind: 'switch', icon: 'volume-high', name: 'ST01-Dehumidifier Beeper', on: true, tip: '操作時機器是否發出「嗶」聲。' },
+      { kind: 'switch', icon: 'air-filter', name: 'ST01-Dehumidifier Air Purifier', on: true, tip: '空氣清淨功能開關。' },
+      { kind: 'switch', icon: 'blur', name: 'ST01-Dehumidifier PM2.5 Detect', on: true, tip: 'PM2.5 偵測功能開關，關掉後 PM 2.5 感測器不會更新。' },
+      { kind: 'button', icon: 'information-outline', name: 'ST01-Dehumidifier Get Info', state: '按下', tip: '讓模組重新向除濕機詢問一次完整狀態。' },
     ],
     sensors: [
-      { icon: 'water-percent', name: 'ST01-Dehumidifier Humidity Indoor', state: '68 %', tip: '目前室內濕度。' },
+      { icon: 'water-percent', name: 'ST01-Dehumidifier Humidity Indoor', state: '68 %', tip: '除濕機偵測到的目前室內濕度，也是自動除濕判斷用的數值。' },
       { icon: 'lightning-bolt', name: 'ST01-Dehumidifier Energy', state: '22.4 kWh', tip: '累積用電量，可加進 HA 能源儀表板。' },
-      { icon: 'blur', name: 'ST01-Dehumidifier PM 2.5', state: '12 µg/m³', tip: '空氣中 PM2.5 濃度。' },
-      { icon: 'cup-water', name: 'ST01-Dehumidifier Water Tank Full', state: '正常', tip: '水箱滿水偵測，「開啟」代表水箱滿了要倒水。' },
-      { icon: 'air-filter', name: 'ST01-Dehumidifier Filter Notify', state: '正常', tip: '濾網清潔提示。' },
-      { icon: 'weather-windy', name: 'ST01-Dehumidifier Side Air Flow', state: '關閉', tip: '側吹送風狀態。' },
-      { icon: 'thermometer', name: 'ST01-Dehumidifier Defrost', state: '正常', tip: '除霜狀態（低溫除濕時作動）。' },
+      { icon: 'blur', name: 'ST01-Dehumidifier PM 2.5', state: '12 µg/m³', tip: '空氣中 PM2.5 濃度，需開啟 PM2.5 Detect 才會更新。' },
+      { icon: 'cup-water', name: 'ST01-Dehumidifier Water Tank Full', state: '正常', tip: '水箱滿水偵測，「開啟」代表水箱滿了要倒水；倒完水後自動除濕會重新判斷要不要開機。' },
+      { icon: 'air-filter', name: 'ST01-Dehumidifier Filter Notify', state: '正常', tip: '濾網清潔提示，「開啟」代表該洗濾網了。' },
+      { icon: 'weather-windy', name: 'ST01-Dehumidifier Side Air Flow', state: '關閉', tip: '側吹送風是否作動中。' },
+      { icon: 'thermometer', name: 'ST01-Dehumidifier Defrost', state: '正常', tip: '除霜狀態，低溫環境除濕時機器會暫停除濕先除霜，屬正常現象。' },
       ...saSensors('ST01-Dehumidifier', 'Hitachi', 'RD-200JX'),
+    ],
+    // 自動除濕（模組內建邏輯，設定類別）
+    configExtra: [
+      { kind: 'switch', icon: 'auto-mode', name: 'ST01-Dehumidifier Auto Dehumidify', on: true, tip: '自動除濕總開關（出廠預設開啟）：室內濕度高於下方門檻就自動開機並切到 normal 模式，降到目標濕度以下就自動關機。想完全手動控制時關掉即可。' },
+      { kind: 'number', icon: 'water-percent-alert', name: 'ST01-Dehumidifier Auto Humidity Threshold', state: '70 %', tip: '自動除濕的啟動門檻（41～80%，預設 70）：室內濕度超過這個值才會自動開機。關機點則是上面「Relative Humidity」的目標濕度。' },
     ],
     diagExtra: taixiaDiag('ST01-Dehumidifier'),
   },
@@ -717,10 +722,23 @@ const cl = () => brand().climate;
 
 function renderTabs() {
   document.getElementById('tabs').innerHTML = BRANDS.map((b, i) =>
-    `<button class="tab ${i === activeIdx ? 'active' : ''}" data-i="${i}"><span class="zh">${b.tab}</span><span class="en">${b.en}</span></button>`
+    `<button class="tab ${i === activeIdx ? 'active' : ''}" data-i="${i}" title="分享連結：sim.html#${b.id}"><span class="zh">${b.tab}</span><span class="en">${b.en}</span></button>`
   ).join('');
-  document.querySelectorAll('.tab').forEach(t => { t.onclick = () => { activeIdx = +t.dataset.i; renderBrand(); }; });
+  document.querySelectorAll('.tab').forEach(t => { t.onclick = () => { selectBrand(+t.dataset.i, true); }; });
 }
+
+// 網址 #hash 對應廠牌 id（sim.html#dk / #pa / #ht / #mt / #mhi / #dehu / #erv），分享連結可直接跳到該廠牌
+function brandIdxFromHash() {
+  const id = decodeURIComponent(location.hash.replace(/^#/, '')).toLowerCase();
+  const i = BRANDS.findIndex(b => b.id === id);
+  return i >= 0 ? i : null;
+}
+function selectBrand(i, updateHash) {
+  activeIdx = i;
+  if (updateHash && location.hash !== '#' + BRANDS[i].id) history.replaceState(null, '', '#' + BRANDS[i].id);
+  renderBrand();
+}
+window.addEventListener('hashchange', () => { const i = brandIdxFromHash(); if (i !== null && i !== activeIdx) selectBrand(i, false); });
 
 // 依 kind 產生右側控制元件
 function rightHtml(e) {
@@ -752,19 +770,22 @@ function controlList() {
   const b = brand();
   return b.climate ? [climateRow(), ...b.controls] : [...b.controls];
 }
-function renderControls() {
-  const list = controlList();
-  document.getElementById('rows-controls').innerHTML = list.map((e, i) => rowHtml(e, i)).join('');
+// 可互動的列表（控制／設定）：switch 可切換、select 可展開下拉
+function renderInteractive(list, id) {
+  const box = document.getElementById(id);
+  box.innerHTML = list.map((e, i) => rowHtml(e, i)).join('');
+  const rerender = () => renderInteractive(list, id);
   list.forEach((e, i) => {
-    const row = document.querySelector(`#rows-controls .row[data-idx="${i}"]`);
+    const row = box.querySelector(`.row[data-idx="${i}"]`);
     if (!row) return;
     if (e.climate) row.addEventListener('click', openDialog);
-    else if (e.kind === 'switch') row.querySelector('.toggle').onclick = ev => { ev.stopPropagation(); e.on = !e.on; renderControls(); };
-    else if (e.kind === 'select') row.querySelector('.select-ctrl').onclick = ev => { ev.stopPropagation(); openRowMenu(row, e); };
+    else if (e.kind === 'switch') row.querySelector('.toggle').onclick = ev => { ev.stopPropagation(); e.on = !e.on; rerender(); };
+    else if (e.kind === 'select') row.querySelector('.select-ctrl').onclick = ev => { ev.stopPropagation(); openRowMenu(row, e, rerender); };
   });
 }
+function renderControls() { renderInteractive(controlList(), 'rows-controls'); }
 
-function openRowMenu(row, e) {
+function openRowMenu(row, e, rerender) {
   const existing = row.querySelector('.row-menu');
   const wasOpen = existing && existing.classList.contains('open');
   closeMenus();
@@ -775,7 +796,7 @@ function openRowMenu(row, e) {
     `<div class="opt-item ${o === e.value ? 'sel' : ''}" data-v="${o}"><span class="dot"></span>${o}</div>`
   ).join('');
   menu.querySelectorAll('.opt-item').forEach(el => {
-    el.onclick = ev => { ev.stopPropagation(); e.value = el.dataset.v; renderControls(); };
+    el.onclick = ev => { ev.stopPropagation(); e.value = el.dataset.v; (rerender || renderControls)(); };
   });
   row.appendChild(menu);
 }
@@ -796,7 +817,7 @@ function renderBrand() {
 
   renderControls();
   renderRows([...b.sensors, ...baseSensors(d)], 'rows-sensors');
-  renderRows(baseConfig(d), 'rows-config');
+  renderInteractive([...baseConfig(d), ...(b.configExtra || [])], 'rows-config');
   renderRows([...baseDiag(d), ...(b.diagExtra || [])], 'rows-diag');
 }
 
@@ -905,7 +926,7 @@ document.getElementById('climate-dialog').addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDialog(); });
 
-renderBrand();
+selectBrand(brandIdxFromHash() ?? 0, false);
 </script>
 </body>
 </html>
