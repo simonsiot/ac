@@ -1,0 +1,309 @@
+# ST01 Matter 控制器 — 本機 MQTT API 規格
+
+> 適用：SimonIoT ST01 Matter 系列韌體（ESP32-C3，ESP-IDF）。冷氣：國際 Panasonic（PA）、日立 Hitachi（HT）、大金 Daikin（DK）、三菱重工 MHI、三菱電機 Mitsubishi Electric（MT）；附錄：日立全熱交換機（HTERV）、日立除濕機（HTDEHU）。
+> 文件版本：2026-10-20，內容依韌體原始碼整理。
+> 本文寫給**系統整合商與 AI 助理**看：照本文即可寫出 Savant／Control4／Crestron／Node-RED／Home Assistant 等系統的 MQTT driver。
+
+---
+
+## 0. 一分鐘摘要（給 AI 的重點）
+
+- 裝置是 **MQTT client**，連到**使用者自己指定的本機 broker**（例如 Mosquitto）。沒有雲端，也不需要廠商帳號。
+- 所有 topic 都在使用者自訂的 `<prefix>` 底下：
+  - `<prefix>/state`：**狀態 JSON**（retained），每 5 秒發一次，每次收到指令後會再立即發一次。
+  - `<prefix>/availability`：`online` 或 `offline`（retained，用 LWT 實作）。
+  - `<prefix>/cmd/<key>`：**控制指令**，每個項目一個 topic，payload 是**純文字**，不是 JSON。
+- **不接受**「一筆 JSON 包含所有設定」的指令格式。要同時設定開機、模式、溫度、風速，就依序發多筆。
+- 沒有 `request_id`／ACK topic。確認方式：指令發出後，看下一筆 `<prefix>/state` 的值是否已變成目標值。
+- 只支援明碼 TCP `mqtt://`（預設埠 1883），可以設帳號密碼。**不支援 TLS／mqtts**。
+- 同時會發 Home Assistant MQTT Discovery（`homeassistant/...`），HA 使用者不用自己寫設定。
+
+---
+
+## 1. 裝置端設定
+
+1. 先完成 Matter 配對（Apple 家庭／Google Home／Home Assistant 擇一）。**未配對前 MQTT 開關會反灰無法開啟**，原因是配對期間記憶體不足。
+2. 用瀏覽器打開裝置網頁（`http://<裝置IP>/`），在「配對」分頁打開「MQTT 併行」開關。頁面重新載入後會出現 Broker 設定欄位：
+
+| 欄位 | 說明 | 範例 |
+|---|---|---|
+| Broker URI | 必填，格式為 `mqtt://<host>:<port>` | `mqtt://192.168.1.10:1883` |
+| 使用者名稱 | 選填 | `st01` |
+| 密碼 | 選填（網頁不會回顯） | |
+| Topic 前綴 | 選填，留空時預設等於裝置 hostname（例如 `mt-st01-pa-4439cc`，已含 MAC 末 6 碼，同一網段內不會重複）。可以改成任何不含 `+` `#` 的路徑 | `home/hvac/living-room` |
+
+3. 按「儲存並重新連線」，不用重開機。網頁的「MQTT 狀態」卡會顯示 `connected`／`connecting`／`waiting-pair`／`error`／`disabled`。
+
+注意事項：
+- **每台裝置的前綴必須不同**，否則多台冷氣的狀態和指令會互相干擾。
+- MQTT 和 Matter 同時運作：Apple 家庭或 Google 改的狀態會出現在 MQTT state，MQTT 下的指令也會同步到 Matter。
+- 連線參數：MQTT 3.1.1、keepalive 30 秒、斷線後自動重連。
+
+---
+
+## 2. Topic 一覽
+
+| Topic | 方向 | QoS | Retain | Payload |
+|---|---|---|---|---|
+| `<prefix>/state` | 裝置 → broker | 0 | 是 | 狀態 JSON（見 §3） |
+| `<prefix>/availability` | 裝置 → broker | 1 | 是 | `online`／`offline` |
+| `<prefix>/cmd/<key>` | 整合系統 → 裝置 | 裝置以 QoS 1 訂閱 `<prefix>/cmd/+` | **請勿 retain** | 純文字值（見 §4） |
+| `homeassistant/<component>/<uid>[_<key>]/config` | 裝置 → broker | 1 | 是 | HA Discovery（非 HA 系統可忽略） |
+
+- `availability` 在連上 broker 時發 `online`。裝置斷電或斷網時，由 broker 依 Last Will 自動改成 `offline`（最慢約 45 秒）。
+- **指令不要用 retain 發送**，否則裝置每次重新連線都會再執行一次舊指令。
+- 指令 payload 最長 31 字元，超過的部分會被截掉。
+
+---
+
+## 3. 狀態 JSON：`<prefix>/state`
+
+### 3.1 冷氣共通欄位（五個品牌都有）
+
+```json
+{
+  "power": true,
+  "mode": 0,
+  "mode_name": "cool",
+  "fan": 0,
+  "fan_name": "auto",
+  "target_c": 24.0,
+  "indoor_c": 27.2,
+  "outdoor_c": 31.0,
+  "watt": 850,
+  "energy_kwh": 123.45,
+  "filter_notify": false,
+  "mildew_en": 1,
+  "mildew_min": 30,
+  "mildew_run": 0,
+  "mildew_left": ""
+}
+```
+
+| 欄位 | 型別 | 說明 |
+|---|---|---|
+| `power` | bool | 開機為 `true` |
+| `mode` | int | 機器原始模式：0=冷氣、1=除濕、2=送風、3=自動、4=暖氣（關機時保留最後的模式） |
+| `mode_name` | string | `off`／`cool`／`dry`／`fan_only`／`auto`／`heat`。**關機時為 `off`**，建議以此欄位為準 |
+| `fan` | int | 風速索引，0=auto、1=quiet，2 以上依品牌而定（見 §5） |
+| `fan_name` | string | 風速名稱，與 `cmd/fan` 可接受的值完全相同 |
+| `target_c` | float | 設定溫度（°C） |
+| `indoor_c` | float | 室內溫度（°C） |
+| `outdoor_c` | float | 室外溫度（°C） |
+| `watt` | int | 即時功率（W）。機器不提供時固定為 0 |
+| `energy_kwh` | float | 累計耗電（kWh）。機器不提供時固定為 0 |
+| `filter_notify` | bool | 濾網提醒（目前只有 PA、HT 有實際資料） |
+| `mildew_en` | 0/1 | 「關機後自動送風防霉」功能是否啟用 |
+| `mildew_min` | int | 防霉送風時間（分鐘，1–180） |
+| `mildew_run` | int | 0=待機、1=關機後延遲中、2=送風防霉中、3=結束驗收中 |
+| `mildew_left` | string | 送風剩餘時間 `mm:ss`，只在 `mildew_run=2` 時有值，其他時候為空字串 |
+
+> 各品牌實際提供的感測值：PA、HT 有室外溫度、功率、耗電、濾網；MT、MHI 有室外溫度、功率、耗電；DK 有室外溫度，功率和耗電要看機器是否支援（見 §5）。不提供的欄位仍會出現在 JSON 裡，但值為 0 或 false。
+
+### 3.2 品牌額外欄位
+
+欄位會接在共通欄位後面，同一個 JSON 物件，詳見 §5。
+
+### 3.3 重要行為
+
+- 裝置要先成功讀到冷氣資料才會發 state。若冷氣斷電或通訊線沒接好，state 會停止更新，但 `availability` 仍是 `online`，因為它只代表控制器本身在線。**判斷冷氣是否正常，請一併檢查 state 是否持續更新（正常約每 5 秒一次）。**
+- 收到指令後，裝置會先樂觀更新狀態並立即發一次 state。之後的定期 state 是向冷氣讀回的實際值。若機器拒絕指令（例如超出範圍），下一輪 state 會改回實際值。
+
+---
+
+## 4. 控制指令：`<prefix>/cmd/<key>`
+
+### 4.1 冷氣共通指令
+
+| Topic | Payload | 說明 |
+|---|---|---|
+| `<prefix>/cmd/power` | `ON`／`OFF`（也接受 `1`／`0`、`true`／`false`，不分大小寫） | 開關機 |
+| `<prefix>/cmd/mode` | `off`／`cool`／`heat`／`dry`／`fan_only`／`auto`（小寫） | 切換模式。**off 以外的值會自動開機**；`off` 等同關機 |
+| `<prefix>/cmd/temp` | `16`～`30`，例如 `24` 或 `24.5` | 設定溫度（°C）。超出範圍會被忽略。PA、HT 只接受整數，送 24.5 會四捨五入成 25；DK、MHI、MT 可以 0.5 度為單位 |
+| `<prefix>/cmd/fan` | 該品牌的 `fan_name` 值之一（見 §5） | 設定風速，必須完全符合，否則會變成 `auto` |
+| `<prefix>/cmd/mildew_en` | `1`／`0`（或 `on`／`off`） | 開關「關機後自動送風防霉」 |
+| `<prefix>/cmd/mildew_min` | `1`～`180` | 防霉送風時間（分鐘） |
+
+### 4.2 範例：客廳冷氣開機、冷氣模式、24°C、自動風速
+
+依序 publish 這幾筆（QoS 1、retain=false）：
+
+```
+home/hvac/living-room/cmd/mode   cool
+home/hvac/living-room/cmd/temp   24
+home/hvac/living-room/cmd/fan    auto
+```
+
+`cmd/mode cool` 已經包含開機，所以不用另外發 `cmd/power ON`。
+
+接著訂閱 `home/hvac/living-room/state`，確認收到 `"mode_name":"cool"`、`"target_c":24.0`、`"fan_name":"auto"`。
+
+關機：
+
+```
+home/hvac/living-room/cmd/power  OFF
+```
+
+### 4.3 對照「單筆 JSON 指令」的整合需求
+
+若整合系統的設計是送一筆 JSON，例如：
+```json
+{"power":"ON","mode":"COOL","target_temperature":24.0,"fan_mode":"AUTO","swing_mode":"OFF"}
+```
+請在 driver 裡拆成多筆發送：
+1. `power` 為 OFF → 只發 `cmd/power OFF`，結束。
+2. 否則 → 發 `cmd/mode <模式小寫>`。COOL→`cool`、HEAT→`heat`、DRY→`dry`、FAN→`fan_only`、AUTO→`auto`。
+3. 發 `cmd/temp <溫度>`。
+4. 發 `cmd/fan <該品牌風速名稱>`。
+5. 擺風：DK 發 `cmd/swing_mode`；其他品牌見 §5 的 `vlevel`／`hlevel`／`swing_v`／`swing_h`。
+
+---
+
+## 5. 品牌差異
+
+| 品牌 | 代碼 | 風速 `fan_name` 可用值 | 溫度間距 |
+|---|---|---|---|
+| 國際 Panasonic | PA | `auto` `quiet` `low` `medium` `high` `max` | 1°C |
+| 日立 Hitachi | HT | `auto` `quiet` `low` `medium` `high` | 1°C |
+| 大金 Daikin | DK | `auto` `quiet` `1` `2` `3` `4` `5` | 0.5°C |
+| 三菱重工 MHI | MHI | `auto` `quiet` `low` `medium` `high` | 0.5°C |
+| 三菱電機 Mitsubishi Electric | MT | `auto` `quiet` `1` `2` `3` `4` | 0.5°C |
+
+品牌專屬的 state 欄位和指令如下。指令 topic 一樣是 `<prefix>/cmd/<key>`，payload 送**數字**；開關類為 `1`／`0`。
+
+### 5.1 國際 Panasonic（PA）
+
+| key | state | 指令 | 值 |
+|---|---|---|---|
+| `vlevel` | ✓ | ✓ | 上下擺動：0=自動擺動、1=最上、2=中上、3=中、4=中下、5=最下 |
+| `hlevel` | ✓ | ✓ | 左右擺動：0=自動擺動、1–7=固定位置（左葉、右葉組合） |
+| `activity` | ✓ | ✓ | 動向感應：0=關、1=吹向人、2=避開人、3=自動 |
+| `beeper` | ✓ | ✓ | 蜂鳴器 0/1 |
+| `econavi` | ✓ | ✓ | econavi 0/1 |
+| `nanoex` | ✓ | ✓ | nanoeX 0/1 |
+| `mold_dry` | 機型有支援才出現 | ✓ | 機器內建乾燥防霉 0/1 |
+| `mold_watch` | 機型有支援才出現 | ✓ | 監測防霉 0/1 |
+| `voice` | 機型有支援才出現 | ✓ | 語音控制 0/1 |
+| `rh` | 機型有支援才出現 | — | 室內濕度 % |
+| `volt` | 機型有支援才出現 | — | 室外機電壓 V |
+| `kwh_in` `kwh_out` `kwh_month` | 機型有支援才出現 | — | 室內機、室外機、本月耗電 kWh |
+| `maint_h` `filter_h` | 機型有支援才出現 | — | 保養、濾網累計運轉時數 |
+
+### 5.2 日立 Hitachi（HT）
+
+| key | state | 指令 | 值 |
+|---|---|---|---|
+| `hlevel` | ✓ | ✓ | 水平擺動 0–5 |
+| `swing_v` | ✓ | ✓ | 上下擺動 0/1 |
+| `swing_h` | ✓ | ✓ | 左右擺動 0/1 |
+| `beeper` | ✓ | ✓ | 蜂鳴器 0/1 |
+| `mildew` | ✓ | ✓ | 機器內建防霉 0/1（和 framework 的 `mildew_en` 送風防霉是兩個不同的功能） |
+| `frost_wash` | ✓ | ✓ | 凍結洗淨 0/1 |
+
+### 5.3 大金 Daikin（DK）
+
+| key | state | 指令 | 值 |
+|---|---|---|---|
+| `swing_mode` | ✓ | ✓ | `off`／`vertical`／`horizontal`／`both`（字串） |
+| `coil_c` | ✓ | — | 室內盤管溫度 °C（機器不支援時為 0） |
+| `comp_hz` | ✓ | — | 壓縮機頻率 Hz |
+| `fan_rpm` | ✓ | — | 室內風扇轉速 |
+| `humidity` | ✓ | — | 室內濕度 %（機器不支援時為 0） |
+
+DK 的 `watt`、`energy_kwh` 只有在機器支援耗電回報時才有值。
+
+### 5.4 三菱重工 MHI
+
+| key | state | 指令 | 值 |
+|---|---|---|---|
+| `vlevel` | ✓ | ✓ | 上下風向 0–4 |
+| `hlevel` | ✓ | ✓ | 左右風向 0–6、8 |
+| `defrost` | ✓ | — | 除霜中 0/1 |
+| `link_ok` | ✓ | — | 與室內機通訊正常 0/1 |
+| `current_a` | ✓ | — | 電流 A |
+
+### 5.5 三菱電機 Mitsubishi Electric（MT）
+
+| key | state | 指令 | 值 |
+|---|---|---|---|
+| `vlevel` | ✓ | ✓ | 上下風向 0–6 |
+| `hlevel` | ✓ | ✓ | 左右風向 0–6 |
+| `defrost` | ✓ | — | 除霜中 0/1 |
+| `isee` | ✓ | — | i-see 感應器 0/1 |
+| `comp_hz` | ✓ | — | 壓縮機頻率 Hz |
+| `runtime_h` | ✓ | — | 運轉時數 h |
+
+---
+
+## 6. 目前不支援的項目
+
+| 項目 | 現況 | 替代做法 |
+|---|---|---|
+| 單筆 JSON 指令 | 不支援 | 拆成多個 `cmd/<key>` 依序發送（§4.3） |
+| `request_id`／指令 ACK | 不支援 | 以下一筆 `state` 驗證，指令後會立即發一次 |
+| TLS／mqtts | 不支援 | 只在可信任的區網使用，broker 設帳號密碼與 ACL |
+| 冷氣故障碼 | 冷氣系列沒有此欄位 | 用 state 是否持續更新判斷通訊是否正常 |
+| 華氏溫度 | 不支援 | 全部使用 °C |
+| 自訂 topic 結構 | 前綴可自訂，後段固定 | `<prefix>/state`、`<prefix>/availability`、`<prefix>/cmd/<key>` |
+
+---
+
+## 7. 測試指令（Mosquitto CLI）
+
+```bash
+# 監看狀態
+mosquitto_sub -h 192.168.1.10 -u st01 -P '密碼' -v -t 'home/hvac/living-room/#'
+
+# 冷氣 24°C
+mosquitto_pub -h 192.168.1.10 -u st01 -P '密碼' -q 1 -t 'home/hvac/living-room/cmd/mode' -m 'cool'
+mosquitto_pub -h 192.168.1.10 -u st01 -P '密碼' -q 1 -t 'home/hvac/living-room/cmd/temp' -m '24'
+
+# 關機
+mosquitto_pub -h 192.168.1.10 -u st01 -P '密碼' -q 1 -t 'home/hvac/living-room/cmd/power' -m 'OFF'
+```
+
+---
+
+## 附錄 A：日立全熱交換機（HTERV）
+
+state：
+```json
+{"power":true,"fan":2,"fan_lvl":1,"ventilate":0,"ventilate_name":"Auto",
+ "indoor_c":26.0,"model_type":0,"error":0,"filter":0,"front_filter":0,"pm25_filter":0}
+```
+- `fan_lvl`：1=弱、2=強（`fan` 是機器原始值，2 或 4）
+- `ventilate`：0=Auto、1=Full（全熱交換）、2=Normal（普通換氣）
+- `error`：故障碼，0 代表正常
+- `filter`、`front_filter`、`pm25_filter`：各濾網的提醒 0/1
+
+指令：
+
+| key | payload |
+|---|---|
+| `power` | `ON`／`OFF` |
+| `fan_lvl` | `0`=關機、`1`=弱、`2`=強 |
+| `ventilate` | `Auto`／`Full`／`Normal` |
+| `filter_reset`、`front_filter_reset`、`pm25_filter_reset` | 任意值（例如 `1`），清除對應的濾網提醒 |
+
+## 附錄 B：日立除濕機（HTDEHU）
+
+state 共通欄位：
+```json
+{"power":true,"mode":1,"mode_name":"normal","fan":2,"fan_idx":0,
+ "target_humidity":55,"current_humidity":68,"action":"drying"}
+```
+- `mode_name`：`auto` `normal` `continuous` `boost` `purifier` `sleep` `fan` `comfort` `home` `eco`，實際可用的模式依機型而定
+- `action`：`off`／`idle`／`drying`
+- 額外欄位：`operating_time` `sound_mode` `light_level` `water_tank_full` `filter_notify` `side_air_flow` `defrost` `error` `energy_kwh` `pm25` `child_lock` `air_flow_auto` `mildew` `humidity_notify` `beeper` `air_purifier` `pm25_detect`
+
+指令：
+
+| key | payload |
+|---|---|
+| `power` | `ON`／`OFF` |
+| `target_humidity` | 目標濕度 %（依機型，常見 30–80） |
+| `mode` | 上列 `mode_name` 之一（會自動開機） |
+| `fan_idx` | 機器原始風速值（依機型，常見 2–4） |
+| `operating_time` `sound_mode` `light_level` | 數字 |
+| `child_lock` `air_flow_auto` `mildew` `humidity_notify` `beeper` `air_purifier` `pm25_detect` | `1`／`0` |
+| `filter_reset` | `1`，清除濾網提醒 |

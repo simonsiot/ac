@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ST01 Matter MQTT API</title>
+<meta name="description" content="SimonIoT ST01 Matter 控制器本機 MQTT API 規格：topic、狀態 JSON、控制指令與各品牌差異。純文字版：mqtt.txt">
+<link rel="alternate" type="text/plain" href="mqtt.txt">
+<link rel="icon" href="img/favicon.png" type="image/png">
+<style>
+:root { --bg:#f0f4f8; --card:#fff; --fg:#1e293b; --muted:#64748b; --line:#e2e8f0;
+        --accent:#0d4f8d; --code:#f1f5f9; --note:#eff6ff; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#0f172a; --card:#1e293b; --fg:#e2e8f0; --muted:#94a3b8; --line:#334155;
+          --accent:#7cc0ff; --code:#0b1220; --note:#172a46; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--fg);
+       font:16px/1.7 -apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC",sans-serif; }
+main { max-width:880px; margin:0 auto; padding:24px 16px 64px; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:8px 24px 24px; }
+.top { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
+        font-size:14px; color:var(--muted); margin-bottom:12px; }
+.top a { color:var(--accent); }
+h1 { font-size:1.7rem; line-height:1.3; }
+h2 { margin-top:2.2em; padding-top:.6em; border-top:1px solid var(--line); color:var(--accent); font-size:1.3rem; }
+h3 { font-size:1.1rem; margin-top:1.6em; }
+a { color:var(--accent); }
+code { background:var(--code); padding:.1em .35em; border-radius:4px; font-size:.9em;
+        font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+pre { background:var(--code); padding:12px 14px; border-radius:8px; overflow-x:auto; line-height:1.5; }
+pre code { padding:0; background:none; }
+.tbl { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; font-size:.92rem; margin:.6em 0; }
+th, td { border:1px solid var(--line); padding:6px 9px; text-align:left; vertical-align:top; }
+th { background:var(--code); }
+blockquote { margin:1em 0; padding:8px 14px; background:var(--note); border-left:4px solid var(--accent);
+             border-radius:6px; color:var(--fg); }
+hr { display:none; }
+</style>
+</head>
+<body>
+<main>
+<div class="top"><a href="index.html">← SimonIoT 說明書首頁</a>
+<span>純文字版（給 AI／程式讀取）：<a href="mqtt.txt">mqtt.txt</a></span></div>
+<div class="card">
+<h1>ST01 Matter 控制器 — 本機 MQTT API 規格</h1>
+<blockquote>
+<p>適用：SimonIoT ST01 Matter 系列韌體（ESP32-C3，ESP-IDF）。冷氣：國際 Panasonic（PA）、日立 Hitachi（HT）、大金 Daikin（DK）、三菱重工 MHI、三菱電機 Mitsubishi Electric（MT）；附錄：日立全熱交換機（HTERV）、日立除濕機（HTDEHU）。
+文件版本：2026-10-20，內容依韌體原始碼整理。
+本文寫給<strong>系統整合商與 AI 助理</strong>看：照本文即可寫出 Savant／Control4／Crestron／Node-RED／Home Assistant 等系統的 MQTT driver。</p>
+</blockquote>
+<hr />
+<h2>0. 一分鐘摘要（給 AI 的重點）</h2>
+<ul>
+<li>裝置是 <strong>MQTT client</strong>，連到<strong>使用者自己指定的本機 broker</strong>（例如 Mosquitto）。沒有雲端，也不需要廠商帳號。</li>
+<li>所有 topic 都在使用者自訂的 <code>&lt;prefix&gt;</code> 底下：</li>
+<li><code>&lt;prefix&gt;/state</code>：<strong>狀態 JSON</strong>（retained），每 5 秒發一次，每次收到指令後會再立即發一次。</li>
+<li><code>&lt;prefix&gt;/availability</code>：<code>online</code> 或 <code>offline</code>（retained，用 LWT 實作）。</li>
+<li><code>&lt;prefix&gt;/cmd/&lt;key&gt;</code>：<strong>控制指令</strong>，每個項目一個 topic，payload 是<strong>純文字</strong>，不是 JSON。</li>
+<li><strong>不接受</strong>「一筆 JSON 包含所有設定」的指令格式。要同時設定開機、模式、溫度、風速，就依序發多筆。</li>
+<li>沒有 <code>request_id</code>／ACK topic。確認方式：指令發出後，看下一筆 <code>&lt;prefix&gt;/state</code> 的值是否已變成目標值。</li>
+<li>只支援明碼 TCP <code>mqtt://</code>（預設埠 1883），可以設帳號密碼。<strong>不支援 TLS／mqtts</strong>。</li>
+<li>同時會發 Home Assistant MQTT Discovery（<code>homeassistant/...</code>），HA 使用者不用自己寫設定。</li>
+</ul>
+<hr />
+<h2>1. 裝置端設定</h2>
+<ol>
+<li>先完成 Matter 配對（Apple 家庭／Google Home／Home Assistant 擇一）。<strong>未配對前 MQTT 開關會反灰無法開啟</strong>，原因是配對期間記憶體不足。</li>
+<li>用瀏覽器打開裝置網頁（<code>http://&lt;裝置IP&gt;/</code>），在「配對」分頁打開「MQTT 併行」開關。頁面重新載入後會出現 Broker 設定欄位：</li>
+</ol>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>欄位</th>
+<th>說明</th>
+<th>範例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Broker URI</td>
+<td>必填，格式為 <code>mqtt://&lt;host&gt;:&lt;port&gt;</code></td>
+<td><code>mqtt://192.168.1.10:1883</code></td>
+</tr>
+<tr>
+<td>使用者名稱</td>
+<td>選填</td>
+<td><code>st01</code></td>
+</tr>
+<tr>
+<td>密碼</td>
+<td>選填（網頁不會回顯）</td>
+<td></td>
+</tr>
+<tr>
+<td>Topic 前綴</td>
+<td>選填，留空時預設等於裝置 hostname（例如 <code>mt-st01-pa-4439cc</code>，已含 MAC 末 6 碼，同一網段內不會重複）。可以改成任何不含 <code>+</code> <code>#</code> 的路徑</td>
+<td><code>home/hvac/living-room</code></td>
+</tr>
+</tbody>
+</table></div>
+<ol>
+<li>按「儲存並重新連線」，不用重開機。網頁的「MQTT 狀態」卡會顯示 <code>connected</code>／<code>connecting</code>／<code>waiting-pair</code>／<code>error</code>／<code>disabled</code>。</li>
+</ol>
+<p>注意事項：
+- <strong>每台裝置的前綴必須不同</strong>，否則多台冷氣的狀態和指令會互相干擾。
+- MQTT 和 Matter 同時運作：Apple 家庭或 Google 改的狀態會出現在 MQTT state，MQTT 下的指令也會同步到 Matter。
+- 連線參數：MQTT 3.1.1、keepalive 30 秒、斷線後自動重連。</p>
+<hr />
+<h2>2. Topic 一覽</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>方向</th>
+<th>QoS</th>
+<th>Retain</th>
+<th>Payload</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;prefix&gt;/state</code></td>
+<td>裝置 → broker</td>
+<td>0</td>
+<td>是</td>
+<td>狀態 JSON（見 §3）</td>
+</tr>
+<tr>
+<td><code>&lt;prefix&gt;/availability</code></td>
+<td>裝置 → broker</td>
+<td>1</td>
+<td>是</td>
+<td><code>online</code>／<code>offline</code></td>
+</tr>
+<tr>
+<td><code>&lt;prefix&gt;/cmd/&lt;key&gt;</code></td>
+<td>整合系統 → 裝置</td>
+<td>裝置以 QoS 1 訂閱 <code>&lt;prefix&gt;/cmd/+</code></td>
+<td><strong>請勿 retain</strong></td>
+<td>純文字值（見 §4）</td>
+</tr>
+<tr>
+<td><code>homeassistant/&lt;component&gt;/&lt;uid&gt;[_&lt;key&gt;]/config</code></td>
+<td>裝置 → broker</td>
+<td>1</td>
+<td>是</td>
+<td>HA Discovery（非 HA 系統可忽略）</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><code>availability</code> 在連上 broker 時發 <code>online</code>。裝置斷電或斷網時，由 broker 依 Last Will 自動改成 <code>offline</code>（最慢約 45 秒）。</li>
+<li><strong>指令不要用 retain 發送</strong>，否則裝置每次重新連線都會再執行一次舊指令。</li>
+<li>指令 payload 最長 31 字元，超過的部分會被截掉。</li>
+</ul>
+<hr />
+<h2>3. 狀態 JSON：<code>&lt;prefix&gt;/state</code></h2>
+<h3>3.1 冷氣共通欄位（五個品牌都有）</h3>
+<pre><code class="language-json">{
+  &quot;power&quot;: true,
+  &quot;mode&quot;: 0,
+  &quot;mode_name&quot;: &quot;cool&quot;,
+  &quot;fan&quot;: 0,
+  &quot;fan_name&quot;: &quot;auto&quot;,
+  &quot;target_c&quot;: 24.0,
+  &quot;indoor_c&quot;: 27.2,
+  &quot;outdoor_c&quot;: 31.0,
+  &quot;watt&quot;: 850,
+  &quot;energy_kwh&quot;: 123.45,
+  &quot;filter_notify&quot;: false,
+  &quot;mildew_en&quot;: 1,
+  &quot;mildew_min&quot;: 30,
+  &quot;mildew_run&quot;: 0,
+  &quot;mildew_left&quot;: &quot;&quot;
+}
+</code></pre>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>欄位</th>
+<th>型別</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>power</code></td>
+<td>bool</td>
+<td>開機為 <code>true</code></td>
+</tr>
+<tr>
+<td><code>mode</code></td>
+<td>int</td>
+<td>機器原始模式：0=冷氣、1=除濕、2=送風、3=自動、4=暖氣（關機時保留最後的模式）</td>
+</tr>
+<tr>
+<td><code>mode_name</code></td>
+<td>string</td>
+<td><code>off</code>／<code>cool</code>／<code>dry</code>／<code>fan_only</code>／<code>auto</code>／<code>heat</code>。<strong>關機時為 <code>off</code></strong>，建議以此欄位為準</td>
+</tr>
+<tr>
+<td><code>fan</code></td>
+<td>int</td>
+<td>風速索引，0=auto、1=quiet，2 以上依品牌而定（見 §5）</td>
+</tr>
+<tr>
+<td><code>fan_name</code></td>
+<td>string</td>
+<td>風速名稱，與 <code>cmd/fan</code> 可接受的值完全相同</td>
+</tr>
+<tr>
+<td><code>target_c</code></td>
+<td>float</td>
+<td>設定溫度（°C）</td>
+</tr>
+<tr>
+<td><code>indoor_c</code></td>
+<td>float</td>
+<td>室內溫度（°C）</td>
+</tr>
+<tr>
+<td><code>outdoor_c</code></td>
+<td>float</td>
+<td>室外溫度（°C）</td>
+</tr>
+<tr>
+<td><code>watt</code></td>
+<td>int</td>
+<td>即時功率（W）。機器不提供時固定為 0</td>
+</tr>
+<tr>
+<td><code>energy_kwh</code></td>
+<td>float</td>
+<td>累計耗電（kWh）。機器不提供時固定為 0</td>
+</tr>
+<tr>
+<td><code>filter_notify</code></td>
+<td>bool</td>
+<td>濾網提醒（目前只有 PA、HT 有實際資料）</td>
+</tr>
+<tr>
+<td><code>mildew_en</code></td>
+<td>0/1</td>
+<td>「關機後自動送風防霉」功能是否啟用</td>
+</tr>
+<tr>
+<td><code>mildew_min</code></td>
+<td>int</td>
+<td>防霉送風時間（分鐘，1–180）</td>
+</tr>
+<tr>
+<td><code>mildew_run</code></td>
+<td>int</td>
+<td>0=待機、1=關機後延遲中、2=送風防霉中、3=結束驗收中</td>
+</tr>
+<tr>
+<td><code>mildew_left</code></td>
+<td>string</td>
+<td>送風剩餘時間 <code>mm:ss</code>，只在 <code>mildew_run=2</code> 時有值，其他時候為空字串</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>各品牌實際提供的感測值：PA、HT 有室外溫度、功率、耗電、濾網；MT、MHI 有室外溫度、功率、耗電；DK 有室外溫度，功率和耗電要看機器是否支援（見 §5）。不提供的欄位仍會出現在 JSON 裡，但值為 0 或 false。</p>
+</blockquote>
+<h3>3.2 品牌額外欄位</h3>
+<p>欄位會接在共通欄位後面，同一個 JSON 物件，詳見 §5。</p>
+<h3>3.3 重要行為</h3>
+<ul>
+<li>裝置要先成功讀到冷氣資料才會發 state。若冷氣斷電或通訊線沒接好，state 會停止更新，但 <code>availability</code> 仍是 <code>online</code>，因為它只代表控制器本身在線。<strong>判斷冷氣是否正常，請一併檢查 state 是否持續更新（正常約每 5 秒一次）。</strong></li>
+<li>收到指令後，裝置會先樂觀更新狀態並立即發一次 state。之後的定期 state 是向冷氣讀回的實際值。若機器拒絕指令（例如超出範圍），下一輪 state 會改回實際值。</li>
+</ul>
+<hr />
+<h2>4. 控制指令：<code>&lt;prefix&gt;/cmd/&lt;key&gt;</code></h2>
+<h3>4.1 冷氣共通指令</h3>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Payload</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;prefix&gt;/cmd/power</code></td>
+<td><code>ON</code>／<code>OFF</code>（也接受 <code>1</code>／<code>0</code>、<code>true</code>／<code>false</code>，不分大小寫）</td>
+<td>開關機</td>
+</tr>
+<tr>
+<td><code>&lt;prefix&gt;/cmd/mode</code></td>
+<td><code>off</code>／<code>cool</code>／<code>heat</code>／<code>dry</code>／<code>fan_only</code>／<code>auto</code>（小寫）</td>
+<td>切換模式。<strong>off 以外的值會自動開機</strong>；<code>off</code> 等同關機</td>
+</tr>
+<tr>
+<td><code>&lt;prefix&gt;/cmd/temp</code></td>
+<td><code>16</code>～<code>30</code>，例如 <code>24</code> 或 <code>24.5</code></td>
+<td>設定溫度（°C）。超出範圍會被忽略。PA、HT 只接受整數，送 24.5 會四捨五入成 25；DK、MHI、MT 可以 0.5 度為單位</td>
+</tr>
+<tr>
+<td><code>&lt;prefix&gt;/cmd/fan</code></td>
+<td>該品牌的 <code>fan_name</code> 值之一（見 §5）</td>
+<td>設定風速，必須完全符合，否則會變成 <code>auto</code></td>
+</tr>
+<tr>
+<td><code>&lt;prefix&gt;/cmd/mildew_en</code></td>
+<td><code>1</code>／<code>0</code>（或 <code>on</code>／<code>off</code>）</td>
+<td>開關「關機後自動送風防霉」</td>
+</tr>
+<tr>
+<td><code>&lt;prefix&gt;/cmd/mildew_min</code></td>
+<td><code>1</code>～<code>180</code></td>
+<td>防霉送風時間（分鐘）</td>
+</tr>
+</tbody>
+</table></div>
+<h3>4.2 範例：客廳冷氣開機、冷氣模式、24°C、自動風速</h3>
+<p>依序 publish 這幾筆（QoS 1、retain=false）：</p>
+<pre><code>home/hvac/living-room/cmd/mode   cool
+home/hvac/living-room/cmd/temp   24
+home/hvac/living-room/cmd/fan    auto
+</code></pre>
+<p><code>cmd/mode cool</code> 已經包含開機，所以不用另外發 <code>cmd/power ON</code>。</p>
+<p>接著訂閱 <code>home/hvac/living-room/state</code>，確認收到 <code>"mode_name":"cool"</code>、<code>"target_c":24.0</code>、<code>"fan_name":"auto"</code>。</p>
+<p>關機：</p>
+<pre><code>home/hvac/living-room/cmd/power  OFF
+</code></pre>
+<h3>4.3 對照「單筆 JSON 指令」的整合需求</h3>
+<p>若整合系統的設計是送一筆 JSON，例如：</p>
+<pre><code class="language-json">{&quot;power&quot;:&quot;ON&quot;,&quot;mode&quot;:&quot;COOL&quot;,&quot;target_temperature&quot;:24.0,&quot;fan_mode&quot;:&quot;AUTO&quot;,&quot;swing_mode&quot;:&quot;OFF&quot;}
+</code></pre>
+<p>請在 driver 裡拆成多筆發送：
+1. <code>power</code> 為 OFF → 只發 <code>cmd/power OFF</code>，結束。
+2. 否則 → 發 <code>cmd/mode &lt;模式小寫&gt;</code>。COOL→<code>cool</code>、HEAT→<code>heat</code>、DRY→<code>dry</code>、FAN→<code>fan_only</code>、AUTO→<code>auto</code>。
+3. 發 <code>cmd/temp &lt;溫度&gt;</code>。
+4. 發 <code>cmd/fan &lt;該品牌風速名稱&gt;</code>。
+5. 擺風：DK 發 <code>cmd/swing_mode</code>；其他品牌見 §5 的 <code>vlevel</code>／<code>hlevel</code>／<code>swing_v</code>／<code>swing_h</code>。</p>
+<hr />
+<h2>5. 品牌差異</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>品牌</th>
+<th>代碼</th>
+<th>風速 <code>fan_name</code> 可用值</th>
+<th>溫度間距</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>國際 Panasonic</td>
+<td>PA</td>
+<td><code>auto</code> <code>quiet</code> <code>low</code> <code>medium</code> <code>high</code> <code>max</code></td>
+<td>1°C</td>
+</tr>
+<tr>
+<td>日立 Hitachi</td>
+<td>HT</td>
+<td><code>auto</code> <code>quiet</code> <code>low</code> <code>medium</code> <code>high</code></td>
+<td>1°C</td>
+</tr>
+<tr>
+<td>大金 Daikin</td>
+<td>DK</td>
+<td><code>auto</code> <code>quiet</code> <code>1</code> <code>2</code> <code>3</code> <code>4</code> <code>5</code></td>
+<td>0.5°C</td>
+</tr>
+<tr>
+<td>三菱重工 MHI</td>
+<td>MHI</td>
+<td><code>auto</code> <code>quiet</code> <code>low</code> <code>medium</code> <code>high</code></td>
+<td>0.5°C</td>
+</tr>
+<tr>
+<td>三菱電機 Mitsubishi Electric</td>
+<td>MT</td>
+<td><code>auto</code> <code>quiet</code> <code>1</code> <code>2</code> <code>3</code> <code>4</code></td>
+<td>0.5°C</td>
+</tr>
+</tbody>
+</table></div>
+<p>品牌專屬的 state 欄位和指令如下。指令 topic 一樣是 <code>&lt;prefix&gt;/cmd/&lt;key&gt;</code>，payload 送<strong>數字</strong>；開關類為 <code>1</code>／<code>0</code>。</p>
+<h3>5.1 國際 Panasonic（PA）</h3>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>key</th>
+<th>state</th>
+<th>指令</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vlevel</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>上下擺動：0=自動擺動、1=最上、2=中上、3=中、4=中下、5=最下</td>
+</tr>
+<tr>
+<td><code>hlevel</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>左右擺動：0=自動擺動、1–7=固定位置（左葉、右葉組合）</td>
+</tr>
+<tr>
+<td><code>activity</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>動向感應：0=關、1=吹向人、2=避開人、3=自動</td>
+</tr>
+<tr>
+<td><code>beeper</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>蜂鳴器 0/1</td>
+</tr>
+<tr>
+<td><code>econavi</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>econavi 0/1</td>
+</tr>
+<tr>
+<td><code>nanoex</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>nanoeX 0/1</td>
+</tr>
+<tr>
+<td><code>mold_dry</code></td>
+<td>機型有支援才出現</td>
+<td>✓</td>
+<td>機器內建乾燥防霉 0/1</td>
+</tr>
+<tr>
+<td><code>mold_watch</code></td>
+<td>機型有支援才出現</td>
+<td>✓</td>
+<td>監測防霉 0/1</td>
+</tr>
+<tr>
+<td><code>voice</code></td>
+<td>機型有支援才出現</td>
+<td>✓</td>
+<td>語音控制 0/1</td>
+</tr>
+<tr>
+<td><code>rh</code></td>
+<td>機型有支援才出現</td>
+<td>—</td>
+<td>室內濕度 %</td>
+</tr>
+<tr>
+<td><code>volt</code></td>
+<td>機型有支援才出現</td>
+<td>—</td>
+<td>室外機電壓 V</td>
+</tr>
+<tr>
+<td><code>kwh_in</code> <code>kwh_out</code> <code>kwh_month</code></td>
+<td>機型有支援才出現</td>
+<td>—</td>
+<td>室內機、室外機、本月耗電 kWh</td>
+</tr>
+<tr>
+<td><code>maint_h</code> <code>filter_h</code></td>
+<td>機型有支援才出現</td>
+<td>—</td>
+<td>保養、濾網累計運轉時數</td>
+</tr>
+</tbody>
+</table></div>
+<h3>5.2 日立 Hitachi（HT）</h3>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>key</th>
+<th>state</th>
+<th>指令</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hlevel</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>水平擺動 0–5</td>
+</tr>
+<tr>
+<td><code>swing_v</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>上下擺動 0/1</td>
+</tr>
+<tr>
+<td><code>swing_h</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>左右擺動 0/1</td>
+</tr>
+<tr>
+<td><code>beeper</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>蜂鳴器 0/1</td>
+</tr>
+<tr>
+<td><code>mildew</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>機器內建防霉 0/1（和 framework 的 <code>mildew_en</code> 送風防霉是兩個不同的功能）</td>
+</tr>
+<tr>
+<td><code>frost_wash</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>凍結洗淨 0/1</td>
+</tr>
+</tbody>
+</table></div>
+<h3>5.3 大金 Daikin（DK）</h3>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>key</th>
+<th>state</th>
+<th>指令</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>swing_mode</code></td>
+<td>✓</td>
+<td>✓</td>
+<td><code>off</code>／<code>vertical</code>／<code>horizontal</code>／<code>both</code>（字串）</td>
+</tr>
+<tr>
+<td><code>coil_c</code></td>
+<td>✓</td>
+<td>—</td>
+<td>室內盤管溫度 °C（機器不支援時為 0）</td>
+</tr>
+<tr>
+<td><code>comp_hz</code></td>
+<td>✓</td>
+<td>—</td>
+<td>壓縮機頻率 Hz</td>
+</tr>
+<tr>
+<td><code>fan_rpm</code></td>
+<td>✓</td>
+<td>—</td>
+<td>室內風扇轉速</td>
+</tr>
+<tr>
+<td><code>humidity</code></td>
+<td>✓</td>
+<td>—</td>
+<td>室內濕度 %（機器不支援時為 0）</td>
+</tr>
+</tbody>
+</table></div>
+<p>DK 的 <code>watt</code>、<code>energy_kwh</code> 只有在機器支援耗電回報時才有值。</p>
+<h3>5.4 三菱重工 MHI</h3>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>key</th>
+<th>state</th>
+<th>指令</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vlevel</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>上下風向 0–4</td>
+</tr>
+<tr>
+<td><code>hlevel</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>左右風向 0–6、8</td>
+</tr>
+<tr>
+<td><code>defrost</code></td>
+<td>✓</td>
+<td>—</td>
+<td>除霜中 0/1</td>
+</tr>
+<tr>
+<td><code>link_ok</code></td>
+<td>✓</td>
+<td>—</td>
+<td>與室內機通訊正常 0/1</td>
+</tr>
+<tr>
+<td><code>current_a</code></td>
+<td>✓</td>
+<td>—</td>
+<td>電流 A</td>
+</tr>
+</tbody>
+</table></div>
+<h3>5.5 三菱電機 Mitsubishi Electric（MT）</h3>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>key</th>
+<th>state</th>
+<th>指令</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vlevel</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>上下風向 0–6</td>
+</tr>
+<tr>
+<td><code>hlevel</code></td>
+<td>✓</td>
+<td>✓</td>
+<td>左右風向 0–6</td>
+</tr>
+<tr>
+<td><code>defrost</code></td>
+<td>✓</td>
+<td>—</td>
+<td>除霜中 0/1</td>
+</tr>
+<tr>
+<td><code>isee</code></td>
+<td>✓</td>
+<td>—</td>
+<td>i-see 感應器 0/1</td>
+</tr>
+<tr>
+<td><code>comp_hz</code></td>
+<td>✓</td>
+<td>—</td>
+<td>壓縮機頻率 Hz</td>
+</tr>
+<tr>
+<td><code>runtime_h</code></td>
+<td>✓</td>
+<td>—</td>
+<td>運轉時數 h</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2>6. 目前不支援的項目</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>項目</th>
+<th>現況</th>
+<th>替代做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>單筆 JSON 指令</td>
+<td>不支援</td>
+<td>拆成多個 <code>cmd/&lt;key&gt;</code> 依序發送（§4.3）</td>
+</tr>
+<tr>
+<td><code>request_id</code>／指令 ACK</td>
+<td>不支援</td>
+<td>以下一筆 <code>state</code> 驗證，指令後會立即發一次</td>
+</tr>
+<tr>
+<td>TLS／mqtts</td>
+<td>不支援</td>
+<td>只在可信任的區網使用，broker 設帳號密碼與 ACL</td>
+</tr>
+<tr>
+<td>冷氣故障碼</td>
+<td>冷氣系列沒有此欄位</td>
+<td>用 state 是否持續更新判斷通訊是否正常</td>
+</tr>
+<tr>
+<td>華氏溫度</td>
+<td>不支援</td>
+<td>全部使用 °C</td>
+</tr>
+<tr>
+<td>自訂 topic 結構</td>
+<td>前綴可自訂，後段固定</td>
+<td><code>&lt;prefix&gt;/state</code>、<code>&lt;prefix&gt;/availability</code>、<code>&lt;prefix&gt;/cmd/&lt;key&gt;</code></td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2>7. 測試指令（Mosquitto CLI）</h2>
+<pre><code class="language-bash"># 監看狀態
+mosquitto_sub -h 192.168.1.10 -u st01 -P '密碼' -v -t 'home/hvac/living-room/#'
+
+# 冷氣 24°C
+mosquitto_pub -h 192.168.1.10 -u st01 -P '密碼' -q 1 -t 'home/hvac/living-room/cmd/mode' -m 'cool'
+mosquitto_pub -h 192.168.1.10 -u st01 -P '密碼' -q 1 -t 'home/hvac/living-room/cmd/temp' -m '24'
+
+# 關機
+mosquitto_pub -h 192.168.1.10 -u st01 -P '密碼' -q 1 -t 'home/hvac/living-room/cmd/power' -m 'OFF'
+</code></pre>
+<hr />
+<h2>附錄 A：日立全熱交換機（HTERV）</h2>
+<p>state：</p>
+<pre><code class="language-json">{&quot;power&quot;:true,&quot;fan&quot;:2,&quot;fan_lvl&quot;:1,&quot;ventilate&quot;:0,&quot;ventilate_name&quot;:&quot;Auto&quot;,
+ &quot;indoor_c&quot;:26.0,&quot;model_type&quot;:0,&quot;error&quot;:0,&quot;filter&quot;:0,&quot;front_filter&quot;:0,&quot;pm25_filter&quot;:0}
+</code></pre>
+<ul>
+<li><code>fan_lvl</code>：1=弱、2=強（<code>fan</code> 是機器原始值，2 或 4）</li>
+<li><code>ventilate</code>：0=Auto、1=Full（全熱交換）、2=Normal（普通換氣）</li>
+<li><code>error</code>：故障碼，0 代表正常</li>
+<li><code>filter</code>、<code>front_filter</code>、<code>pm25_filter</code>：各濾網的提醒 0/1</li>
+</ul>
+<p>指令：</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>key</th>
+<th>payload</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>power</code></td>
+<td><code>ON</code>／<code>OFF</code></td>
+</tr>
+<tr>
+<td><code>fan_lvl</code></td>
+<td><code>0</code>=關機、<code>1</code>=弱、<code>2</code>=強</td>
+</tr>
+<tr>
+<td><code>ventilate</code></td>
+<td><code>Auto</code>／<code>Full</code>／<code>Normal</code></td>
+</tr>
+<tr>
+<td><code>filter_reset</code>、<code>front_filter_reset</code>、<code>pm25_filter_reset</code></td>
+<td>任意值（例如 <code>1</code>），清除對應的濾網提醒</td>
+</tr>
+</tbody>
+</table></div>
+<h2>附錄 B：日立除濕機（HTDEHU）</h2>
+<p>state 共通欄位：</p>
+<pre><code class="language-json">{&quot;power&quot;:true,&quot;mode&quot;:1,&quot;mode_name&quot;:&quot;normal&quot;,&quot;fan&quot;:2,&quot;fan_idx&quot;:0,
+ &quot;target_humidity&quot;:55,&quot;current_humidity&quot;:68,&quot;action&quot;:&quot;drying&quot;}
+</code></pre>
+<ul>
+<li><code>mode_name</code>：<code>auto</code> <code>normal</code> <code>continuous</code> <code>boost</code> <code>purifier</code> <code>sleep</code> <code>fan</code> <code>comfort</code> <code>home</code> <code>eco</code>，實際可用的模式依機型而定</li>
+<li><code>action</code>：<code>off</code>／<code>idle</code>／<code>drying</code></li>
+<li>額外欄位：<code>operating_time</code> <code>sound_mode</code> <code>light_level</code> <code>water_tank_full</code> <code>filter_notify</code> <code>side_air_flow</code> <code>defrost</code> <code>error</code> <code>energy_kwh</code> <code>pm25</code> <code>child_lock</code> <code>air_flow_auto</code> <code>mildew</code> <code>humidity_notify</code> <code>beeper</code> <code>air_purifier</code> <code>pm25_detect</code></li>
+</ul>
+<p>指令：</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>key</th>
+<th>payload</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>power</code></td>
+<td><code>ON</code>／<code>OFF</code></td>
+</tr>
+<tr>
+<td><code>target_humidity</code></td>
+<td>目標濕度 %（依機型，常見 30–80）</td>
+</tr>
+<tr>
+<td><code>mode</code></td>
+<td>上列 <code>mode_name</code> 之一（會自動開機）</td>
+</tr>
+<tr>
+<td><code>fan_idx</code></td>
+<td>機器原始風速值（依機型，常見 2–4）</td>
+</tr>
+<tr>
+<td><code>operating_time</code> <code>sound_mode</code> <code>light_level</code></td>
+<td>數字</td>
+</tr>
+<tr>
+<td><code>child_lock</code> <code>air_flow_auto</code> <code>mildew</code> <code>humidity_notify</code> <code>beeper</code> <code>air_purifier</code> <code>pm25_detect</code></td>
+<td><code>1</code>／<code>0</code></td>
+</tr>
+<tr>
+<td><code>filter_reset</code></td>
+<td><code>1</code>，清除濾網提醒</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</main>
+</body>
+</html>
